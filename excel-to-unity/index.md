@@ -1,3 +1,5 @@
+__[Privacy-Policy](https://hnb-rabear.github.io/excel-to-unity/privacy-policy)__
+
 # 1. Introduction
 
 This tool is designed to assist independent game developers by providing a simple way to design and manage databases that can be used by both developers and designers. It allows designers to easily modify game statistics without needing developer assistance.
