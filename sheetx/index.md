@@ -1,4 +1,4 @@
-# Sheet X Documment
+# SheetX Documment
 
 ## 1. Introduction
 
@@ -8,7 +8,7 @@ As game projects grow, so does the need for efficient data table, constant, and 
 
 Originally designed for RPGs with extensive databases, it now supports various game genres and utilizes Excel and Google Spreadsheets for data management.
 
-__You can download Example [Here](https://github.com/hnb-rabear/RCore/blob/main/Assets/RCore/SheetX/Document/SheetXExample.unitypackage)__
+__You can download Example [Here](https://github.com/hnb-rabear/hnb-rabear.github.io/blob/main/sheetx/SheetXExample.unitypackage)__
 
 ## 2. Main functions
 
@@ -19,6 +19,8 @@ __You can download Example [Here](https://github.com/hnb-rabear/RCore/blob/main/
 - __Flexible Data Formats:__ Support a variety of data formats, adaptable to your design needs.
 
 ## 3. Settings
+
+Navigate to the main menu and select: Window > SheetX > Settings
 
 ![SheetX Settings](https://github.com/user-attachments/assets/80e31126-7a6e-40b5-9bdd-4ffc82d726dc)
 
@@ -79,6 +81,8 @@ For managing complex Static Databases that need to be divided into multiple Exce
 ## 5. Google Spreadsheets
 
 Prefer using Google Spreadsheets? No problem.
+
+Navigate to the main menu and select: Window > SheetX > Google Sheets Exporter
 
 ### 5.1. Setup Client ID and Client Secret
 
@@ -284,7 +288,7 @@ To define an attribute object type, the following rules should be followed:
 
 ## 7. How to integration
 
-__Download and import the [Example](https://github.com/hnb-rabear/RCore/blob/main/Assets/RCore/SheetX/Document/SheetXExample.unitypackage)__
+__Download and import the [Example](https://github.com/hnb-rabear/hnb-rabear.github.io/blob/main/sheetx/SheetXExample.unitypackage)__
 
 First, open the excel file located at `/Assets/SheetX/Examples/Exporting a Single Excel/Example.xlsx`. This is a sample Excel file. Within this file, there are sheets containing sample data that will help you understand how to design various types of data such as IDs, Constants, and Data Tables.
 
@@ -467,7 +471,7 @@ LocalizationsManager.OnLanguageChanged += OnLanguageChanged;
 
   3. Using Localization Component.
 
-      ![LocalizationComponent](https://github.com/user-attachments/assets/0f0214b9-51ed-44bf-9b27-f2a210e6f0f6)
+      ![Using Localization Component](https://github.com/user-attachments/assets/0f0214b9-51ed-44bf-9b27-f2a210e6f0f6)
 
 #### Combine Localizations
 
@@ -492,11 +496,11 @@ Creating TextMeshPro Fonts:
 - Under the _Character Set_ section, select _Character From File_.
 - Choose the appropriate character set file (e.g., characters_set_jp) in the Character File section.
 
-![characters_set_jp](https://github.com/user-attachments/assets/7bc98c77-9994-4551-8e5a-dae51eba9f45)
+![Create Japanese font](https://github.com/user-attachments/assets/7bc98c77-9994-4551-8e5a-dae51eba9f45)
 
-![characters_set_ko](https://github.com/user-attachments/assets/dc14fbbb-b38f-4f56-89b0-844d94b825cb)
+![Create Korean font](https://github.com/user-attachments/assets/dc14fbbb-b38f-4f56-89b0-844d94b825cb)
 
-![characters_set_cn](https://github.com/user-attachments/assets/08020e00-14b1-47cd-a9f2-be3d4321ca48)
+![Create Chinese font](https://github.com/user-attachments/assets/08020e00-14b1-47cd-a9f2-be3d4321ca48)
 
 #### Loading Localization Using the Addressable Assets System
 
