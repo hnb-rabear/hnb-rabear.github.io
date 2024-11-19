@@ -168,7 +168,7 @@ Sheets named according to the syntax _[%IDs]_ are called IDs sheets. They are us
 | EXAMPLE_INT           | int         | 83                 | Integer Example       |
 | EXAMPLE_FLOAT         | float       | 1.021              | Float example         |
 | EXAMPLE_STRING        | string      | 321fda             | String example        |
-| EXAMPLE_INTARRAY_1    | int-array   | 4                  | Integer array example |
+| EXAMPLE_INT_ARRAY_1   | int-array   | 4                  | Integer array example |
 | EXAMPLE_INT_ARRAY_2   | int-array   | 0:3:4:5            | Integer array example |
 | EXAMPLE_FLOAT_ARRAY_1 | float-array | 5                  | FLoat array example   |
 | EXAMPLE_FLOAT_ARRAY_2 | float-array | 5:1:1:3            | FLoat array example   |
@@ -267,7 +267,7 @@ Sheets named according to the syntax _[%Localization%]_ are called Localization 
 
 Attribute is a specific data type, specially created for RPG genre games - where characters and equipment can possess various different and non-fixed attributes and stats. This data type makes character and equipment customization more flexible, without restrictions.
 
-![attribute example](https://github.com/nbhung100914/excel-to-unity/assets/9100041/2d619d56-5fa9-4371-b212-3e857bcbbead)
+![Attribute Example](https://github.com/nbhung100914/excel-to-unity/assets/9100041/2d619d56-5fa9-4371-b212-3e857bcbbead)
 
 To define an attribute object type, the following rules should be followed:
 
@@ -292,7 +292,7 @@ __Download and import the [Example](https://github.com/hnb-rabear/hnb-rabear.git
 
 First, open the excel file located at `/Assets/SheetX/Examples/Exporting a Single Excel/Example.xlsx`. This is a sample Excel file. Within this file, there are sheets containing sample data that will help you understand how to design various types of data such as IDs, Constants, and Data Tables.
 
-![SheetXExcelFile](https://github.com/user-attachments/assets/2b4c8fe3-3c58-42bc-a85b-dea33c8122cf)
+![Excel File](https://github.com/user-attachments/assets/2b4c8fe3-3c58-42bc-a85b-dea33c8122cf)
 
 ### 7.1. Create folders for exporting files
 
