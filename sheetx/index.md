@@ -1,5 +1,7 @@
 # SheetX Documment
 
+__If you are using the Lite version, access to some advanced features will be restricted, and the number of spreadsheets you can process will be limited. If you find my software beneficial for your work, please consider upgrading to the PRO version.__
+
 ## 1. Introduction
 
 This tool simplifies database design and management for game developers and designers, allowing easy modification of game statistics without needing developer help.
