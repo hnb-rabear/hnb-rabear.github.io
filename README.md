@@ -1,5 +1,0 @@
-![settings_tab](https://github.com/user-attachments/assets/538a5a8b-50c9-4c21-a04d-092c8de4f4f3)
-![excel_tab](https://github.com/user-attachments/assets/a4a6b06e-c0ea-4eee-9630-e3e109085ddd)
-![edit_excel_sheets](https://github.com/user-attachments/assets/0717b9b5-a857-466e-8aa2-1115d8e3ba91)
-![google_tab](https://github.com/user-attachments/assets/9bfaeca9-3735-4eea-91be-7f8e936a6509)
-![edit_google_sheets](https://github.com/user-attachments/assets/a04f35d1-1b1f-4e54-9625-f6fd9c0d92bb)

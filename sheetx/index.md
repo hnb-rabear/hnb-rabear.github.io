@@ -24,9 +24,9 @@ __You can download Example [Here](https://github.com/hnb-rabear/hnb-rabear.githu
 
 Navigate to the main menu and select: `Window > SheetX > Settings`
 
-![SheetX Settings](https://github.com/user-attachments/assets/80e31126-7a6e-40b5-9bdd-4ffc82d726dc)%
+![tab_settings](https://github.com/user-attachments/assets/8d339afe-3323-4f03-99d0-34b3cc7dc56e)
 
-- __Constants Output Folder:__ Stores exported C# scripts, including IDs, Constants, Localization Components, and Localization API.
+- __Scripts Output Folder:__ Stores exported C# scripts, including IDs, Constants, Localization Components, and Localization API.
 - __Json Output Folder:__ Stores exported JSON data.
 - __Localization Output:__ Stores Localization Data, which should be inside the Resources folder for loading via Resources, or in the Localizations folder for loading via Addressable Asset System.
 - __Namespace:__ Defines the namespace for the exported C# files.
@@ -56,9 +56,9 @@ Navigate to the main menu and select: `Window > SheetX > Settings`
 
 ### 4.1. Export Single Excel File
 
-Navigate to the main menu and select: `Window > SheetX > Excel Sheets Exporter`
+Navigate to the main menu and select: `Window > SheetX > Excel Spreadsheets`
 
-![Export Excel Spreadsheet](https://github.com/user-attachments/assets/1772d9b2-9ac9-4bf7-9be3-80a157e02e07)
+![tab_excel_1](https://github.com/user-attachments/assets/b8ef6183-21c6-43b9-b952-8b5d57fc4c0b)
 
 This function is ideal for learning how to use the tools. It's great for small, simple Static Databases that only need one Excel file for all the data.
 
@@ -72,7 +72,8 @@ Key Functions:
 
 ### 4.2. Export multiple Excel Files (PRO only)
 
-![Export Multi Excel Spreadsheets](https://github.com/user-attachments/assets/93a2c413-7c7e-4747-abe0-d652bf8635ac)
+![tab_excel_2](https://github.com/user-attachments/assets/54b3632d-18f9-4053-b2fe-3feef6f71f92)
+![tab_excel_2_edit](https://github.com/user-attachments/assets/d958d749-5410-416b-9095-a598f9fe5a82)
 
 This feature is essential for managing complex Static Databases divided into multiple Excel files. It helps you efficiently handle and export all your files with one click:
 
@@ -84,7 +85,7 @@ This feature is essential for managing complex Static Databases divided into mul
 
 Prefer using Google Spreadsheets? No problem.
 
-Navigate to the main menu and select: `Window > SheetX > Google Sheets Exporter`
+Navigate to the main menu and select: `Window > SheetX > Google Spreadsheets`
 
 ### 5.1. Setup Google Client ID and Client Secret
 
@@ -111,11 +112,11 @@ Navigate to the main menu and select: `Window > SheetX > Google Sheets Exporter`
 2. Click on the Edit button to find the Client ID and Client Secret.
 3. Copy the __Client ID__ and __Client Secret__, and paste them into the corresponding settings in the __Sheets Exporter Settings__ Window
 
-![Google Client Id and Client Secret](https://github.com/user-attachments/assets/6e1297f5-6d8c-4c10-9ba2-e3f146726e43)
+![tab_settings_2](https://github.com/user-attachments/assets/4140a3e8-05df-4bbe-a3b8-a2fb0576f1ee)
 
 ### 5.2. Export single Google Spreadsheet
 
-![Export Google Spreadsheet](https://github.com/user-attachments/assets/65a7f64f-c93b-41b7-b2fa-358c631dd620)
+![tab_google_1](https://github.com/user-attachments/assets/02d6e2a9-3c39-4087-9a1e-0e77eec73a19)
 
 Enter the Google Sheet ID, then click the Download button. You can find the ID in the Google Sheet's URL, formatted like this: 
 
@@ -127,9 +128,8 @@ https://docs.google.com/spreadsheets/d/[GOOGLE_SHEET_ID]/edit?......
 
 Click on __Add Google Spreadsheets__, then enter the Google Sheet ID in the popup that appears. Press __Download__, then select the sheets you want to process.
 
-![Export Multiple Google Spreadsheets](https://github.com/user-attachments/assets/66a750f1-1997-4c6c-ac1b-b3194fb11167)
-
-![Edit Google Spreadsheet](https://github.com/user-attachments/assets/ac74f8a0-d59a-4d96-886f-9212395509dc)
+![tab_google_2](https://github.com/user-attachments/assets/f2ba3d93-7785-42b3-b33b-13b2687f699f)
+![tab_google_2_edit](https://github.com/user-attachments/assets/3386dda3-a2ba-4f88-87d0-f25e43ebfa56)
 
 ## 6. Rules in Spreadsheet
 
@@ -310,7 +310,7 @@ Create 3 directories to store the files that will be exported:
     - Alternatively, use the Addressable Asset System. In this case, create a "Localizations" folder outside the Resources folder and set it as an Addressable Asset. It's recommended to name this folder "Localizations".
 
 - Navigate to `Window > SheetX > Settings`
-- In Sheets Exporter Settings, set up the paths for the "Constants Output Folder," "Json Output Folder," and "Localization Output Folder" using the three folders you just created.
+- In Sheets Exporter Settings, set up the paths for the "Scripts Output Folder," "Json Output Folder," and "Localization Output Folder" using the three folders you just created.
 
 For this example I will create 3 folders:
 
