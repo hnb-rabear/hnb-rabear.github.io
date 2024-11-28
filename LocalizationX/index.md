@@ -160,6 +160,8 @@ First, open the Excel file at `/Assets/LocalizationX/Example/Example.xlsx`. This
 
 ![Excel File](https://github.com/user-attachments/assets/2b4c8fe3-3c58-42bc-a85b-dea33c8122cf)
 
+For the example using Google Sheets, you can view the file [here](https://docs.google.com/spreadsheets/d/1GuKuexdBzW3S3aXDx6eusUEhB6kxPq4cXaa9SuhVJJ0/edit?usp=drive_link).
+
 ### 5.1. Create folders for exporting files
 
 Create 2 directories to store the files that will be exported:
