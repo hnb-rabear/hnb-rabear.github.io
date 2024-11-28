@@ -1,5 +1,7 @@
 # LocalizationX Document
 
+__Download and import the [Example](https://github.com/hnb-rabear/hnb-rabear.github.io/blob/main/LocalizationX/LocalizationXExample.unitypackage)__
+
 ## 1. Settings
 
 Navigate to the main menu and select: `Window > LocalizationX > Settings`
@@ -152,7 +154,7 @@ Localization Sheets are named with the prefix `Localization` and follow these ru
 
 ## 5. How to integration
 
-__Download and import the [Example](https://github.com/hnb-rabear/hnb-rabear.github.io/blob/main/localizationx/LocalizationXExample.unitypackage)__
+__Download and import the [Example](https://github.com/hnb-rabear/hnb-rabear.github.io/blob/main/LocalizationX/LocalizationXExample.unitypackage)__
 
 First, open the Excel file at `/Assets/LocalizationX/Example/Example.xlsx`. This file has example data to help you understand how to create Localization sheets
 
