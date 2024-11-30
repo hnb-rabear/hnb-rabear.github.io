@@ -477,6 +477,9 @@ LocalizationsManager.OnLanguageChanged += OnLanguageChanged;
       LocalizationExample2.RegisterDynamicText(m_dynamicText2.gameObject, LocalizationExample2.REQUIRED_LEVEL_X, "3");
       // Register dynamic localized text using a string key with an argument
       LocalizationExample2.RegisterDynamicText(m_dynamicText3.gameObject, "REQUIRED_LEVEL_X", "30");
+      ```
+
+      ```cs
       // Unregister the gameObject
       Localization.UnregisterDynamicText(m_textGameObject1);
       Localization.UnregisterDynamicText(m_textGameObject2);

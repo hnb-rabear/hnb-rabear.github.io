@@ -146,6 +146,9 @@ Localization.OnLanguageChanged += OnLanguageChanged;
       Localization.RegisterDynamicText(m_dynamicText2.gameObject, Localization.REQ_LVL_X, "3");
       // Register dynamic localized text using a string key with an argument
       Localization.RegisterDynamicText(m_dynamicText3.gameObject, "REQ_LVL_X", "30");
+      ```
+
+      ```cs
       // Unregister the gameObject
       Localization.UnregisterDynamicText(m_dynamicText1.gameObject);
       Localization.UnregisterDynamicText(m_dynamicText2.gameObject);
