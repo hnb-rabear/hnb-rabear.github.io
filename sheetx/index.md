@@ -341,7 +341,7 @@ public class ExampleData1
 {
     public int numberExample1;
     public int numberExample2;
-    public int numberExample3;
+    public float numberExample3;
     public bool boolExample;
     public string stringExample;
 }
