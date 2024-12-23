@@ -99,10 +99,11 @@ Navigate to the main menu and select: `Window > SheetX > Google Spreadsheets`
 
 1. On the top Google Sheets API screen, click on __Create Credentials__.
 2. Choose __Google Sheets API__, __User data__, then click __Next__.
-3. In the Scopes section, click on __Add or remove scopes__.
-4. Find and select the __Google Sheets API__ (description: "See all your Google Sheets Spreadsheets"), then __Save and Continue__.
-5. In the OAuth Client ID section, select Application Type as Desktop App, enter any name, then click __Create__.
-6. Click __Done__.
+3. Add the information for OAuth Consent Screen, then click __Save And Continue__
+4. In the Scopes section, click on __Add or remove scopes__.
+5. Find and select the __Google Sheets API__ (description: "See all your Google Sheets Spreadsheets"), click __Update__ then __Save and Continue__.
+6. In the OAuth Client ID section, select Application Type as Desktop App, enter any name, then click __Create__.
+7. Click __Done__.
 
 #### Step 3: Accessing Your Client ID and Client Secret:
 
