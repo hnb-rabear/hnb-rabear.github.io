@@ -1,4 +1,4 @@
-# SheetX Document
+# SheetX Lite Document
 
 ## 1. Introduction
 
@@ -28,10 +28,10 @@ Navigate to the main menu and select: `Window > SheetX > Settings`
 - __Json Output Folder:__ Stores exported JSON data.
 - __Localization Output:__ Stores Localization Data, which should be inside the Resources folder for loading via Resources, or in the Localizations folder for loading via Addressable Asset System.
 - __Namespace:__ Defines the namespace for the exported C# files.
-- __Separate IDs: Sheets__
+- __Separate IDs Sheets (Pro Only):__
   - TRUE: Exports _[%IDs]_ sheets to individual C# files named _[SheetName] + IDs.cs_.
   - FALSE: Merges all _[%IDs]_ sheets from all Excel files into a single C# file named _IDs.cs._
-- __Separate Constants: Sheets__
+- __Separate Constants (Pro Only): Sheets__
   - TRUE: Exports _[%Constants]_ sheets to individual C# files named _[SheetName] + %Constants.cs_.
   - FALSE: Merges all _[%Constants]_ sheets from all Excel files into a single C# file named _Constants.cs_.
 - __Separate Localization Sheets:__
@@ -43,8 +43,8 @@ Navigate to the main menu and select: `Window > SheetX > Settings`
     - Localization Data: _Localization\_ + [language].txt_
     - Component: _LocalizationText.cs_
     - API: _Localization.cs_
-- __Only enum as IDs:__ For _[%IDs]_ sheets, columns with the extension _[enum]_ will be exported as enums and will not include the Integer Constant form.
-- __Combine Json Sheets:__ Merges the Data Table from one Excel file into a single JSON file, named _[ExcelName].txt_.
+- __Only enum as IDs (Pro Only):__ For _[%IDs]_ sheets, columns with the extension _[enum]_ will be exported as enums and will not include the Integer Constant form.
+- __Combine Json Sheets (Pro Only):__ Merges the Data Table from one Excel file into a single JSON file, named _[ExcelName].txt_.
 - __Language Char Sets:__ Used in Localization with TextMeshPro to compile the character table of a language, mainly applied for Korean, Japanese, and Chinese due to their extensive character systems.
 - __Persistent columns:__ Specifies the names of columns to retain during processing even if they are empty.
 - __Google Client ID:__ Enter your Google Client ID (retrieved from Credentials in Google Console).
@@ -68,7 +68,7 @@ Key Functions:
 - __Export Localization:__ Exports Localization Data, Localization Components, and Localization API.
 - __Export All:__ Performs all the functions with a single click.
 
-### 4.2. Export multiple Excel Files
+### 4.2. Export multiple Excel Files (Pro only)
 
 ![tab_excel_2](https://github.com/user-attachments/assets/54b3632d-18f9-4053-b2fe-3feef6f71f92)
 ![tab_excel_2_edit](https://github.com/user-attachments/assets/d958d749-5410-416b-9095-a598f9fe5a82)
@@ -122,7 +122,7 @@ Enter the Google Sheet ID, then click the Download button. You can find the ID i
 https://docs.google.com/spreadsheets/d/[GOOGLE_SHEET_ID]/edit?......
 ```
 
-### 5.3. Export multiple Google Spreadsheets
+### 5.3. Export multiple Google Spreadsheets (PRO only)
 
 Click on __Add Google Spreadsheets__, then enter the Google Sheet ID in the popup that appears. Press __Download__, then select the sheets you want to process.
 
