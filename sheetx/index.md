@@ -22,7 +22,7 @@ __You can download Example [Here](https://github.com/hnb-rabear/hnb-rabear.githu
 
 Navigate to the main menu and select: `Window > SheetX > Settings`
 
-![tab_settings](https://github.com/user-attachments/assets/8d339afe-3323-4f03-99d0-34b3cc7dc56e)
+![sheetx_settings](https://github.com/user-attachments/assets/cd15d421-dfd5-4bbc-9e88-717a480c2ebe)
 
 - __Scripts Output Folder:__ Stores exported C# scripts, including IDs, Constants, Localization Components, and Localization API.
 - __Json Output Folder:__ Stores exported JSON data.
@@ -46,7 +46,7 @@ Navigate to the main menu and select: `Window > SheetX > Settings`
 - __Only enum as IDs:__ For _[%IDs]_ sheets, columns with the extension _[enum]_ will be exported as enums and will not include the Integer Constant form.
 - __Combine Json Sheets:__ Merges the Data Table from one Excel file into a single JSON file, named _[ExcelName].txt_.
 - __Language Char Sets:__ Used in Localization with TextMeshPro to compile the character table of a language, mainly applied for Korean, Japanese, and Chinese due to their extensive character systems.
-- __Persistent columns:__ Specifies the names of columns to retain during processing even if they are empty.
+- __Persistent fields:__ By default, empty cells are excluded when exporting to JSON. If you wish to retain these empty cells, add the name of their columns into the Persistent Fields box.
 - __Google Client ID:__ Enter your Google Client ID (retrieved from Credentials in Google Console).
 - __Google Client Secret:__ Enter your Google Secret (retrieved from Credentials in Google Console).
 
@@ -56,7 +56,7 @@ Navigate to the main menu and select: `Window > SheetX > Settings`
 
 Navigate to the main menu and select: `Window > SheetX > Excel Spreadsheets`
 
-![tab_excel_1](https://github.com/user-attachments/assets/b8ef6183-21c6-43b9-b952-8b5d57fc4c0b)
+![sheetx_excel_1](https://github.com/user-attachments/assets/2087c745-4a40-4dcd-a813-9ba1d0134c10)
 
 This function is ideal for learning how to use the tools. It's great for small, simple Static Databases that only need one Excel file for all the data.
 
@@ -70,7 +70,7 @@ Key Functions:
 
 ### 4.2. Export multiple Excel Files
 
-![tab_excel_2](https://github.com/user-attachments/assets/54b3632d-18f9-4053-b2fe-3feef6f71f92)
+![sheetx_excel_2](https://github.com/user-attachments/assets/fead0cb8-fdd1-4089-9d56-7ed288519fab)
 ![tab_excel_2_edit](https://github.com/user-attachments/assets/d958d749-5410-416b-9095-a598f9fe5a82)
 
 This feature is essential for managing complex Static Databases divided into multiple Excel files. It helps you efficiently handle and export all your files with one click:
@@ -91,11 +91,11 @@ Navigate to the main menu and select: `Window > SheetX > Google Spreadsheets`
 
 Copy the __Client ID__ and __Client Secret__, and paste them into the corresponding settings in the __Sheets Exporter Settings__ Window
 
-![tab_settings_2](https://github.com/user-attachments/assets/4140a3e8-05df-4bbe-a3b8-a2fb0576f1ee)
+![sheetx_settings_2](https://github.com/user-attachments/assets/9c4bddcc-d014-4b73-a71f-c817771fc8cb)
 
 ### 5.2. Export single Google Spreadsheet
 
-![tab_google_1](https://github.com/user-attachments/assets/02d6e2a9-3c39-4087-9a1e-0e77eec73a19)
+![sheetx_google_1](https://github.com/user-attachments/assets/86bf3278-e61f-4b0b-b4bf-2feae0cf4429)
 
 Enter the Google Sheet ID, then click the Download button. You can find the ID in the Google Sheet's URL, formatted like this: 
 
@@ -107,7 +107,7 @@ https://docs.google.com/spreadsheets/d/[GOOGLE_SHEET_ID]/edit?......
 
 Click on __Add Google Spreadsheets__, then enter the Google Sheet ID in the popup that appears. Press __Download__, then select the sheets you want to process.
 
-![tab_google_2](https://github.com/user-attachments/assets/f2ba3d93-7785-42b3-b33b-13b2687f699f)
+![sheetx_google_2](https://github.com/user-attachments/assets/77df4421-a5ed-44d9-951d-1a36ce293781)
 ![tab_google_2_edit](https://github.com/user-attachments/assets/3386dda3-a2ba-4f88-87d0-f25e43ebfa56)
 
 ## 6. Rules in Spreadsheet
