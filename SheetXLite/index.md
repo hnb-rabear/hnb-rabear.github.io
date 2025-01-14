@@ -10,6 +10,8 @@ It supports various data types and utilizes popular spreadsheet tools for data m
 
 __You can download Example [Here](https://github.com/hnb-rabear/hnb-rabear.github.io/blob/main/sheetx/SheetXExample.unitypackage)__
 
+__Preview the types of data supported by SheetX [Here](https://docs.google.com/spreadsheets/d/1_9BqoKwRsod5cMwML5n_pLpuWk045lD3Jd7nrizqVBo/edit?usp=sharing)__
+
 ## 2. Main functions
 
 - __Excel and Google Sheets Integration:__ Manage your entire database using Excel or Google Spreadsheets.
