@@ -1,4 +1,4 @@
-# SheetX Lite Document
+# SheetX Prime Document
 
 ## 1. Introduction
 
