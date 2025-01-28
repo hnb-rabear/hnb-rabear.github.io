@@ -1,4 +1,4 @@
-# SheetX Prime Document
+# SheetX Essential Document
 
 ## 1. Introduction
 
