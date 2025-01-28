@@ -8,7 +8,7 @@ As projects grow, the need for efficient management of data tables, constants, a
 
 It supports various data types and utilizes popular spreadsheet tools for data management.
 
-__You can download Example [Here](https://github.com/hnb-rabear/hnb-rabear.github.io/blob/main/sheetx/SheetXExample.unitypackage)__
+__You can download Example [Here](https://github.com/hnb-rabear/hnb-rabear.github.io/blob/main/sheetx/SheetXEssentialExample.unitypackage)__
 
 __Preview the types of data supported by SheetX [Here](https://docs.google.com/spreadsheets/d/1_9BqoKwRsod5cMwML5n_pLpuWk045lD3Jd7nrizqVBo/edit?usp=sharing)__
 
@@ -224,7 +224,7 @@ To define an attribute object type, the following rules should be followed:
 
 ## 7. How to integration
 
-__Download and import the [Example](https://github.com/hnb-rabear/hnb-rabear.github.io/blob/main/sheetx/SheetXExample.unitypackage)__
+__Download and import the [Example](https://github.com/hnb-rabear/hnb-rabear.github.io/blob/main/sheetx/SheetXEssentialExample.unitypackage)__
 
 First, open the excel file located at `/Assets/SheetX/Examples/Exporting a Single Excel/Example.xlsx`. This is a sample Excel file. Within this file, there are sheets containing sample data that will help you understand how to design various types of data such as IDs, Constants, and Data Tables.
 
