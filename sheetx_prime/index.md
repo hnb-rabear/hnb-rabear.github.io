@@ -1,0 +1,360 @@
+# SheetX Essential Document
+
+## 1. Introduction
+
+This tool simplifies database design and management for game developers and designers, allowing for easy modification of configurations and statistics.
+
+As projects grow, the need for efficient management of data tables, constants, and IDs increases. This tool centralizes the process, enabling easy searching, modification, and updates.
+
+It supports various data types and utilizes popular spreadsheet tools for data management.
+
+__You can download Example [Here](https://github.com/hnb-rabear/hnb-rabear.github.io/blob/main/sheetx/SheetXEssentialExample.unitypackage)__
+
+__Preview the types of data supported by SheetX [Here](https://docs.google.com/spreadsheets/d/1_9BqoKwRsod5cMwML5n_pLpuWk045lD3Jd7nrizqVBo/edit?usp=sharing)__
+
+## 2. Main functions
+
+- __Excel and Google Sheets Integration:__ Manage your entire database using Excel or Google Spreadsheets.
+- __ID and Constant Management:__ Make batch adjustments to IDs and constants without impacting the database.
+- __JSON Export:__ Convert data tables to JSON files for easy Unity integration.
+- __Flexible Data Formats:__ Support a variety of data formats, adaptable to your design needs.
+
+## 3. Settings
+
+Navigate to the main menu and select: `Window > SheetX > Settings`
+
+![sheetx_settings](https://github.com/user-attachments/assets/cd15d421-dfd5-4bbc-9e88-717a480c2ebe)
+
+- __Scripts Output Folder:__ Stores exported C# scripts, including IDs and Constants.
+- __Json Output Folder:__ Stores exported JSON data.
+- __Namespace:__ Defines the namespace for the exported C# files.
+- __Separate IDs: Sheets__
+  - TRUE: Exports _[%IDs]_ sheets to individual C# files named _[SheetName] + IDs.cs_.
+  - FALSE: Merges all _[%IDs]_ sheets from all Excel files into a single C# file named _IDs.cs._
+- __Separate Constants: Sheets__
+  - TRUE: Exports _[%Constants]_ sheets to individual C# files named _[SheetName] + %Constants.cs_.
+  - FALSE: Merges all _[%Constants]_ sheets from all Excel files into a single C# file named _Constants.cs_.
+- __Only enum as IDs:__ For _[%IDs]_ sheets, columns with the extension _[enum]_ will be exported as enums and will not include the Integer Constant form.
+- __Combine Json Sheets:__ Merges the Data Table from one Excel file into a single JSON file, named _[ExcelName].txt_.
+- __Persistent fields:__ By default, empty cells are excluded when exporting to JSON. If you wish to retain these empty cells, add the name of their columns into the Persistent Fields box.
+- __Google Client ID:__ Enter your Google Client ID (retrieved from Credentials in Google Console).
+- __Google Client Secret:__ Enter your Google Secret (retrieved from Credentials in Google Console).
+
+## 4. Excel Sheets Exporter
+
+### 4.1. Export Single Excel File
+
+Navigate to the main menu and select: `Window > SheetX > Excel Spreadsheets`
+
+![sheetx_excel_1](https://github.com/user-attachments/assets/2087c745-4a40-4dcd-a813-9ba1d0134c10)
+
+This function is ideal for learning how to use the tools. It's great for small, simple Static Databases that only need one Excel file for all the data.
+
+Key Functions:
+
+- __Export IDs:__ Converts ID sheets to C# files.
+- __Export Constants:__ Converts Constants sheets to C# files.
+- __Export Json:__ Transforms Data Table sheets into JSON data.
+- __Export All:__ Performs all the functions with a single click.
+
+### 4.2. Export multiple Excel Files
+
+![sheetx_excel_2](https://github.com/user-attachments/assets/fead0cb8-fdd1-4089-9d56-7ed288519fab)
+![tab_excel_2_edit](https://github.com/user-attachments/assets/d958d749-5410-416b-9095-a598f9fe5a82)
+
+This feature is essential for managing complex Static Databases divided into multiple Excel files. It helps you efficiently handle and export all your files with one click:
+
+1. Add all the Excel files you want to process.
+2. For each Excel file, you have the option to choose which sheets to include or exclude.
+3. Press the Export All button to complete the process.
+
+## 5. Google Spreadsheets
+
+Prefer using Google Spreadsheets? No problem.
+
+Navigate to the main menu and select: `Window > SheetX > Google Spreadsheets`
+
+### 5.1. Setup Google Client ID and Client Secret
+
+[View instruction here](https://hnb-rabear.github.io/sheetx/how-get-google-client-id-and-secret-id)
+
+Copy the __Client ID__ and __Client Secret__, and paste them into the corresponding settings in the __Sheets Exporter Settings__ Window
+
+![sheetx_settings_2](https://github.com/user-attachments/assets/9c4bddcc-d014-4b73-a71f-c817771fc8cb)
+
+### 5.2. Export single Google Spreadsheet
+
+![sheetx_google_1](https://github.com/user-attachments/assets/86bf3278-e61f-4b0b-b4bf-2feae0cf4429)
+
+Enter the Google Sheet ID, then click the Download button. You can find the ID in the Google Sheet's URL, formatted like this: 
+
+```url
+https://docs.google.com/spreadsheets/d/[GOOGLE_SHEET_ID]/edit?......
+```
+
+### 5.3. Export multiple Google Spreadsheets
+
+Click on __Add Google Spreadsheets__, then enter the Google Sheet ID in the popup that appears. Press __Download__, then select the sheets you want to process.
+
+![sheetx_google_2](https://github.com/user-attachments/assets/77df4421-a5ed-44d9-951d-1a36ce293781)
+![tab_google_2_edit](https://github.com/user-attachments/assets/3386dda3-a2ba-4f88-87d0-f25e43ebfa56)
+
+## 6. Rules in Spreadsheet
+
+### 6.1. IDs
+
+| Hero   |     |         | Building      |     |         | Pet      |     |         | Gender[enum]      |     |
+| ------ | --- | ------- | ------------- | --- | ------- | -------- | --- | ------- | ----------------- | --- |
+| HERO_1 | 1   | comment | BUILDING_NULL | 0   | comment | PET_NULL | 0   | comment | GENDER_NONE       | 0   |
+| HERO_2 | 2   | comment | BUILDING_1    | 1   |         | PET_1    | 1   |         | GENDER_MALE       | 1   |
+| HERO_3 | 3   | comment | BUILDING_2    | 2   |         | PET_2    | 2   |         | GENDER_FEMALE     | 2   |
+|        |     |         | BUILDING_3    | 3   |         | PET_3    | 3   |         | GENDER_HELICOPTER | 3   |
+|        |     |         | BUILDING_4    | 4   |         | PET_4    | 4   |         |                   |     |
+|        |     |         | BUILDING_5    | 5   |         | PET_5    | 5   |         |                   |     |
+|        |     |         | BUILDING_6    | 6   |         | PET_6    | 6   |         |                   |     |
+|        |     |         | BUILDING_7    | 7   |         | PET_7    | 7   |         |                   |     |
+|        |     |         | BUILDING_8    | 8   |         |          |     |         |                   |     |
+
+ID Sheets, named with the suffix `IDs` are used to compile all IDs into Integer Constants. The design rules are:
+
+- The sheet name must end with `IDs`.
+- Only the Integer data type is allowed.
+- Each group is organized in 3 consecutive columns.
+- The first row contains the group name for easy reference.
+- The first column holds the Key Name, and the next column holds the Key Value.
+- Key Value must be an integer.
+- By default, all IDs in a column will be exported as Integer Constants. Add the suffix [enum] to the group name to export them as an enum.
+- To only export enums and skip Integer Constants, select `Only enum as IDs` in the Settings.
+
+```a
+| Group | Key | Comment |
+| ----- | --- | ------- |
+```
+
+### 6.2. Constants
+
+| Name                  | Type        | Value              | Comment               |
+| --------------------- | ----------- | ------------------ | --------------------- |
+| EXAMPLE_INT           | int         | 83                 | Integer Example       |
+| EXAMPLE_FLOAT         | float       | 1.021              | Float example         |
+| EXAMPLE_STRING        | string      | 321fda             | String example        |
+| EXAMPLE_INT_ARRAY_1   | int-array   | 4                  | Integer array example |
+| EXAMPLE_INT_ARRAY_2   | int-array   | 0:3:4:5            | Integer array example |
+| EXAMPLE_FLOAT_ARRAY_1 | float-array | 5                  | FLoat array example   |
+| EXAMPLE_FLOAT_ARRAY_2 | float-array | 5:1:1:3            | FLoat array example   |
+| EXAMPLE_VECTOR2_1     | vector2     | 1:2                | Vector2 example       |
+| EXAMPLE_VECTOR2_2     | vector2     | 1:2:3              | Vector2 example       |
+| EXAMPLE_VECTOR3       | vector3     | 3:3:4              | Vector3 example       |
+| EXAMPLE_REFERENCE_1   | int         | HERO_1             | Integer example       |
+| EXAMPLE_REFERENCE_2   | int-array   | HERO_1 : HERO_2    | Integer array example |
+| EXAMPLE_REFERENCE_3   | int-array   | HERO_1 \| HERO_3   | Integer array example |
+| EXAMPLE_REFERENCE_4   | int-array   | HERO_1 HERO_4      | Integer array example |
+| EXAMPLE_FORMULA_1     | int         | =1\*10\*36         | Excel formula example |
+| EXAMPLE_FORMULA_2     | float       | =1+2+3+4+5+6+7+8+9 | Excel formula example |
+
+Constants Sheets, named with the suffix `Constants` compile project constants. The design rules are:
+
+- The sheet name must end with `Constants`.
+- There are four columns: Name, Type, Value, and Comment.
+  - Name: The name of the constant; must be continuous, without special characters.
+  - Type: The data type of the constant. Possible data types include: `int`, `float`, `bool`, `string`, `int-array`, `float-array`, `vector2`, and `vector3`.
+  - Value: The value matching the data type. For array types, separate elements with `:` or `|` or `newline`.
+
+```a
+| Name | Type | Value | Comment |
+| ---- | ---- | ----- | ------- |
+```
+
+### 6.3. Data table - JSON Data
+
+#### Basic data type: Boolean, Number, String
+
+| numberExample1 | numberExample2 | numberExample3 | boolExample | stringExample |
+| -------------- | -------------- | -------------- | ----------- | ------------- |
+| 1              | 10             | 1.2            | TRUE        | text          |
+| 2              | 20             | 3.1            | TRUE        | text          |
+| 3              | BUILDING_8     | 5              | FALSE       | text          |
+| 6              | HERO_3         | 10.7           | FALSE       | text          |
+| 9              | PET_2          | 16.4           | FALSE       | text          |
+
+#### Extended data type: Array, JSON object
+
+| array1[]                | array2[]    | array3[]                       | array4[]              | array5[]   | array6[]    | JSON\{}                                                                   |
+| ----------------------- | ----------- | ------------------------------ | --------------------- | ---------- | ----------- | ------------------------------------------------------------------------- |
+| text1                   | 1           | 1                              | TRUE                  | 123<br/>66 | aaa<br/>ccc | \{}                                                                       |
+| text2                   | 2 \| 2 \| 3 | 1 \| 2 \| 3                    | TRUE \| FALSE \| TRUE | 123<br/>71 | aaa<br/>ccc | \{"id":1, "name":"John Doe 1"}                                            |
+| text1 \| text2          | 1 \| 2      | 1 \| BUILDING_2                | TRUE \| FALSE         | 123<br/>67 | aaa<br/>ccc | \{"id":2, "name":"John Doe 2"}                                            |
+| text1 \| text2 \| text3 | 1 \| 2 \| 3 | BUILDING_1 \| HERO_2           | TRUE \| FALSE \| TRUE | 123<br/>68 | aaa<br/>ccc | \{"id":HERO_2, "name":"JohnDoe 2"}                                        |
+| text3                   | 4 \| 2      | BUILDING_3 \| HERO_1 \| HERO_2 | TRUE \| FALSE         | 123<br/>76 | aaa<br/>ccc | [\{"id":HERO_1, "name":"John Doe 1"},\{"id":HERO_2, "name":"Mary Sue 2"}] |
+| text1 \| text2 \| text7 | 5           | 1 \| 2 \| 4 \| PET_5           | TRUE                  | 123<br/>78 | aaa<br/>ccc | [\{"id":HERO_1, "name":"John Doe 1"},\{"id":HERO_2, "name":"Mary Sue 2"}] |
+
+- For array types, the column name must end with `[]`.
+- For JSON object types, the column name must end with `{}`.
+
+#### Special data type: Attributes list
+
+| attribute0 | value0 | unlock0 | increase0 | max0 | attribute1 | value1[] | unlock1[] | increase1[] | max1[]   | ... | attributeN |
+| ---------- | ------ | ------- | --------- | ---- | ---------- | -------- | --------- | ----------- | -------- | --- | ---------- |
+| ATT_HP     | 30     | 2       | 1.2       | 8    |            |          |           |             |          | ... |            |
+| ATT_AGI    | 25     | 3       | 1.5       | 8    |            |          |           |             |          | ... |            |
+| ATT_INT    | 30     | 2       | 1         | 5    | ATT_CRIT   | 3 \| 2   | 0 \| 11   | 0.5 \| 1    | 10 \| 20 | ... |            |
+| ATT_ATK    | 30     | 2       | 1         | 8    | ATT_CRIT   | 10 \| 1  | 1 \| 12   | 1.5 \| 1    | 10 \| 20 | ... |            |
+|            |        |         |           |      | ATT_CRIT   | 10 \| 1  | 1 \| 12   | 1.5 \| 1    | 10 \| 20 | ... |            |
+
+Attribute is a specific data type, specially created for RPG genre games - where characters and equipment can possess various different and non-fixed attributes and stats. This data type makes character and equipment customization more flexible, without restrictions.
+
+![Attribute Example](https://github.com/nbhung100914/excel-to-unity/assets/9100041/2d619d56-5fa9-4371-b212-3e857bcbbead)
+
+To define an attribute object type, the following rules should be followed:
+
+- The attribute columns should be placed at the end of the data table.
+- Attribute id is a constant integer, so it should be defined in the IDs sheet.
+- An attribute has the following structure:
+
+  1. __`attribute`__: The column name follows the pattern _`attribute + (index)`_, where index can be any number, but should start from 0 and increase. The value of this column is the id of the attribute, which is an Integer type, this value should be set in the IDs sheet.
+  2. __`value`__: The column name follows the pattern _`value + (index)`_ or _`value + (index) + []`_, the value of the column can be a number or a number array.
+  3. __`increase`__: The column name follows the pattern _`increase + (index)`_ or _`increase + (index) + []`_. This is an additional value, which can be present or not, usually used for level-up situations, specifying the additional increase when a character or item levels up.
+  4. __`unlock`__: The column name follows the pattern _`unlock + (index)`_ or _`unlock + (index) + []`_. This is an additional value, which can be present or not, usually used for situations where the attribute needs conditions to be unlocked, such as minimum level or minimum rank.
+  5. __`max`__: The column name follows the pattern _`max + (index)`_ or _`max + (index) + []`_. This is an additional value, which can be present or not, usually used for situations where the attribute has a maximum value.
+
+    ```a
+    Example 1: attribute0, value0, increase0, value0, max0.
+    Example 2: attribute1, value1[], increase1[], value1[], max1[].
+    ```
+
+## 7. How to integration
+
+__Download and import the [Example](https://github.com/hnb-rabear/hnb-rabear.github.io/blob/main/sheetx/SheetXEssentialExample.unitypackage)__
+
+First, open the excel file located at `/Assets/SheetX/Examples/Exporting a Single Excel/Example.xlsx`. This is a sample Excel file. Within this file, there are sheets containing sample data that will help you understand how to design various types of data such as IDs, Constants, and Data Tables.
+
+![Excel File](https://github.com/user-attachments/assets/2b4c8fe3-3c58-42bc-a85b-dea33c8122cf)
+
+__For the example using Google Sheets, you can view the file here.__
+
+Example for exporting single file
+[__Example__](https://docs.google.com/spreadsheets/d/1_9BqoKwRsod5cMwML5n_pLpuWk045lD3Jd7nrizqVBo/edit?usp=drive_link)
+
+Example for exporting multiple files
+[__Example 1__](https://docs.google.com/spreadsheets/d/1l9_elk7QfABbWlKanOHqkSIYlWcxWO1EIPt9Ax4XtUE/edit?usp=drive_link)
+[__Example 2__](https://docs.google.com/spreadsheets/d/1d53vWQzrp-qNsoeyEmkqQx4KeQObONOk55oWeNS2YXg/edit?usp=drive_link)
+[__Example 3__](https://docs.google.com/spreadsheets/d/1i2CmDGYpAYuX_8vBUbHXBAhuWPKHi_gd52uwzsegLdY/edit?usp=drive_link)
+[__Example 4__](https://docs.google.com/spreadsheets/d/1kq0KaQxQ129f1OABm62x6GtfOKTg_3t4M8gODGHzSu8/edit?usp=drive_link)
+
+### 7.1. Create folders for exporting files
+
+Create 3 directories to store the files that will be exported:
+
+- A folder to store the C# scripts (IDs and Constants).
+- A folder to store the JSON data files.
+- Navigate to `Window > SheetX > Settings`
+- In Sheets Exporter Settings, set up the paths for the "Scripts Output Folder" and "Json Output Folder," using the two folders you just created.
+
+For this example I will create 3 folders:
+
+- `Assets\SheetXExample\Scripts\Generated`: for C# scripts
+- `Assets\SheetXExample\DataConfig`: for Json data
+
+### 7.2. Scripting
+
+#### Create a ScriptableObject as Storage for Static Database
+
+- Create Serializable classes that correspond to the data fields in the data tables.
+
+```cs
+[Serializable]
+public class ExampleData1
+{
+    public int numberExample1;
+    public int numberExample2;
+    public float numberExample3;
+    public bool boolExample;
+    public string stringExample;
+}
+```
+
+```cs
+[Serializable]
+public class ExampleData2
+{
+    [Serializable]
+    public class Example
+    {
+        public int id;
+        public string name;
+    }
+
+    public string[] array1;
+    public int[] array2;
+    public int[] array3;
+    public bool[] array4;
+    public int[] array5;
+    public string[] array6;
+    public Example json1;
+}
+```
+
+```cs
+[Serializable]
+public class ExampleData3
+{
+    public int id;
+    public string name;
+    public List<Attribute> Attributes;
+}
+
+[Serializable]
+public class Attribute
+{
+    //=== MAIN
+    public int id;
+    public float value;
+    public int unlock;
+    public float increase;
+    public float max;
+    //=== Optional
+    public float[] values;
+    public float[] increases;
+    public float[] unlocks;
+    public float[] maxes;
+}
+```
+
+- Create a ScriptableObject to encapsulate the above Serializable classes.
+
+```cs
+[CreateAssetMenu(fileName = "ExampleDataCollection", menuName = "SheetXExample/Create ExampleDataCollection")]
+public class ExampleDataCollection : ScriptableObject
+{
+    public List<ExampleData1> exampleData1s;
+    public List<ExampleData2> exampleData2s;
+    public List<ExampleData3> exampleData3s;
+}
+```
+
+- Load Json Data into Serializable classes
+
+```cs
+// NOTE: This function utilizes the UnityEditor library and must be placed in the Editor directory or within #if UNITY_EDITOR directives.
+// If you prefer not to use Editor code, you can alternatively store the JSON data files in the Resources directory or Asset Bundles and load them accordingly.
+[ContextMenu("Load")]
+private void LoadData()
+{
+    #if UNITY_EDITOR
+    
+    var txt = AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/Import/Json/ExampleData1.txt");
+    exampleData1s = JsonConvert.DeserializeObject<List<ExampleData1>>(txt.text);
+
+    txt = AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/SheetXExample/DataConfig/ExampleData2.txt");
+    exampleData2s = JsonConvert.DeserializeObject<List<ExampleData2>>(txt.text);
+
+    txt = AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/SheetXExample/DataConfig/ExampleData3.txt");
+    exampleData3s = JsonConvert.DeserializeObject<List<ExampleData3>>(txt.text);
+
+    #endif
+}
+```
+
+![Example Data Collection](https://github.com/user-attachments/assets/8a0a1dc4-3cac-4c88-bd7e-a3bc2fa7b546)
+
+![Example Data Collection](https://github.com/user-attachments/assets/23e9aec3-cfbd-416c-8459-66cbb0e2fb58)
