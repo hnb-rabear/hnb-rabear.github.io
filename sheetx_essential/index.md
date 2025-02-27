@@ -16,6 +16,7 @@ __Preview the types of data supported by SheetX [Here](https://docs.google.com/s
 
 - __Excel and Google Sheets Integration:__ Manage your entire database using Excel or Google Spreadsheets.
 - __ID and Constant Management:__ Make batch adjustments to IDs and constants without impacting the database.
+- __Localization System (PRO Version):__ Effortlessly handle multiple languages, with seamless Unity integration.
 - __JSON Export:__ Convert data tables to JSON files for easy Unity integration.
 - __Flexible Data Formats:__ Support a variety of data formats, adaptable to your design needs.
 
@@ -25,8 +26,9 @@ Navigate to the main menu and select: `Window > SheetX > Settings`
 
 ![sheetx_settings](https://github.com/user-attachments/assets/cd15d421-dfd5-4bbc-9e88-717a480c2ebe)
 
-- __Scripts Output Folder:__ Stores exported C# scripts, including IDs and Constants.
+- __Scripts Output Folder:__ Stores exported C# scripts, including IDs, Constants, Localization Components, and Localization API.
 - __Json Output Folder:__ Stores exported JSON data.
+- __Localization Output (PRO Version):__ Stores Localization Data, which should be inside the Resources folder for loading via Resources, or in the Localizations folder for loading via Addressable Asset System.
 - __Namespace:__ Defines the namespace for the exported C# files.
 - __Separate IDs: Sheets__
   - TRUE: Exports _[%IDs]_ sheets to individual C# files named _[SheetName] + IDs.cs_.
@@ -34,8 +36,18 @@ Navigate to the main menu and select: `Window > SheetX > Settings`
 - __Separate Constants: Sheets__
   - TRUE: Exports _[%Constants]_ sheets to individual C# files named _[SheetName] + %Constants.cs_.
   - FALSE: Merges all _[%Constants]_ sheets from all Excel files into a single C# file named _Constants.cs_.
+- __Separate Localization Sheets (PRO Version):__
+  - TRUE (default): Exports _[Localization%]_ sheets to separate groups, each containing Localization Data, Component, and API, with the following file name structure:
+    - Localization Data: _[SheetName]\_[language].txt_
+    - Component: _[SheetName] + Text.cs_
+    - API: _[SheetName].cs_
+  - FALSE: Merges all _[Localization%]_ sheets from all Excel files into a single group, with the following file name structure:
+    - Localization Data: _Localization\_ + [language].txt_
+    - Component: _LocalizationText.cs_
+    - API: _Localization.cs_
 - __Only enum as IDs:__ For _[%IDs]_ sheets, columns with the extension _[enum]_ will be exported as enums and will not include the Integer Constant form.
 - __Combine Json Sheets:__ Merges the Data Table from one Excel file into a single JSON file, named _[ExcelName].txt_.
+- __Language Char Sets (PRO Version):__ Used in Localization with TextMeshPro to compile the character table of a language, mainly applied for Korean, Japanese, and Chinese due to their extensive character systems.
 - __Persistent fields:__ By default, empty cells are excluded when exporting to JSON. If you wish to retain these empty cells, add the name of their columns into the Persistent Fields box.
 - __Google Client ID:__ Enter your Google Client ID (retrieved from Credentials in Google Console).
 - __Google Client Secret:__ Enter your Google Secret (retrieved from Credentials in Google Console).
@@ -55,6 +67,7 @@ Key Functions:
 - __Export IDs:__ Converts ID sheets to C# files.
 - __Export Constants:__ Converts Constants sheets to C# files.
 - __Export Json:__ Transforms Data Table sheets into JSON data.
+- __Export Localization (PRO Version):__ Exports Localization Data, Localization Components, and Localization API.
 - __Export All:__ Performs all the functions with a single click.
 
 ### 4.2. Export multiple Excel Files
@@ -165,7 +178,42 @@ Constants Sheets, named with the suffix `Constants` compile project constants. T
 | ---- | ---- | ----- | ------- |
 ```
 
-### 6.3. Data table - JSON Data
+### 6.3. Localization (PRO Version)
+
+| idstring     | relativeId | english                   | spanish                        |
+| ------------ | ---------- | ------------------------- | ------------------------------ |
+| message_1    |            | this is english message 1 | este es el mensaje en ingles 1 |
+| message_2    |            | this is english message 2 | este es el mensaje en ingles 2 |
+| message_3    |            | this is english message 3 | este es el mensaje en ingles 3 |
+|              |            |                           |                                |
+| content      | 1          | this is english message 1 | este es el mensaje en ingles 1 |
+| content      | 2          | this is english message 2 | este es el mensaje en ingles 2 |
+| content      | 3          | this is english message 3 | este es el mensaje en ingles 3 |
+|              |            |                           |                                |
+| title_1      |            | this is english title 1   | este es el titulo 1 en ingles  |
+| title_2      |            | this is english title 2   | este es el titulo 2 en ingles  |
+| title_3      |            | this is english title 3   | este es el titulo 3 en ingles  |
+|              |            |                           |                                |
+| whatever_msg |            | this is a sample message  | este es un mensaje de muestra  |
+|              |            |                           |                                |
+| hero_name    | HERO_1     | hero name 1               | nombre del héroe 1             |
+| hero_name    | HERO_2     | hero name 2               | nombre del héroe 2             |
+| hero_name    | HERO_3     | hero name 3               | nombre del héroe 3             |
+
+Localization Sheets are named with the prefix `Localization` and follow these rules:
+
+- TThe sheet name must start with `Localization`.
+- Each sheet has two key columns: the main key `idString` and an additional key `relativeId`.
+- The following columns contain localized content.
+- The key for each row is a combination of `idString` and `relativeId`.
+- `relativeId` can reference an ID from the IDs sheets.
+
+```a
+| idString | relativeId | english | spanish | japan | .... |
+| -------- | ---------- | ------- | ------- | ----- | ---- |
+```
+
+### 6.4. Data table - JSON Data
 
 #### Basic data type: Boolean, Number, String
 
@@ -358,3 +406,104 @@ private void LoadData()
 ![Example Data Collection](https://github.com/user-attachments/assets/8a0a1dc4-3cac-4c88-bd7e-a3bc2fa7b546)
 
 ![Example Data Collection](https://github.com/user-attachments/assets/23e9aec3-cfbd-416c-8459-66cbb0e2fb58)
+
+### 7.3. Localization integration (PRO Version)
+
+- Initialization
+
+```cs
+LocalizationManager.Init();
+```
+
+- Change the language.
+
+```cs
+// Set the language japanese
+LocalizationsManager.CurrentLanguage = "jp";
+```
+
+- Register an event handler for the language change event.
+
+```cs
+// Register an action when language changed
+LocalizationsManager.OnLanguageChanged += OnLanguageChanged;
+```
+
+- You can retrieve localized content using three different methods.
+
+  1. Retrieve localized content using a Key. Note that the text will not automatically refresh when the language changes using this method.
+
+      ```cs
+      // Retrieve localized text using an integer key
+      m_simpleText1.text = LocalizationExample2.Get(LocalizationExample2.GO_TO_SHOP).ToString();
+      // Retrieve localized text using an integer key with an argument
+      m_simpleText2.text = LocalizationExample2.Get(LocalizationExample2.REQUIRED_CITY_LEVEL_X, 10).ToString();
+      // Retrieve localized text using a string key with an argument
+      m_simpleText3.text = LocalizationExample2.Get("REQUIRED_CITY_LEVEL_X", 25).ToString();
+      ```
+
+  2. Link a GameObject containing a Text or TextMeshProUGUI component with a key so that the text automatically updates when the language changes.
+
+      ```cs
+      // Register dynamic localized text using an integer key
+      LocalizationExample2.RegisterDynamicText(m_dynamicText1.gameObject, LocalizationExample2.TAP_TO_COLLECT);
+      // Register dynamic localized text using an integer key with an argument
+      LocalizationExample2.RegisterDynamicText(m_dynamicText2.gameObject, LocalizationExample2.REQUIRED_LEVEL_X, "3");
+      // Register dynamic localized text using a string key with an argument
+      LocalizationExample2.RegisterDynamicText(m_dynamicText3.gameObject, "REQUIRED_LEVEL_X", "30");
+      ```
+
+      ```cs
+      // Unregister the gameObject
+      Localization.UnregisterDynamicText(m_textGameObject1);
+      Localization.UnregisterDynamicText(m_textGameObject2);
+      Localization.UnregisterDynamicText(m_dynamicText3);
+      ```
+
+  3. Using Localization Component.
+
+      ![Using Localization Component](https://github.com/user-attachments/assets/0f0214b9-51ed-44bf-9b27-f2a210e6f0f6)
+
+#### Combine Localizations
+
+If you want to combine all Localization Sheets, simply deselect the "Separate Localization Sheets" checkbox in the Settings. Next, delete all generated files and re-export everything.
+
+Then, replace instances of __LocalizationExample1__ and __LocalizationExample2__ with __Localization__. Also, replace component __LocalizationExample1Text__ and __LocalizationExample2Text__ with __LocalizationText__.
+
+#### Creating TextMeshPro Fonts for Different Languages
+
+To create TextMeshPro fonts for Japanese, Korean, and Chinese, follow these steps using the respective character set files __characters_set_jp__, __characters_set_ko__, and __characters_set_cn__, which include all characters from the localization sheets:
+
+Fonts to use in this example:
+
+- Japanese: NotoSerif-Bold
+- Korean: NotoSerifJP-Bold
+- Chinese: NotoSerifTC-Bold
+
+Creating TextMeshPro Fonts:
+
+- For each language font, create a TextMeshPro font asset.
+- Open the Font Asset Creator window in Unity.
+- Under the _Character Set_ section, select _Character From File_.
+- Choose the appropriate character set file (e.g., characters_set_jp) in the Character File section.
+
+![Create Japanese font](https://github.com/user-attachments/assets/7bc98c77-9994-4551-8e5a-dae51eba9f45)
+
+![Create Korean font](https://github.com/user-attachments/assets/dc14fbbb-b38f-4f56-89b0-844d94b825cb)
+
+![Create Chinese font](https://github.com/user-attachments/assets/08020e00-14b1-47cd-a9f2-be3d4321ca48)
+
+#### Loading Localization Using the Addressable Assets System
+
+To utilize this feature, follow these steps:
+
+- Install the Addressable Assets System.
+- Add `ADDRESSABLES` to the directives list in the Build Settings.
+- Move the Localizations folder out of the Resources folder. Additionally, relocate the Output folder in the SheetX Settings window.
+- Set the Localizations folder as an Addressable Asset.
+
+![SheetX Settings](https://github.com/user-attachments/assets/ee17fdaa-c951-4f9c-8a6b-a5e2614db546)
+
+![Localizations Folder](https://github.com/user-attachments/assets/1ecf2ae1-00e9-4c9f-9056-2867d04e8ee1)
+
+![Build Settings](https://github.com/user-attachments/assets/229da607-da10-4b87-b799-5d9549e5620d)
