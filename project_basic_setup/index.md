@@ -2,15 +2,20 @@
 
 Tài liệu này cung cấp hướng dẫn chi tiết để xây dựng một dự án Unity sử dụng framework **RCore** và công cụ **SheetX**, tuân theo **kiến trúc phân lớp (Layered Architecture)** và mô hình **MVP (Model-View-Presenter)**. Dự án sẽ được thiết kế để đảm bảo sự tách biệt rõ ràng giữa các thành phần, dễ dàng bảo trì, mở rộng và hỗ trợ làm việc nhóm giữa **Game Developer** và **Game Designer**.
 
+Trước khi bắt đầu, hãy xem qua các tài liệu bên dưới:
+- **Architecture**: https://hnb-rabear.github.io/project_basic_setup/project_architect
+- **SheetX**: https://hnb-rabear.github.io/project_basic_setup/sheetx
+- **RCore**: https://hnb-rabear.github.io/project_basic_setup/rcore
+
 ## 1. Cài đặt Các Công cụ và Thư viện
 
 ### 1.1. Yêu cầu Cài đặt
 Để bắt đầu, bạn cần cài đặt các thư viện sau thông qua **Unity Package Manager (UPM)** bằng cách thêm các Git URL:
 
 - **UniTask** (Thư viện phụ thuộc)
-  ```
-  https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask
-  ```
+	```
+	https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask
+	```
 - **RCore**
   ```
   https://github.com/hnb-rabear/RCore.git?path=Assets/RCore/Main
@@ -19,6 +24,10 @@ Tài liệu này cung cấp hướng dẫn chi tiết để xây dựng một d�
   ```
   https://github.com/hnb-rabear/RCore.git?path=Assets/RCore.SheetX
   ```
+-	**SheetX Winform**
+	```
+	https://github.com/hnb-rabear/excel-to-unity
+	```
 
 ### 1.2. Thiết lập Thư mục (tùy chọn)
 Tạo các thư mục sau trong dự án Unity để lưu trữ các tệp xuất từ SheetX:
