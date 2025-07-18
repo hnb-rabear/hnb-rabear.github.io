@@ -70,6 +70,8 @@ Phần này chứa các hệ thống nền tảng của `framework`.
 
 ### 2.1. JObjectDB System
 
+![alt text](image-2.png)
+
 Một hệ thống dựa trên `JSON` được thiết kế để xử lý dữ liệu game với các cấu trúc linh hoạt.
 
 *   `JObjectDB.cs`: Lớp `static` chính cho hệ thống lưu trữ. Cung cấp các phương thức để tạo, lưu, tải, xóa, `backup`, và `restore` các `collection` dữ liệu. Nó sử dụng `PlayerPrefs` làm `storage backend` và hỗ trợ `import/export` dữ liệu JSON.
