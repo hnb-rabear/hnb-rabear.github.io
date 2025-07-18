@@ -152,7 +152,7 @@ public override void LoadData()
 }
 ```
 
-### 2.2. Xây dựng Hệ thống Quản lý User Data
+### 2.2. Hệ thống Quản lý User Data
 
 Sử dụng **JObjectDB** từ RCore để quản lý dữ liệu người chơi.
 
@@ -219,7 +219,38 @@ public class DataManager : DBManager
 }
 ```
 
-### 2.3. Xây dựng Hệ thống Quản lý Assets
+### 2.3. Công cụ hỗ trợ quản lý Data.
+
+#### 2.3.1. JObjectDB Editor: Trình chỉnh sửa dữ liệu dạng JSON
+
+Đây là công cụ để xem và chỉnh sửa trực tiếp dữ liệu người dùng dưới dạng JSON.
+
+* **Truy cập:** RCore > JObject Database > JObjectDB Editor.
+
+![alt text](image.png)
+
+* **Chức năng chính:**
+    * Hiển thị toàn bộ dữ liệu người dùng (`Player`, `Quest`, `SessionData`, v.v.) dưới dạng JSON.
+    * Cho phép **chỉnh sửa** trực tiếp từng mục dữ liệu thông qua một cửa sổ "Text Editor".
+    * Cung cấp các tiện ích như **Delete All**, **Back Up**, **Restore**,... để quản lý dữ liệu test một cách hiệu quả.
+
+![alt text](image-2.png)
+
+![alt text](image-4.png)
+
+#### 2.3.2. Trình quản lý Data Model qua ScriptableObject `JObjectModelCollection`
+
+![alt text](image-1.png)
+
+#### 2.3.3. Chỉnh sửa dữ liệu trực tiếp qua ScriptableObject (Runtime)
+
+![alt text](image-3.png)
+
+![alt text](image-5.png)
+
+-------------------------------------------------------
+
+### 2.3. Hệ thống Quản lý Assets
 
 Tạo một **AssetsCollection** để quản lý các assets (Prefabs, Sprites, Audio, v.v.) trong game.
 
@@ -244,34 +275,3 @@ public class AssetsCollection : ScriptableObject
 	public List<Sprite> avatars;
 }
 ```
-
--------------------------------------------------------
-
-## 3. Công cụ hỗ trợ.
-
-### 3.1. JObjectDB Editor: Trình chỉnh sửa dữ liệu dạng JSON
-
-Đây là công cụ để xem và chỉnh sửa trực tiếp dữ liệu người dùng dưới dạng JSON.
-
-* **Truy cập:** RCore > JObject Database > JObjectDB Editor.
-
-![alt text](image.png)
-
-* **Chức năng chính:**
-    * Hiển thị toàn bộ dữ liệu người dùng (`Player`, `Quest`, `SessionData`, v.v.) dưới dạng JSON.
-    * Cho phép **chỉnh sửa** trực tiếp từng mục dữ liệu thông qua một cửa sổ "Text Editor".
-    * Cung cấp các tiện ích như **Delete All**, **Back Up**, **Restore**,... để quản lý dữ liệu test một cách hiệu quả.
-
-![alt text](image-2.png)
-
-![alt text](image-4.png)
-
-### 3.2. Trình quản lý Data Model qua ScriptableObject `JObjectModelCollection`
-
-![alt text](image-1.png)
-
-### 3.3. Chỉnh sửa dữ liệu trực tiếp qua ScriptableObject (Runtime)
-
-![alt text](image-3.png)
-
-![alt text](image-5.png)
