@@ -3,9 +3,9 @@
 Tài liệu này cung cấp hướng dẫn chi tiết để xây dựng một dự án Unity sử dụng framework **RCore** và công cụ **SheetX**, tuân theo **kiến trúc phân lớp (Layered Architecture)** và mô hình **MVP (Model-View-Presenter)**. Dự án sẽ được thiết kế để đảm bảo sự tách biệt rõ ràng giữa các thành phần, dễ dàng bảo trì, mở rộng và hỗ trợ làm việc nhóm giữa **Game Developer** và **Game Designer**.
 
 Trước khi bắt đầu, hãy xem qua các tài liệu bên dưới:
-- **Architecture**: https://hnb-rabear.github.io/project_basic_setup/project_architect
-- **SheetX**: https://hnb-rabear.github.io/project_basic_setup/sheetx
-- **RCore**: https://hnb-rabear.github.io/project_basic_setup/rcore
+- **Architecture**: [Link](https://hnb-rabear.github.io/project_basic_setup/project_architect)
+- **SheetX**: [Link](https://hnb-rabear.github.io/project_basic_setup/sheetx)
+- **RCore**: [Link](https://hnb-rabear.github.io/project_basic_setup/rcore)
 
 ## 1. Cài đặt Các Công cụ và Thư viện
 
@@ -42,13 +42,15 @@ Cấu hình các thư mục này trong cửa sổ **SheetX Settings**:
    - **JSON Output Folder**: `Assets/DataConfig`
    - **Localization Output**: `Assets/Resources/Localizations` (hoặc `Assets/Localizations` nếu dùng Addressable Assets).
 
-### 1.3. Cấu hình Google Sheets (Tùy chọn)
+### 1.3. Cấu hình Google Sheets
 Nếu sử dụng Google Sheets để quản lý dữ liệu:
 1. Lấy **Google Client ID** và **Google Client Secret** từ Google Console ([Hướng dẫn](https://hnb-rabear.github.io/sheetx/how-get-google-client-id-and-secret-id)).
-2. Dán vào các trường tương ứng trong `Window > SheetX > Settings`.
-3. Thêm ID Google Sheet vào `Window > SheetX > Google Spreadsheets` để xuất dữ liệu.
+2. Dán vào các trường tương ứng trong `RCore > SheetX > Settings`.
+3. Thêm ID Google Sheet vào `RCore > SheetX > Google Spreadsheets` để xuất dữ liệu.
 
-## 2. Quy trình Xây dựng Dự án
+-------------------------------------------------------
+
+## 2. Xây dựng hệ thống quản lý Data và Config
 
 Dự án được xây dựng theo mô hình **Layered Architecture** với các lớp: **Data Model**, **Data Handler**, **Presenter**, và **View**. Các bước dưới đây sẽ hướng dẫn cách tích hợp **SheetX** và **RCore** để quản lý dữ liệu, tài sản, và bản địa hóa.
 
@@ -88,7 +90,7 @@ Tạo các bảng dữ liệu trong Google Sheets hoặc Excel theo các quy t�
   ```
 
 #### 2.1.2. Xuất Dữ liệu từ SheetX
-1. Điều hướng đến `Window > SheetX > Excel Spreadsheets` hoặc `Google Spreadsheets`.
+1. Điều hướng đến `RCore > SheetX > Excel Spreadsheets` hoặc `Google Spreadsheets`.
 2. Thêm các tệp Excel hoặc ID Google Sheet.
 3. Chọn các sheet cần xuất và nhấn **Export All** để tạo:
    - Các script C# (ID, Constants, Localization) trong `Assets/Scripts/Generated`.
@@ -242,3 +244,34 @@ public class AssetsCollection : ScriptableObject
 	public List<Sprite> avatars;
 }
 ```
+
+-------------------------------------------------------
+
+## 3. Công cụ hỗ trợ.
+
+### 3.1. JObjectDB Editor: Trình chỉnh sửa dữ liệu dạng JSON
+
+Đây là công cụ để xem và chỉnh sửa trực tiếp dữ liệu người dùng dưới dạng JSON.
+
+* **Truy cập:** RCore > JObject Database > JObjectDB Editor.
+
+![alt text](image.png)
+
+* **Chức năng chính:**
+    * Hiển thị toàn bộ dữ liệu người dùng (`Player`, `Quest`, `SessionData`, v.v.) dưới dạng JSON.
+    * Cho phép **chỉnh sửa** trực tiếp từng mục dữ liệu thông qua một cửa sổ "Text Editor".
+    * Cung cấp các tiện ích như **Delete All**, **Back Up**, **Restore**,... để quản lý dữ liệu test một cách hiệu quả.
+
+![alt text](image-2.png)
+
+![alt text](image-4.png)
+
+### 3.2. Trình quản lý Data Model qua ScriptableObject `JObjectModelCollection`
+
+![alt text](image-1.png)
+
+### 3.3. Chỉnh sửa dữ liệu trực tiếp qua ScriptableObject (Runtime)
+
+![alt text](image-3.png)
+
+![alt text](image-5.png)
