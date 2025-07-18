@@ -2,7 +2,7 @@
 
 ## Tổng quan
 
-RCore là một `framework` Unity được thiết kế để cung cấp hỗ trợ nền tảng cho việc phát triển game. Nó không hướng tới mục tiêu trở thành một giải pháp mạnh mẽ, toàn diện; thay vào đó, nó tập trung vào một tập hợp các hệ thống và lớp tiện ích (`helpers`) thiết yếu để hợp lý hóa các tác vụ phát triển phổ biến.
+RCore là một framework Unity được thiết kế để cung cấp hỗ trợ nền tảng cho việc phát triển game. Nó không hướng tới mục tiêu trở thành một giải pháp mạnh mẽ, toàn diện; thay vào đó, nó tập trung vào một tập hợp các hệ thống và lớp tiện ích thiết yếu để hợp lý hóa các tác vụ phát triển phổ biến.
 
 ### Các Tính năng Cốt lõi
 
@@ -13,7 +13,7 @@ RCore là một `framework` Unity được thiết kế để cung cấp hỗ tr
 *   Tích hợp `Service` (Ads, Firebase, IAP)
 *   Các `Editor Tools` hỗ trợ phát triển
 
-## Cài đặt (Installation)
+## Installation
 
 Để cài đặt, hãy thêm các Git URL sau vào Unity Package Manager (UPM) bằng cách chọn "Add package from git URL...":
 
@@ -32,20 +32,20 @@ RCore là một `framework` Unity được thiết kế để cung cấp hỗ tr
 
 Phần này chứa các hệ thống nền tảng của `framework`.
 
-### 1.1. Hệ thống Cấu hình (Configuration System)
+### 1.1. Configuration System
 
 *   `Configuration.cs`: Một `ScriptableObject` singleton quản lý cấu hình toàn cục của ứng dụng. Nó cung cấp một hệ thống cho các `environments` và `directives` để xử lý các thiết lập `build` khác nhau, lưu trữ dữ liệu cấu hình dưới dạng cặp `key-value`, và tự động thiết lập `culture info` khi game khởi động.
 
 ### 1.2. Audio System
 
 *   `BaseAudioManager.cs`: Một lớp `abstract base` cho hệ thống âm thanh. Các tính năng bao gồm `volume control` (master, music, SFX), hiệu ứng `fade in/out`, hỗ trợ `music playlist`, và `SFX pooling/limiting` để tối ưu hóa hiệu suất.
-*   `AudioManager.cs`: Một triển khai `singleton` của `BaseAudioManager` với hành vi `DontDestroyOnLoad`, cung cấp một điểm truy cập toàn cục. Nó tự động lắng nghe các sự kiện UI SFX từ `EventDispatcher` để phát các âm thanh tương ứng.
+*   `AudioManager.cs`: Một `singleton` của `BaseAudioManager` với hành vi `DontDestroyOnLoad`, cung cấp một điểm truy cập toàn cục. Nó tự động lắng nghe các sự kiện UI SFX từ `EventDispatcher` để phát các âm thanh tương ứng.
 *   `AudioCollection.cs`: Một `ScriptableObject` chứa các bộ sưu tập `AudioClips` cho music và SFX. Nó hỗ trợ tải `asset` động qua `Addressable Assets` và bao gồm một `script generator` để tự động tạo ID âm thanh từ cấu trúc thư mục.
 *   `SfxSource.cs`: Một `component` `MonoBehaviour` để phát SFX với các thiết lập cho `loop`, `pitch randomization`, và `volume control`. Nó có thể được sử dụng độc lập hoặc tích hợp với `AudioManager`.
 *   `StandaloneAudioManager`:
 *   `AudioIDsTemplate`:
 
-### 1.3. Hệ thống Sự kiện (Event System)
+### 1.3. Event System
 
 *   `EventDispatcher.cs`: Một lớp `static` cung cấp hệ thống sự kiện tập trung sử dụng `type-safe delegates`. Nó hỗ trợ `AddListener`, `RemoveListener`, và `Raise events`, đồng thời bao gồm chức năng `debounce` để ngăn chặn việc spam sự kiện và đảm bảo các hoạt động `thread-safe`.
 
@@ -53,21 +53,22 @@ Phần này chứa các hệ thống nền tảng của `framework`.
 
 *   `SceneLoader.cs`: Một lớp `static utility` để load và unload các `scene` một cách bất đồng bộ (`asynchronously`). Nó cung cấp `progress tracking`, `completion callbacks`, mô phỏng `fixed load time`, và hỗ trợ `additive loading`.
 
-### 1.5. Hệ thống Module Factory (Module Factory System)
+### 1.5. Module Factory System
 
 *   `ModuleFactory.cs`: Một lớp `static factory` để tạo và quản lý các `IModule instances` bằng `reflection` và `attributes`. Nó tự động phát hiện các module được đánh dấu bằng `ModuleAttribute` và tạo chúng dựa trên một `load order` (thứ tự tải) đã xác định. Lưu ý: Nó không thể tạo các module kế thừa từ `MonoBehaviour`.
 *   `ModuleManager.cs`: Quản lý `lifecycle` (vòng đời) của tất cả các module đã đăng ký.
 *   `ModuleAttribute.cs`: Một `attribute` được sử dụng để đánh dấu một lớp là một module.
 
-### 1.6. Quản lý Cấu hình Dữ liệu (Data Config Management)
+### 1.6. Data Config Management
 
 *   `ConfigCollection.cs`: Một lớp `abstract ScriptableObject base` để tải dữ liệu cấu hình từ các file text (chủ yếu là `JSON`). Nó hỗ trợ tải từ các thư mục `Resources` hoặc trực tiếp từ `AssetDatabase` trong Editor.
+*   Nên sử dụng kết hợp với `SheetX`.
 
 ---
 
-## 2. Các Hệ thống Dữ liệu (Data Systems)
+## 2. Data Systems
 
-### 2.1. Hệ thống JObjectDB (JObjectDB System)
+### 2.1. JObjectDB System
 
 Một hệ thống dựa trên `JSON` được thiết kế để xử lý dữ liệu game với các cấu trúc linh hoạt.
 
@@ -132,7 +133,7 @@ Một hệ thống dựa trên `JSON` được thiết kế để xử lý dữ 
 
 ---
 
-## 5. Tích hợp Dịch vụ (Services Integration)
+## 5. Services Integration
 
 *   **Ads System**: `AdsProvider.cs` (base), `AdmobProvider.cs`, `ApplovinProvider.cs`, `IronSourceProvider.cs`.
 *   **Firebase Integration**: `RFirebase.cs` (core), `RFirebaseAnalytics.cs`, `RFirebaseAuth.cs`, `RFirebaseDatabase.cs`, `RFirebaseFirestore.cs`, `RFirebaseRemote.cs`, `RFirebaseStorage.cs`.

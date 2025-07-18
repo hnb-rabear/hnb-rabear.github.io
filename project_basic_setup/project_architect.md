@@ -20,7 +20,7 @@ Luồng phụ thuộc đi theo một chiều, từ lớp ngoài vào lớp trong
 
 ## **2. Chi tiết các Lớp (Layers)**
 
-### **Lớp Toàn cục: Services (Dịch vụ)**
+### **Lớp Toàn cục: Dịch vụ (Services)**
 
 *   **Vai trò:** Cung cấp các chức năng hạ tầng, nền tảng, có thể được truy cập từ bất kỳ đâu (thường thông qua Dependency Injection hoặc Service Locator).
 *   **Các dịch vụ tiêu biểu:**
@@ -31,7 +31,7 @@ Luồng phụ thuộc đi theo một chiều, từ lớp ngoài vào lớp trong
 
 ---
 
-### **Lớp 1: Data Models (Dữ liệu Gốc)**
+### **Lớp 1: Dữ liệu Gốc (Data Models)**
 
 *   **Vai trò:** Tương ứng với lớp **"Data Saved"**. Đây là lớp chỉ chứa dữ liệu trạng thái của game, không chứa bất kỳ logic xử lý nào.
 *   **Đặc điểm:**
@@ -41,7 +41,7 @@ Luồng phụ thuộc đi theo một chiều, từ lớp ngoài vào lớp trong
 
 ---
 
-### **Lớp 2: Data Handlers (Logic Xử lý Dữ liệu)**
+### **Lớp 2: Logic Xử lý Dữ liệu (Data Handlers)**
 
 *   **Vai trò:** Tương ứng với lớp **"Data Handler"**. Đây là lớp trung tâm quản lý và thực thi logic nghiệp vụ liên quan đến dữ liệu.
 *   **Đặc điểm:**
@@ -52,7 +52,7 @@ Luồng phụ thuộc đi theo một chiều, từ lớp ngoài vào lớp trong
 
 ---
 
-### **Lớp 3: Presenter (Logic Game & Điều phối)**
+### **Lớp 3: Logic Game & Điều phối (Presenter)**
 
 *   **Vai trò:** Là bộ não xử lý logic của các tính năng và điều phối hoạt động giữa `View` và `Data Handler`.
 *   **Đặc điểm:**
@@ -66,7 +66,7 @@ Luồng phụ thuộc đi theo một chiều, từ lớp ngoài vào lớp trong
 
 ---
 
-### **Lớp 4: View (Hiển thị)**
+### **Lớp 4: Hiển thị (View)**
 
 *   **Vai trò:** Là lớp "thụ động" (dumb), chỉ chịu trách nhiệm hiển thị và chuyển tiếp tương tác của người dùng.
 *   **Đặc điểm:**
@@ -90,4 +90,3 @@ Luồng phụ thuộc đi theo một chiều, từ lớp ngoài vào lớp trong
 6.  **Presenter → View:**
     * a. `HUDPresenter` nhận sự kiện `OnGoldChanged` và gọi `hudView.UpdateGoldText(newGoldAmount)`.
     * b. `ShopPresenter` nhận sự kiện và gọi `shopView.SetItemAsPurchased("item_id")`.
-
