@@ -94,7 +94,7 @@ Một hệ thống dựa trên `JSON` được thiết kế để xử lý dữ 
 *   `MathHelper.cs`: Cung cấp các hàm toán học mở rộng và các `extension methods` cho `Vector3`, `int`, và `float`.
 *   `RandomHelper.cs`: Các `Utilities` để tạo số ngẫu nhiên và `shuffling` (xáo trộn) các bộ sưu tập.
 *   `TimeHelper.cs`: Các `Utilities` để định dạng thời gian, chuyển đổi `Unix timestamps`, và các tính toán khác liên quan đến thời gian.
-*   `TransformHelper.cs`: Các `Extension methods` cho `Transform` và `RectTransform` để thao tác vị trí, `scale`, và `rotation` một cách thuận tiện.
+*   `TransformHelper.cs`: Các `Extension methods` cho `Transform` và `RectTransform`.
 
 ### 3.2. Pool System
 
@@ -119,9 +119,9 @@ Một hệ thống dựa trên `JSON` được thiết kế để xử lý dữ 
 
 ### 4.1. Panel System
 
-*   `PanelController.cs`: Một lớp `abstract base` cho tất cả các UI `panels`. Nó quản lý `lifecycle` (`Show`, `Hide`, `Back`) và các `animation effects` (hiệu ứng hoạt ảnh) qua `coroutines`.
-*   `PanelStack.cs`: Quản lý một `stack` (ngăn xếp) các `PanelControllers`. Nó hỗ trợ các `push modes` khác nhau (`OnTop`, `Replacement`, `Queued`), một `caching system`, và điều hướng `panel`.
-*   `PanelRoot.cs`: `Root container` cho toàn bộ hệ thống UI. Nó quản lý `panel queue` (hàng đợi panel), `dimmer overlay` (lớp phủ làm mờ) cho các `modal panel`, và `event-driven panel pushing`.
+*   `PanelController.cs`: Một lớp `abstract base` cho tất cả các UI `panels`. Nó quản lý `lifecycle` (`Show`, `Hide`, `Back`) và các `UI animation effects` qua `coroutines`.
+*   `PanelStack.cs`: Quản lý một `stack` các `PanelControllers`. Nó hỗ trợ các `push modes` khác nhau (`OnTop`, `Replacement`, `Queued`), một `caching system`, và điều hướng `panel`.
+*   `PanelRoot.cs`: `Root container` cho toàn bộ hệ thống UI.
 
 ### 4.2. UI Components
 
@@ -153,26 +153,26 @@ Một hệ thống dựa trên `JSON` được thiết kế để xử lý dữ 
 *   `ReadOnlyAttribute.cs`: Đặt một trường ở chế độ chỉ đọc trong Inspector.
 *   `CommentAttribute.cs`: Thêm các bình luận mô tả vào Inspector.
 *   `HighlightAttribute.cs`: Làm nổi bật các trường quan trọng trong Inspector.
-*   `CreateScriptableObjectAttribute.cs`
-*   `DisplayEnumAttribute.cs`
-*   `ExposeScriptableObjectAttribute.cs`
-*   `FolderPathAttribute.cs`
-*   `SeparatorAttribute.cs`
-*   `ShowIfAttribute.cs`
-*   `SpriteBoxAttribute.cs`
-*   `TagSelectorAttribute.cs`
-*   `TMPFontMaterialsAttribute.cs`
+*   `CreateScriptableObjectAttribute.cs`: Cho phép tạo ScriptableObject instances trực tiếp từ Inspector. Hiển thị button "Create" bên cạnh field để tạo asset mới và tự động assign vào field.
+*   `DisplayEnumAttribute.cs`: Cho phép hiển thị int field theo dạng enum.
+*   `ExposeScriptableObjectAttribute.cs`: Cho phép edit properties của ScriptableObject inline mà không cần mở asset riêng biệt.
+*   `FolderPathAttribute.cs`: Cho phép chọn thư mục từ file system và tự động gán đường dẫn vào string field.
+*   `SeparatorAttribute.cs`: Tạo đường phân cách trong Inspector.
+*   `ShowIfAttribute.cs`: Đặt điều kiện hiển thị field trong Inspector dựa trên giá trị của field khác. Hỗ trợ multiple conditions, comparison operators và boolean logic.
+*   `SpriteBoxAttribute.cs`: Hiển thị preview box cho Sprite fields trong Inspector.
+*   `TagSelectorAttribute.cs`: Thay thế text field bằng dropdown menu chọn Unity tag.
+*   `TMPFontMaterialsAttribute.cs`: Hiển thị dropdown với danh sách TMP materials có sẵn của font được chọn. Tự động filter materials phù hợp.
 *   ...
 
 ### 6.2. Development Tools
 
-*   `AssetShortcutsWindow.cs`: Một cửa sổ để truy cập nhanh vào các `asset` thường dùng.
-*   `FindComponentReferenceWindow.cs`: Một công cụ để tìm tất cả các tham chiếu đến một `component` cụ thể.
-*   `ObjectsFinderWindow.cs`: Một công cụ để tìm kiếm các đối tượng trong `scene` hiện tại.
-*   `ScreenshotTaker.cs`: Một tiện ích để chụp ảnh màn hình trong game.
-*   `ScenesNavigatorWindow.cs`: Một cửa sổ để điều hướng nhanh giữa các `scene`.
-*   `PlayAssetDeliveryFilter.cs`
-*   `ToolsCollectionWindow.cs`
+*   `AssetShortcutsWindow.cs`: để truy cập nhanh vào các `asset` thường dùng.
+*   `FindComponentReferenceWindow.cs`: để tìm tất cả các tham chiếu đến một `component` cụ thể.
+*   `ObjectsFinderWindow.cs`: để tìm kiếm các đối tượng trong `scene` hiện tại.
+*   `ScreenshotTaker.cs`: để chụp ảnh màn hình trong game.
+*   `ScenesNavigatorWindow.cs`: để điều hướng nhanh giữa các `scene`.
+*   `PlayAssetDeliveryFilter.cs`: để filter và quản lý assets cho Google Play Asset Delivery system. Cho phép đánh dấu on-demand, fast-follow, default, và excluded addressable assets.
+*   `ToolsCollectionWindow.cs`: tổng hợp nhiều Editor-Tool trong một cửa sổ.
 *   ...
 
 ### 6.3. Reskin Toolkit
