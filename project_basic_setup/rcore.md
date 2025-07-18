@@ -1,4 +1,4 @@
-# RCore Framework - Tài liệu Kỹ thuật
+# RCore Framework
 
 ## Tổng quan
 
@@ -28,34 +28,36 @@ RCore là một `framework` Unity được thiết kế để cung cấp hỗ tr
 
 ---
 
-## 1. Các Hệ thống Lõi (Core Systems - MAIN/RUNTIME)
+## 1. Core Systems
 
 Phần này chứa các hệ thống nền tảng của `framework`.
 
 ### 1.1. Hệ thống Cấu hình (Configuration System)
 
-*   `Configuration.cs`: Một `ScriptableObject` singleton quản lý cấu hình toàn cục của ứng dụng. Nó cung cấp một hệ thống cho các `environments` (môi trường) và `directives` (chỉ thị) để xử lý các thiết lập `build` khác nhau, lưu trữ dữ liệu cấu hình dưới dạng cặp `key-value`, và tự động thiết lập `culture info` khi game khởi động.
+*   `Configuration.cs`: Một `ScriptableObject` singleton quản lý cấu hình toàn cục của ứng dụng. Nó cung cấp một hệ thống cho các `environments` và `directives` để xử lý các thiết lập `build` khác nhau, lưu trữ dữ liệu cấu hình dưới dạng cặp `key-value`, và tự động thiết lập `culture info` khi game khởi động.
 
-### 1.2. Hệ thống Âm thanh (Audio System)
+### 1.2. Audio System
 
 *   `BaseAudioManager.cs`: Một lớp `abstract base` cho hệ thống âm thanh. Các tính năng bao gồm `volume control` (master, music, SFX), hiệu ứng `fade in/out`, hỗ trợ `music playlist`, và `SFX pooling/limiting` để tối ưu hóa hiệu suất.
 *   `AudioManager.cs`: Một triển khai `singleton` của `BaseAudioManager` với hành vi `DontDestroyOnLoad`, cung cấp một điểm truy cập toàn cục. Nó tự động lắng nghe các sự kiện UI SFX từ `EventDispatcher` để phát các âm thanh tương ứng.
 *   `AudioCollection.cs`: Một `ScriptableObject` chứa các bộ sưu tập `AudioClips` cho music và SFX. Nó hỗ trợ tải `asset` động qua `Addressable Assets` và bao gồm một `script generator` để tự động tạo ID âm thanh từ cấu trúc thư mục.
 *   `SfxSource.cs`: Một `component` `MonoBehaviour` để phát SFX với các thiết lập cho `loop`, `pitch randomization`, và `volume control`. Nó có thể được sử dụng độc lập hoặc tích hợp với `AudioManager`.
+*   `StandaloneAudioManager`:
+*   `AudioIDsTemplate`:
 
 ### 1.3. Hệ thống Sự kiện (Event System)
 
 *   `EventDispatcher.cs`: Một lớp `static` cung cấp hệ thống sự kiện tập trung sử dụng `type-safe delegates`. Nó hỗ trợ `AddListener`, `RemoveListener`, và `Raise events`, đồng thời bao gồm chức năng `debounce` để ngăn chặn việc spam sự kiện và đảm bảo các hoạt động `thread-safe`.
 
-### 1.4. Quản lý Scene (Scene Management)
+### 1.4. Scene Management
 
-*   `SceneLoader.cs`: Một lớp `static utility` để tải và dỡ tải các `scene` một cách bất đồng bộ (`asynchronously`). Nó cung cấp `progress tracking` (theo dõi tiến trình), `completion callbacks` (callback khi hoàn thành), mô phỏng `fixed load time` (thời gian tải cố định), và hỗ trợ `additive loading`.
+*   `SceneLoader.cs`: Một lớp `static utility` để load và unload các `scene` một cách bất đồng bộ (`asynchronously`). Nó cung cấp `progress tracking`, `completion callbacks`, mô phỏng `fixed load time`, và hỗ trợ `additive loading`.
 
 ### 1.5. Hệ thống Module Factory (Module Factory System)
 
 *   `ModuleFactory.cs`: Một lớp `static factory` để tạo và quản lý các `IModule instances` bằng `reflection` và `attributes`. Nó tự động phát hiện các module được đánh dấu bằng `ModuleAttribute` và tạo chúng dựa trên một `load order` (thứ tự tải) đã xác định. Lưu ý: Nó không thể tạo các module kế thừa từ `MonoBehaviour`.
-*   `ModuleManager.cs`: Quản lý `lifecycle` (vòng đời) của tất cả các module đã đăng ký, bao gồm `registration` (đăng ký), `initialization` (khởi tạo), `tick updates` (cập nhật mỗi frame), `shutdown` (tắt), và `retrieval` (truy xuất).
-*   `ModuleAttribute.cs`: Một `attribute` được sử dụng để đánh dấu một lớp là một module, chứa các `metadata` như `Key`, cờ `AutoCreate`, và `LoadOrder`.
+*   `ModuleManager.cs`: Quản lý `lifecycle` (vòng đời) của tất cả các module đã đăng ký.
+*   `ModuleAttribute.cs`: Một `attribute` được sử dụng để đánh dấu một lớp là một module.
 
 ### 1.6. Quản lý Cấu hình Dữ liệu (Data Config Management)
 
@@ -77,9 +79,9 @@ Một hệ thống dựa trên `JSON` được thiết kế để xử lý dữ 
 
 ---
 
-## 3. Các Tiện ích Chung (Common Utilities)
+## 3. Common Utilities
 
-### 3.1. Các Lớp Tiện ích (Helper Classes)
+### 3.1. Helper Classes
 
 *   `AddressableHelper.cs`: Cung cấp các `utilities` và `wrapper classes` để đơn giản hóa việc làm việc với `Unity Addressables system`. Hỗ trợ `async/await`, `coroutines`, kiểm tra `download size`, và quản lý vòng đời của `asset`.
 *   `CameraHelper.cs`: Các `Extension methods` cho lớp `Camera` để chuyển đổi tọa độ, tính toán kích thước camera, và kiểm tra khả năng hiển thị của đối tượng.
@@ -91,18 +93,18 @@ Một hệ thống dựa trên `JSON` được thiết kế để xử lý dữ 
 *   `TimeHelper.cs`: Các `Utilities` để định dạng thời gian, chuyển đổi `Unix timestamps`, và các tính toán khác liên quan đến thời gian.
 *   `TransformHelper.cs`: Các `Extension methods` cho `Transform` và `RectTransform` để thao tác vị trí, `scale`, và `rotation` một cách thuận tiện.
 
-### 3.2. Hệ thống Pool (Pool System)
+### 3.2. Pool System
 
 *   `CustomPool.cs`: Một hệ thống `generic object pooling` được thiết kế để tái sử dụng các đối tượng và cải thiện hiệu suất bằng cách giảm các hoạt động `spawn/despawn` thường xuyên.
 *   `PoolsContainer.cs`: Một `container` quản lý tập trung nhiều `object pools` khác nhau, hoạt động như một `factory` kết hợp với object pooling.
 
-### 3.3. Hệ thống Hẹn giờ (Timer System)
+### 3.3. Timer System
 
-*   `TimerEvents.cs`: Một lớp `MonoBehaviour` quản lý các `timer events` khác nhau, bao gồm các sự kiện `countdown` (đếm ngược), `condition` (điều kiện), và `delayable` (có thể trì hoãn). Hỗ trợ cả `scaled` và `unscaled` time.
+*   `TimerEvents.cs`: Một lớp `MonoBehaviour` quản lý các `timer events` khác nhau, bao gồm các sự kiện `countdown`, `condition`, và `delayable`. Hỗ trợ cả `scaled` và `unscaled` time.
 *   `TimerEventsGlobal.cs`: Một phiên bản `singleton` của `TimerEvents` tồn tại qua các lần tải `scene` (`DontDestroyOnLoad`). Nó cung cấp một `execution queue` để chạy các hành động một cách `thread-safe` từ các luồng nền.
 *   `TimedAction.cs`: Một lớp đơn giản để thực thi một hành động sau một khoảng thời gian xác định, với một `callback` `onFinished`.
 
-### 3.4. Hệ thống Số lớn (Big Number System)
+### 3.4. Big Number System
 
 *   `BigNumberD.cs`: Đại diện cho các số lớn sử dụng `decimal` làm kiểu dữ liệu cơ sở để có độ chính xác cao.
 *   `BigNumberF.cs`: Đại diện cho các số lớn sử dụng `float` làm kiểu dữ liệu cơ sở để có hiệu suất tốt hơn. Hỗ trợ chuyển đổi sang `notation string` (ví dụ: 1.23E+45) và `KKK format` (ví dụ: 1.23AA).
@@ -112,13 +114,13 @@ Một hệ thống dựa trên `JSON` được thiết kế để xử lý dữ 
 
 ## 4. Hệ thống UI
 
-### 4.1. Hệ thống Panel (Panel System)
+### 4.1. Panel System
 
 *   `PanelController.cs`: Một lớp `abstract base` cho tất cả các UI `panels`. Nó quản lý `lifecycle` (`Show`, `Hide`, `Back`) và các `animation effects` (hiệu ứng hoạt ảnh) qua `coroutines`.
 *   `PanelStack.cs`: Quản lý một `stack` (ngăn xếp) các `PanelControllers`. Nó hỗ trợ các `push modes` khác nhau (`OnTop`, `Replacement`, `Queued`), một `caching system`, và điều hướng `panel`.
 *   `PanelRoot.cs`: `Root container` cho toàn bộ hệ thống UI. Nó quản lý `panel queue` (hàng đợi panel), `dimmer overlay` (lớp phủ làm mờ) cho các `modal panel`, và `event-driven panel pushing`.
 
-### 4.2. Các Thành phần UI (UI Components)
+### 4.2. UI Components
 
 *   `JustButton.cs`: Một lớp `Button` mở rộng với hiệu ứng `scale bounce`, hiệu ứng `greyscale` khi bị vô hiệu hóa, và hiệu ứng âm thanh khi nhấp.
 *   `SimpleTMPButton.cs`: Kế thừa từ `JustButton` và thêm hỗ trợ cho nhãn `TextMeshPro` với các tính năng `font color/material swap`.
@@ -126,22 +128,23 @@ Một hệ thống dựa trên `JSON` được thiết kế để xử lý dữ 
 *   `ScreenSafeArea.cs`: Một `component` tự động điều chỉnh một `RectTransform` để vừa với vùng an toàn của màn hình, tính đến các `notch` (tai thỏ) và cạnh cong của thiết bị.
 *   `HorizontalAlignment.cs`, `VerticalAlignment.cs`, `TableAlignment.cs`: Các `component` căn chỉnh tự động sắp xếp các đối tượng con theo chiều ngang, chiều dọc, hoặc trong một bố cục `grid` (lưới), với hỗ trợ hoạt ảnh.
 *   `OptimizedScrollView.cs`, `OptimizedVerticalScrollView.cs`, `OptimizedHorizontalScrollView.cs`: Các triển khai `ScrollView` được tối ưu hóa hiệu suất, sử dụng `object pooling` để chỉ `render` các mục có thể nhìn thấy trong `viewport`.
+*   ...
 
 ---
 
 ## 5. Tích hợp Dịch vụ (Services Integration)
 
-*   **Hệ thống Quảng cáo (Ads System)**: `AdsProvider.cs` (base), `AdmobProvider.cs`, `ApplovinProvider.cs`, `IronSourceProvider.cs`.
-*   **Tích hợp Firebase (Firebase Integration)**: `RFirebase.cs` (core), `RFirebaseAnalytics.cs`, `RFirebaseAuth.cs`, `RFirebaseDatabase.cs`, `RFirebaseFirestore.cs`, `RFirebaseRemote.cs`, `RFirebaseStorage.cs`.
-*   **Dịch vụ Game (Game Services)**: `GameServices.cs` (core), `GameServices.CloudSave.cs`, `GameServices.InAppReview.cs`, `GameServices.InAppUpdate.cs`.
-*   **Hệ thống IAP (IAP System)**: `IAPManager.cs` để quản lý `In-App Purchases`.
-*   **Hệ thống Thông báo (Notification System)**: `NotificationsManager.cs`, `GameNotification.cs`, `PendingNotification.cs`.
+*   **Ads System**: `AdsProvider.cs` (base), `AdmobProvider.cs`, `ApplovinProvider.cs`, `IronSourceProvider.cs`.
+*   **Firebase Integration**: `RFirebase.cs` (core), `RFirebaseAnalytics.cs`, `RFirebaseAuth.cs`, `RFirebaseDatabase.cs`, `RFirebaseFirestore.cs`, `RFirebaseRemote.cs`, `RFirebaseStorage.cs`.
+*   **Game Services**: `GameServices.cs` (core), `GameServices.CloudSave.cs`, `GameServices.InAppReview.cs`, `GameServices.InAppUpdate.cs`.
+*   **IAP System**: `IAPManager.cs` để quản lý `In-App Purchases`.
+*   **Notification System**: `NotificationsManager.cs`, `GameNotification.cs`, `PendingNotification.cs`.
 
 ---
 
-## 6. Các Công cụ Editor (Editor Tools)
+## 6. Editor Tools
 
-### 6.1. Cải tiến Inspector (Inspector Enhancements)
+### 6.1. Inspector Enhancements
 
 *   `AutoFillAttribute.cs`: Tự động điền các tham chiếu `component` trong Inspector.
 *   `ReadOnlyAttribute.cs`: Đặt một trường ở chế độ chỉ đọc trong Inspector.
@@ -158,7 +161,7 @@ Một hệ thống dựa trên `JSON` được thiết kế để xử lý dữ 
 *   `TMPFontMaterialsAttribute.cs`
 *   ...
 
-### 6.2. Công cụ Phát triển (Development Tools)
+### 6.2. Development Tools
 
 *   `AssetShortcutsWindow.cs`: Một cửa sổ để truy cập nhanh vào các `asset` thường dùng.
 *   `FindComponentReferenceWindow.cs`: Một công cụ để tìm tất cả các tham chiếu đến một `component` cụ thể.
@@ -169,7 +172,7 @@ Một hệ thống dựa trên `JSON` được thiết kế để xử lý dữ 
 *   `ToolsCollectionWindow.cs`
 *   ...
 
-### 6.3. Bộ công cụ Reskin (Reskin Toolkit)
+### 6.3. Reskin Toolkit
 
 *   `FindAndReplaceAssetToolkit.cs`: Một công cụ để tìm và thay thế các `asset` hàng loạt.
 *   `SpriteReplacer.cs`: Một công cụ chuyên dụng để thay thế `Sprites`.
