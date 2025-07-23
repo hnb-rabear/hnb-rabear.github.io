@@ -219,9 +219,9 @@ public class DataManager : DBManager
 }
 ```
 
-### 2.3. Công cụ hỗ trợ quản lý Data.
+### 2.3. Công cụ hỗ trợ quản lý Data
 
-#### 2.3.1. JObjectDB Editor: Trình chỉnh sửa dữ liệu dạng JSON
+#### 2.3.1. JObjectDB Editor
 
 Đây là công cụ để xem và chỉnh sửa trực tiếp dữ liệu người dùng dưới dạng JSON.
 
@@ -242,36 +242,14 @@ public class DataManager : DBManager
 
 ![alt text](image-1.png)
 
-#### 2.3.3. Chỉnh sửa dữ liệu trực tiếp qua ScriptableObject (Runtime)
+#### 2.3.3. Chỉnh sửa dữ liệu trực tiếp qua ScriptableObject
 
 ![alt text](image-3.png)
 
 ![alt text](image-5.png)
 
--------------------------------------------------------
+## 3. LiveOps Template Project
 
-### 2.3. Hệ thống Quản lý Assets
+Để có thể hình dung ra luồng hoạt động của một dự án tích hợp RCore và SheetX, bạn có thể tham khảo Repository dưới đây.
 
-Tạo một **AssetsCollection** để quản lý các assets (Prefabs, Sprites, Audio, v.v.) trong game.
-
-#### 2.3.1. Tạo AssetsCollection
-Tạo một `ScriptableObject` để lưu trữ Assets:
-```cs
-[CreateAssetMenu(fileName = "AssetsCollection", menuName = "LiveOps/Create AssetsCollection")]
-public class AssetsCollection : ScriptableObject
-{
-	private static AssetsCollection m_Instance;
-	public static AssetsCollection Instance
-	{
-		get
-		{
-			if (m_Instance == null)
-				m_Instance = Resources.Load<AssetsCollection>(nameof(AssetsCollection));
-			return m_Instance;
-		}
-	}
-	public List<BoosterAsset> boosters;
-	public List<PowerAsset> powerUps;
-	public List<Sprite> avatars;
-}
-```
+https://gitlab.ikameglobal.com/hungnb/liveopstemplate.git
