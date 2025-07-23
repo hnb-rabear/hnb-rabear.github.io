@@ -20,24 +20,25 @@ RCore là một framework cho Unity được thiết kế để cung cấp nền
     - [Các Tính Năng Cốt Lõi](#các-tính-năng-cốt-lõi)
     - [Mục Lục](#mục-lục)
   - [Cài đặt](#cài-đặt)
-  - [Các Hệ Thống Cốt Lõi (Core Systems)](#các-hệ-thống-cốt-lõi-core-systems)
+  - [Core Systems](#core-systems)
     - [Configuration System](#configuration-system)
     - [Audio System](#audio-system)
     - [Event System](#event-system)
     - [Module Factory System](#module-factory-system)
     - [Data Config Management](#data-config-management)
-  - [Các Hệ Thống Dữ Liệu (Data Systems)](#các-hệ-thống-dữ-liệu-data-systems)
+  - [Data Systems](#data-systems)
     - [JObjectDB System](#jobjectdb-system)
-  - [Các Tiện Ích Chung (Common Utilities)](#các-tiện-ích-chung-common-utilities)
-    - [Các Lớp Helper](#các-lớp-helper)
+  - [Common Utilities](#common-utilities)
+    - [Helpers](#helpers)
     - [Pool System](#pool-system)
     - [Timer System](#timer-system)
     - [Big Number System](#big-number-system)
-  - [Hệ Thống UI (UI System)](#hệ-thống-ui-ui-system)
+  - [UI System](#ui-system)
     - [Panel System](#panel-system)
     - [Các Component UI](#các-component-ui)
-  - [Tích Hợp Dịch Vụ (Services Integration)](#tích-hợp-dịch-vụ-services-integration)
-  - [Công Cụ Editor (Editor Tools)](#công-cụ-editor-editor-tools)
+  - [Services Integration](#services-integration)
+  - [Inspector Attributes](#inspector-attributes)
+  - [Editor Tools](#editor-tools)
 
 ---
 
@@ -56,13 +57,13 @@ RCore là một framework cho Unity được thiết kế để cung cấp nền
 
 ---
 
-## Các Hệ Thống Cốt Lõi (Core Systems)
+## Core Systems
 
 Phần này chứa các hệ thống nền tảng của framework.
 
 ### Configuration System
 
-**Configuration.cs** — Một `ScriptableObject` singleton đóng vai trò là trung tâm quản lý các thiết lập toàn cục cho project. Nó cung cấp một giao diện mạnh mẽ và thân thiện để quản lý các cấu hình build và các dữ liệu persistent khác.
+**`Configuration.cs`** — Một `ScriptableObject` singleton đóng vai trò là trung tâm quản lý các thiết lập toàn cục cho project. Nó cung cấp một giao diện mạnh mẽ và thân thiện để quản lý các cấu hình build và các dữ liệu persistent khác.
 
 *   **Environment and Directive Management**: Tính năng cốt lõi của hệ thống này là khả năng quản lý các môi trường build (ví dụ: "Development", "Production"). Mỗi môi trường là một tập hợp các `scripting define symbols` (directives) có thể được bật hoặc tắt. Điều này cho phép lập trình viên dễ dàng kiểm soát các tính năng nào được đưa vào một bản build (ví dụ: `UNITY_IAP`, `FIREBASE_ANALYTICS`, `DEVELOPMENT`) chỉ bằng cách chuyển đổi môi trường đang hoạt động trong editor, và các `define symbols` của project sẽ được tự động cập nhật.
 *   **Key-Value Data Store**: Bao gồm một dictionary có thể serialize để lưu trữ dữ liệu cấu hình đa dụng dưới dạng các cặp key-value string, có thể truy cập toàn cục.
@@ -72,16 +73,16 @@ Phần này chứa các hệ thống nền tảng của framework.
 
 Một hệ thống toàn diện và tập trung để quản lý mọi khía cạnh của âm thanh trong game.
 
-*   **AudioManager.cs** — Một singleton toàn cục (`BaseAudioManager`) đóng vai trò là giao diện chính cho mọi hoạt động âm thanh. Nó cung cấp khả năng kiểm soát âm lượng độc lập cho master, music, và SFX, hoàn chỉnh với hiệu ứng fade-in/out. Để tối ưu hiệu năng, nó có một hệ thống quản lý SFX mạnh mẽ với cơ chế pooling và giới hạn số lượng âm thanh đồng thời để tránh nhiễu loạn. Nó cũng hỗ trợ playlist cho music và tự động lắng nghe các sự kiện UI từ `EventDispatcher` để phát các âm thanh tương ứng.
-*   **AudioCollection.cs** — Một `ScriptableObject` hoạt động như một cơ sở dữ liệu trung tâm cho tất cả `AudioClips`. Nó được thiết kế để quản lý bộ nhớ linh hoạt, hỗ trợ cả tham chiếu trực tiếp đến clip và tải động thông qua hệ thống **`Addressable Assets`**. Một tính năng chính là **`script generator`** tích hợp, có thể tự động phân tích các tệp âm thanh từ các thư mục được chỉ định và tạo ra các lớp ID tĩnh (ví dụ: `SfxIDs.cs`), cho phép gọi âm thanh một cách type-safe và không có lỗi từ code.
-*   **SfxSource.cs** — Một `MonoBehaviour` component linh hoạt để phát hiệu ứng âm thanh từ bất kỳ `GameObject` nào. Nó có thể hoạt động ở hai chế độ:
+*   **`AudioManager.cs`** — Một singleton toàn cục (`BaseAudioManager`) đóng vai trò là giao diện chính cho mọi hoạt động âm thanh. Nó cung cấp khả năng kiểm soát âm lượng độc lập cho master, music, và SFX, hoàn chỉnh với hiệu ứng fade-in/out. Để tối ưu hiệu năng, nó có một hệ thống quản lý SFX mạnh mẽ với cơ chế pooling và giới hạn số lượng âm thanh đồng thời để tránh nhiễu loạn. Nó cũng hỗ trợ playlist cho music và tự động lắng nghe các sự kiện UI từ `EventDispatcher` để phát các âm thanh tương ứng.
+*   **`AudioCollection.cs`** — Một `ScriptableObject` hoạt động như một cơ sở dữ liệu trung tâm cho tất cả `AudioClips`. Nó được thiết kế để quản lý bộ nhớ linh hoạt, hỗ trợ cả tham chiếu trực tiếp đến clip và tải động thông qua hệ thống **`Addressable Assets`**. Một tính năng chính là **`script generator`** tích hợp, có thể tự động phân tích các tệp âm thanh từ các thư mục được chỉ định và tạo ra các lớp ID tĩnh (ví dụ: `SfxIDs.cs`), cho phép gọi âm thanh một cách type-safe và không có lỗi từ code.
+*   **`SfxSource.cs`** — Một `MonoBehaviour` component linh hoạt để phát hiệu ứng âm thanh từ bất kỳ `GameObject` nào. Nó có thể hoạt động ở hai chế độ:
     1.  **Managed (Được quản lý)**: Mặc định, nó hoạt động như một trigger đơn giản, yêu cầu `AudioManager` trung tâm phát một âm thanh từ pool được quản lý của nó.
     2.  **Standalone (Độc lập)**: Nếu một `AudioSource` component được gán trực tiếp, nó sẽ kiểm soát hoàn toàn source đó, lý tưởng cho âm thanh 3D định vị.
     Nó cũng bao gồm các tính năng lặp lại (loop), thay đổi pitch ngẫu nhiên và phát một clip ngẫu nhiên từ danh sách được định sẵn.
 
 ### Event System
 
-**EventDispatcher.cs** — Một lớp static cung cấp một hệ thống sự kiện tập trung, type-safe sử dụng mô hình publish-subscribe. Nó được thiết kế để tạo ra một kiến trúc découple, cho phép các phần khác nhau của ứng dụng giao tiếp với nhau mà không cần giữ tham chiếu trực tiếp.
+**`EventDispatcher.cs`** — Một lớp static cung cấp một hệ thống sự kiện tập trung, type-safe sử dụng mô hình publish-subscribe. Nó được thiết kế để tạo ra một kiến trúc découple, cho phép các phần khác nhau của ứng dụng giao tiếp với nhau mà không cần giữ tham chiếu trực tiếp.
 
 *   **Core Functionality**: Các hệ thống có thể đăng ký (subscribe) các loại sự kiện cụ thể bằng `AddListener<T>()` và hủy đăng ký bằng `RemoveListener<T>()`. Các sự kiện được phát đi toàn cục bằng cách tạo một instance của một event struct (phải implement `BaseEvent` interface) và truyền nó vào phương thức `EventDispatcher.Raise()`.
 *   **Debouncing**: Cung cấp phương thức `RaiseDeBounce()` giúp ngăn chặn spam sự kiện bằng cách đảm bảo một sự kiện chỉ được phát đi sau một khoảng thời gian trễ nhất định mà không có cuộc gọi mới nào cho cùng loại sự kiện. Điều này đặc biệt hữu ích để xử lý các hành động nhanh của người dùng, như nhấp chuột liên tục. Tính năng này phụ thuộc vào thư viện **UniTask**.
@@ -98,11 +99,11 @@ Một hệ thống mạnh mẽ dựa trên attribute được thiết kế để
 
 ### Data Config Management
 
-**ConfigCollection.cs** — Một lớp cơ sở trừu tượng `ScriptableObject` để chứa dữ liệu cấu hình từ các tệp văn bản bên ngoài (ví dụ: `JSON`). Nó thúc đẩy một quy trình làm việc sạch sẽ, dựa trên dữ liệu bằng cách tách cấu hình ra khỏi code. Hệ thống hỗ trợ tải từ thư mục `Resources` khi chạy hoặc trực tiếp từ `AssetDatabase` trong Editor, với một nút bấm tùy chỉnh trong Inspector để làm mới dữ liệu theo yêu cầu.
+**`ConfigCollection.cs`** — Một lớp cơ sở trừu tượng `ScriptableObject` để chứa dữ liệu cấu hình từ các tệp văn bản bên ngoài (ví dụ: `JSON`). Nó thúc đẩy một quy trình làm việc sạch sẽ, dựa trên dữ liệu bằng cách tách cấu hình ra khỏi code. Hệ thống hỗ trợ tải từ thư mục `Resources` khi chạy hoặc trực tiếp từ `AssetDatabase` trong Editor, với một nút bấm tùy chỉnh trong Inspector để làm mới dữ liệu theo yêu cầu.
 
 ---
 
-## Các Hệ Thống Dữ Liệu (Data Systems)
+## Data Systems
 
 Framework cung cấp một hệ thống lưu trữ linh hoạt dựa trên JSON, được thiết kế để tách biệt rõ ràng giữa dữ liệu và logic. Nó tận dụng `ScriptableObjects` để quản lý trong editor và sử dụng `PlayerPrefs` làm backend lưu trữ, cung cấp một giải pháp mạnh mẽ để quản lý trạng thái của game.
 
@@ -118,9 +119,9 @@ Hệ thống này được xây dựng trên một kiến trúc phân lớp, tá
 
 ---
 
-## Các Tiện Ích Chung (Common Utilities)
+## Common Utilities
 
-### Các Lớp Helper
+### Helpers
 ĐANG CẬP NHẬT...
 
 ### Pool System
@@ -149,7 +150,7 @@ Một hệ thống hiệu quả và linh hoạt để quản lý logic dựa tr�
 
 ---
 
-## Hệ Thống UI (UI System)
+## UI System
 
 ### Panel System
 
@@ -170,7 +171,7 @@ Một bộ sưu tập các component UI mạnh mẽ, sẵn sàng cho sản phẩ
 
 ---
 
-## Tích Hợp Dịch Vụ (Services Integration)
+## Services Integration
 
 *   **Ads System**: `AdsProvider.cs` (base), `AdmobProvider.cs`, `ApplovinProvider.cs`, `IronSourceProvider.cs`.
 *   **Firebase Integration**: `RFirebase.cs` (core), `RFirebaseAnalytics.cs`, `RFirebaseAuth.cs`, `RFirebaseDatabase.cs`, `RFirebaseFirestore.cs`, `RFirebaseRemote.cs`, `RFirebaseStorage.cs`.
@@ -180,5 +181,27 @@ Một bộ sưu tập các component UI mạnh mẽ, sẵn sàng cho sản phẩ
 
 ---
 
-## Công Cụ Editor (Editor Tools)
+## Inspector Attributes
+
+Một tập hợp các C# attribute mạnh mẽ được thiết kế để nâng cao Unity Inspector, giúp nó trở nên có tổ chức, trực quan và hiệu quả hơn. Các thuộc tính này giúp giảm thiểu code lặp lại và hợp lý hóa quy trình phát triển.
+
+*   **`[AutoFill]`**: Tự động điền các trường `null` với tham chiếu đến component hoặc `ScriptableObject`, giảm thiểu việc kéo-thả thủ công. Hỗ trợ tìm kiếm theo đường dẫn và tự động điền vào mảng hoặc danh sách.
+*   **`[Comment]`**: Hiển thị một ghi chú hoặc hướng dẫn mô tả phía trên một trường, cung cấp ngữ cảnh hữu ích ngay trong Inspector.
+*   **`[CreateScriptableObject]`**: Thêm một nút "Create" bên cạnh trường `ScriptableObject` trống, cho phép tạo và gán nhanh các asset mới mà không cần rời khỏi Inspector.
+*   **`[DisplayEnum]`**: Hiển thị một trường số nguyên dưới dạng danh sách dropdown enum thân thiện với người dùng. Kiểu enum có thể được chỉ định tĩnh hoặc xác định động từ một phương thức, mang lại sự linh hoạt trong việc serialize.
+*   **`[ExposeScriptableObject]`**: Lồng các thuộc tính của một `ScriptableObject` trực tiếp vào trong Inspector của đối tượng cha, cho phép chỉnh sửa nội tuyến tiện lợi.
+*   **`[FolderPath]`**: Biến một trường chuỗi thành một nút mở hộp thoại chọn thư mục, lưu đường dẫn đã chọn dưới dạng đường dẫn tương đối của project.
+*   **`[Highlight]`**: Gây chú ý đến một trường quan trọng bằng cách tô màu nền của nó, làm cho nó nổi bật về mặt hình ảnh.
+*   **`[InspectorButton]`**: Hiển thị một phương thức dưới dạng một nút có thể nhấp trong Inspector, cho phép thực thi code trực tiếp. Hỗ trợ đầy đủ các phương thức có tham số.
+*   **`[ReadOnly]`**: Làm cho một trường đã serialize chỉ có thể đọc trong Inspector, không thể chỉnh sửa.
+*   **`[Separator]`**: Vẽ một đường kẻ ngang, có hoặc không có tiêu đề, để nhóm và tổ chức các trường một cách trực quan cho một bố cục gọn gàng hơn.
+*   **`[ShowIf]`**: Hiển thị hoặc ẩn một trường theo điều kiện dựa trên trạng thái boolean của một trường, thuộc tính hoặc phương thức khác, tạo ra các Inspector động và nhận biết ngữ cảnh.
+*   **`[SingleLayer]`**: Hiển thị một trường số nguyên dưới dạng danh sách dropdown Layer tích hợp của Unity, lưu chỉ số của layer đã chọn.
+*   **`[SpriteBox]`**: Hiển thị một trường `Sprite` với một ảnh xem trước có thể cấu hình bên cạnh trường chọn đối tượng tiêu chuẩn.
+*   **`[TagSelector]`**: Hiển thị một trường chuỗi dưới dạng menu dropdown của tất cả các Tag có sẵn trong Unity.
+*   **`[TMPFontMaterials]`**: Trên một component có đối tượng `TextMeshPro`, thuộc tính này tạo một danh sách dropdown cho trường `Material`, tự động điền vào đó tất cả các material liên quan đến font asset hiện tại.
+
+---
+
+## Editor Tools
 ĐANG CẬP NHẬT...
