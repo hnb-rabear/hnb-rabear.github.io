@@ -294,4 +294,46 @@ Google Sheets:
 
 ![alt text](image-14.png)
 
-### 3.6. Live-Ops Features
+### 3.6. Live-Ops Template Features
+
+#### Store - Store
+
+#### Store - Special Offers (Beginner Offer, No-Ads Offer, Skin Offer, Disco Offer)
+
+#### Store - Piggy Bank
+
+#### Reward - Daily Bonus
+
+#### Reward - Star Chest
+
+#### Reward - Level Chest
+
+#### Reward - Free Reward
+
+#### Quest - Daily Quest
+
+#### Quest - Rocket Rush
+
+#### Quest - Collection
+
+#### Quest - Pinata
+
+#### Competition - Race (Fake Bots)
+
+#### Competition - Volcano Quest (Fake Bots)
+
+#### Competition - Global Leaderboard (Fake Bots)
+
+#### Competition - Weekly Contest (Fake Bots)
+
+#### Competition - Daily Tournament (Fake Bots)
+
+### 3.7. Other Features
+
+#### Settings
+
+#### Ratting
+
+#### User Profile
+
+#### Skin Store
