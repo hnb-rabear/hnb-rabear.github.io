@@ -283,3 +283,15 @@ Google Sheets:
 ![alt text](image-11.png)
 
 ![alt text](image-12.png)
+
+### 3.4. UI System
+
+![alt text](image-13.png)
+
+### 3.5. Audio System
+
+![alt text](image-15.png)
+
+![alt text](image-14.png)
+
+### 3.6. Live-Ops Features
