@@ -248,8 +248,38 @@ public class DataManager : DBManager
 
 ![alt text](image-5.png)
 
+---
+
 ## 3. LiveOps Template Project
 
 Để có thể hình dung ra luồng hoạt động của một dự án tích hợp RCore và SheetX, bạn có thể tham khảo Repository dưới đây.
 
 https://gitlab.ikameglobal.com/hungnb/liveopstemplate.git
+
+### 3.1. Initiliazation Setup
+
+![alt text](image-6.png)
+
+### 3.2. Data Config Setup
+
+#### Setup SheetX
+
+Google Sheets:
+[Sheet 1](https://docs.google.com/spreadsheets/d/1jCQW_d-aWwK5TxQDRt1DCFIvN-cAT-AgetpvB2fd0oQ/edit?gid=199486131#gid=199486131)
+[Sheet 2](https://docs.google.com/spreadsheets/d/1RnjqCJIGjpDCiO6qm2WgwDvh8JUmceE6EXYmALVwoxo/edit?gid=0#gid=0)
+
+![alt text](image-8.png)
+
+![alt text](image-9.png)
+
+#### Eported configuration folders
+
+![alt text](image-7.png)
+
+### 3.3. Dynamic Data Setup
+
+![alt text](image-10.png)
+
+![alt text](image-11.png)
+
+![alt text](image-12.png)
