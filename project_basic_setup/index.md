@@ -219,9 +219,9 @@ public class DataManager : DBManager
 }
 ```
 
-### 2.3. Công cụ hỗ trợ quản lý Data.
+### 2.3. Công cụ hỗ trợ quản lý Data
 
-#### 2.3.1. JObjectDB Editor: Trình chỉnh sửa dữ liệu dạng JSON
+#### 2.3.1. JObjectDB Editor
 
 Đây là công cụ để xem và chỉnh sửa trực tiếp dữ liệu người dùng dưới dạng JSON.
 
@@ -242,36 +242,98 @@ public class DataManager : DBManager
 
 ![alt text](image-1.png)
 
-#### 2.3.3. Chỉnh sửa dữ liệu trực tiếp qua ScriptableObject (Runtime)
+#### 2.3.3. Chỉnh sửa dữ liệu trực tiếp qua ScriptableObject
 
 ![alt text](image-3.png)
 
 ![alt text](image-5.png)
 
--------------------------------------------------------
+---
 
-### 2.3. Hệ thống Quản lý Assets
+## 3. LiveOps Template Project
 
-Tạo một **AssetsCollection** để quản lý các assets (Prefabs, Sprites, Audio, v.v.) trong game.
+Để có thể hình dung ra luồng hoạt động của một dự án tích hợp RCore và SheetX, bạn có thể tham khảo Repository dưới đây.
 
-#### 2.3.1. Tạo AssetsCollection
-Tạo một `ScriptableObject` để lưu trữ Assets:
-```cs
-[CreateAssetMenu(fileName = "AssetsCollection", menuName = "LiveOps/Create AssetsCollection")]
-public class AssetsCollection : ScriptableObject
-{
-	private static AssetsCollection m_Instance;
-	public static AssetsCollection Instance
-	{
-		get
-		{
-			if (m_Instance == null)
-				m_Instance = Resources.Load<AssetsCollection>(nameof(AssetsCollection));
-			return m_Instance;
-		}
-	}
-	public List<BoosterAsset> boosters;
-	public List<PowerAsset> powerUps;
-	public List<Sprite> avatars;
-}
-```
+https://gitlab.ikameglobal.com/hungnb/liveopstemplate.git
+
+### 3.1. Initiliazation Setup
+
+![alt text](image-6.png)
+
+### 3.2. Data Config Setup
+
+#### Setup SheetX
+
+Google Sheets:
+[Sheet 1](https://docs.google.com/spreadsheets/d/1jCQW_d-aWwK5TxQDRt1DCFIvN-cAT-AgetpvB2fd0oQ/edit?gid=199486131#gid=199486131)
+[Sheet 2](https://docs.google.com/spreadsheets/d/1RnjqCJIGjpDCiO6qm2WgwDvh8JUmceE6EXYmALVwoxo/edit?gid=0#gid=0)
+
+![alt text](image-8.png)
+
+![alt text](image-9.png)
+
+#### Eported configuration folders
+
+![alt text](image-7.png)
+
+### 3.3. Dynamic Data Setup
+
+![alt text](image-10.png)
+
+![alt text](image-11.png)
+
+![alt text](image-12.png)
+
+### 3.4. UI System
+
+![alt text](image-13.png)
+
+### 3.5. Audio System
+
+![alt text](image-15.png)
+
+![alt text](image-14.png)
+
+### 3.6. Live-Ops Template Features
+
+#### Store - Store
+
+#### Store - Special Offers (Beginner Offer, No-Ads Offer, Skin Offer, Disco Offer)
+
+#### Store - Piggy Bank
+
+#### Reward - Daily Bonus
+
+#### Reward - Star Chest
+
+#### Reward - Level Chest
+
+#### Reward - Free Reward
+
+#### Quest - Daily Quest
+
+#### Quest - Rocket Rush
+
+#### Quest - Collection
+
+#### Quest - Pinata
+
+#### Competition - Race (Fake Bots)
+
+#### Competition - Volcano Quest (Fake Bots)
+
+#### Competition - Global Leaderboard (Fake Bots)
+
+#### Competition - Weekly Contest (Fake Bots)
+
+#### Competition - Daily Tournament (Fake Bots)
+
+### 3.7. Other Features
+
+#### Settings
+
+#### Ratting
+
+#### User Profile
+
+#### Skin Store
