@@ -31,8 +31,8 @@ Copy the __Client ID__ and __Client Secret__, and paste them into the text boxes
 
 ### 3.2. Access Google Spreadsheets
 
-Enter the Google Sheet Id.
-The Google Sheet Id look like this.
+Enter the Google Sheet ID.
+The Google Sheet ID looks like this:
 
 ```url
 https://docs.google.com/spreadsheets/d/[GOOGLE_SHEET_ID]/edit?......
@@ -55,7 +55,7 @@ Naming Conventions for Localization Sheets:
 
 For more details, please refer to the example Excel file.
 
-## 5. How to integration
+## 5. Integration Guide
 
 __Download and import the [Example](https://github.com/hnb-rabear/hnb-rabear.github.io/blob/main/LocalizationXLite/LocalizationXLiteExample.unitypackage)__
 

@@ -202,7 +202,7 @@ Constants Sheets, named with the suffix `Constants` compile project constants. T
 
 Localization Sheets are named with the prefix `Localization` and follow these rules:
 
-- TThe sheet name must start with `Localization`.
+- The sheet name must start with `Localization`.
 - Each sheet has two key columns: the main key `idString` and an additional key `relativeId`.
 - The following columns contain localized content.
 - The key for each row is a combination of `idString` and `relativeId`.
@@ -270,7 +270,7 @@ To define an attribute object type, the following rules should be followed:
     Example 2: attribute1, value1[], increase1[], value1[], max1[].
     ```
 
-## 7. How to integration
+## 7. Integration Guide
 
 __Download and import the [Example](https://github.com/hnb-rabear/hnb-rabear.github.io/blob/main/sheetx/SheetXExample.unitypackage)__
 

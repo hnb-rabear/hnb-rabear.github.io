@@ -122,7 +122,7 @@ ID Sheets, named with the suffix `IDs` are used to compile all IDs into Integer 
 
 Localization Sheets are named with the prefix `Localization` and follow these rules:
 
-- TThe sheet name must start with `Localization`.
+- The sheet name must start with `Localization`.
 - Each sheet has two key columns: the main key `idString` and an additional key `relativeId`.
 - The following columns contain localized content.
 - The key for each row is a combination of `idString` and `relativeId`.
@@ -133,7 +133,7 @@ Localization Sheets are named with the prefix `Localization` and follow these ru
 | -------- | ---------- | ------- | ------- | ----- | ---- |
 ```
 
-## 5. How to integration
+## 5. Integration Guide
 
 __Download and import the [Example](https://github.com/hnb-rabear/hnb-rabear.github.io/blob/main/LocalizationX/LocalizationXExample.unitypackage)__
 
