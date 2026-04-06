@@ -573,26 +573,26 @@ public partial class PlayerData
         </div>
     </section>
 
-    <!-- ══════ SLIDE 12: MISTAKES ══════ -->
+    <!-- ══════ SLIDE 12: ANTI-PATTERNS ══════ -->
     <section data-background-color="#0a0a14">
-        <h2>Những sai lầm đã trả giá</h2>
-        <p class="text-muted">Những bài học rút ra sau nhiều dự án</p>
+        <h2>Anti-patterns phổ biến</h2>
+        <p class="text-muted">Những lỗi thường gặp khi không có kiến trúc data rõ ràng — và cách framework ngăn chặn</p>
         <div style="margin-top: 0.4em;">
             <div class="lesson fragment">
-                <div class="lesson-q">"Đặt logic trong Data Model"</div>
-                <div class="lesson-a">6 tháng sau: 15 chỗ gọi playerData.AddCoin() trực tiếp. Không validate. Không notify UI. Phải refactor toàn bộ.</div>
+                <div class="lesson-q">❌ Sửa data trực tiếp từ bất kỳ đâu</div>
+                <div class="lesson-a"><code>playerData.coin -= 100</code> rải khắp codebase → không validate, không notify UI, không track dirty. <strong>Fix:</strong> Mọi thay đổi đi qua Data Handler.</div>
             </div>
             <div class="lesson fragment">
-                <div class="lesson-q">"1 file PlayerData.cs — 2000 dòng"</div>
-                <div class="lesson-a">Serialize toàn bộ mỗi lần save = 50ms lag spike trên low-end device. Merge conflict mỗi ngày. partial class = hết cả hai.</div>
+                <div class="lesson-q">❌ Gọi Save() thủ công, quên edge case</div>
+                <div class="lesson-a">Quên save khi app bị kill, ALT+F4, low memory. <strong>Fix:</strong> DBManager auto-save on <code>OnApplicationPause</code> + <code>OnApplicationQuit</code>.</div>
             </div>
             <div class="lesson fragment">
-                <div class="lesson-q">"Thêm field mới, không check version"</div>
-                <div class="lesson-a">Player cũ update app → field mới = default 0, business cần 100. Bỏ lỡ 50K users. Giờ luôn check dataVersion trong OnPostLoad().</div>
+                <div class="lesson-q">❌ UI polling data mỗi frame</div>
+                <div class="lesson-a"><code>Update()</code> liên tục check <code>if (coin != lastCoin)</code> → waste CPU. <strong>Fix:</strong> Observer pattern — UI chỉ update khi nhận event.</div>
             </div>
             <div class="lesson fragment">
-                <div class="lesson-q">"Quên test trên low-end device"</div>
-                <div class="lesson-a">PlayerPrefs write trên flagship: 2ms. Budget phone 2019: 80ms main thread. Solution: MarkDirty() + batch save on pause.</div>
+                <div class="lesson-q">❌ Thêm field mới, quên migration</div>
+                <div class="lesson-a">Player cũ update app → field mới = default 0, business cần 100. <strong>Fix:</strong> Check <code>dataVersion</code> trong <code>OnPostLoad()</code>.</div>
             </div>
         </div>
     </section>
