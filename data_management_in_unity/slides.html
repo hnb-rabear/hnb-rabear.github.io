@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
+        /* ── Design Tokens ── */
         :root {
             --blue: #4a9eff;
             --purple: #7c3aed;
@@ -21,138 +22,178 @@
             --text: #e2e8f0;
             --muted: #64748b;
         }
+
+        /* ── Base ── */
         .reveal { font-family: 'Inter', -apple-system, sans-serif; color: var(--text); }
-        .reveal .slides { text-align: left; }
         .reveal h1, .reveal h2, .reveal h3, .reveal h4 {
             font-family: 'Inter', sans-serif; font-weight: 700;
             text-transform: none; letter-spacing: -0.03em;
         }
-        .reveal h2 { font-size: 1.7em; color: #fff; margin-bottom: 0.5em; }
-        .reveal h3 { font-size: 0.95em; color: var(--blue); margin-bottom: 0.3em; font-weight: 600; }
-        .reveal p, .reveal li { font-size: 0.72em; line-height: 1.7; color: var(--text); }
-        .reveal .slides section { padding: 1.2em 2.5em; }
+        .reveal h2 { font-size: 1.4em; color: #fff; margin-bottom: 0.3em; }
+        .reveal h3 { font-size: 0.82em; color: var(--blue); margin-bottom: 0.2em; font-weight: 600; }
+        .reveal p, .reveal li { font-size: 0.6em; line-height: 1.5; color: var(--text); }
+        .reveal ul { margin: 0.2em 0; }
+        .reveal .slides section { padding: 0.6em 2em; overflow: hidden; text-align: left; width: 100% !important; box-sizing: border-box; }
         .reveal .slide-number { font-family: 'Inter'; font-size: 12px; color: var(--muted); }
+        .reveal .progress span { background: var(--blue); }
 
-        /* Cover */
+        /* ── Cover ── */
         .cover { text-align: center !important; }
         .cover h1 {
-            font-size: 2.6em; font-weight: 900; color: #fff;
+            font-size: 2.4em; font-weight: 900; color: #fff;
             letter-spacing: -0.04em; line-height: 1.15; margin-bottom: 0.3em;
         }
         .cover .accent {
             background: linear-gradient(135deg, var(--blue), var(--purple));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
-        .cover .sub { font-size: 0.9em; color: var(--muted); font-weight: 300; margin-bottom: 2em; }
-        .cover .meta { font-size: 0.7em; color: var(--muted); }
+        .cover .sub { font-size: 0.82em; color: var(--muted); font-weight: 300; margin-bottom: 1.5em; }
+        .cover .meta { font-size: 0.65em; color: var(--muted); }
         .cover .meta strong { color: var(--blue); font-weight: 600; }
 
-        /* Section divider */
-        .divider { text-align: center !important; }
-        .divider .num { font-size: 5em; font-weight: 900; opacity: 0.08; margin-bottom: -0.5em; }
-        .divider h2 { font-size: 2.2em; }
-        .divider p { font-size: 0.85em; color: var(--muted); }
-
-        /* Cards grid */
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5em; margin-top: 0.8em; }
-        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1em; margin-top: 0.8em; }
-
+        /* ── Cards & Grids ── */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8em; margin-top: 0.5em; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.7em; margin-top: 0.5em; }
         .card {
-            background: var(--card); border-radius: 10px; padding: 1.1em 1.3em;
+            background: var(--card); border-radius: 8px; padding: 0.7em 0.9em;
             border: 1px solid var(--border);
         }
-        .card h3 { margin-bottom: 0.4em; }
-        .card p, .card li { font-size: 0.65em !important; color: var(--muted); }
+        .card h3 { margin-bottom: 0.2em; }
+        .card p, .card li { font-size: 0.55em !important; color: var(--muted); line-height: 1.45; }
         .card.bordered-green { border-left: 3px solid var(--green); }
         .card.bordered-purple { border-left: 3px solid var(--purple); }
         .card.bordered-blue { border-left: 3px solid var(--blue); }
         .card.bordered-amber { border-left: 3px solid var(--amber); }
         .card.bordered-red { border-left: 3px solid var(--red); }
 
-        /* Evo timeline */
-        .evo { display: flex; align-items: stretch; gap: 0; margin-top: 1em; }
+        /* ── Evolution Timeline ── */
+        .evo { display: flex; align-items: stretch; gap: 0; margin-top: 0.5em; }
         .evo-item {
-            flex: 1; padding: 1em; position: relative;
+            flex: 1; padding: 0.6em 0.7em; position: relative;
             background: var(--card); border: 1px solid var(--border);
         }
-        .evo-item:first-child { border-radius: 10px 0 0 10px; }
-        .evo-item:last-child { border-radius: 0 10px 10px 0; }
+        .evo-item:first-child { border-radius: 8px 0 0 8px; }
+        .evo-item:last-child { border-radius: 0 8px 8px 0; }
         .evo-item::after {
-            content: '→'; position: absolute; right: -0.7em; top: 50%; transform: translateY(-50%);
-            font-size: 1.2em; color: var(--muted); z-index: 1;
+            content: '→'; position: absolute; right: -0.65em; top: 50%; transform: translateY(-50%);
+            font-size: 1.1em; color: var(--muted); z-index: 1;
         }
         .evo-item:last-child::after { display: none; }
         .evo-item .evo-label {
-            font-size: 0.55em; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;
-            margin-bottom: 0.5em;
+            font-size: 0.48em; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;
+            margin-bottom: 0.3em;
         }
-        .evo-item h3 { font-size: 0.85em !important; color: #fff !important; margin-bottom: 0.3em; }
-        .evo-item p { font-size: 0.6em !important; }
+        .evo-item h3 { font-size: 0.78em !important; color: #fff !important; margin-bottom: 0.15em; }
+        .evo-item p { font-size: 0.5em !important; }
 
-        /* Principle number */
+        /* ── Principle Number ── */
         .principle-num {
-            font-size: 3em; font-weight: 900; opacity: 0.12;
-            position: absolute; top: -0.2em; right: 0.3em;
+            font-size: 2.5em; font-weight: 900; opacity: 0.1;
+            position: absolute; top: -0.1em; right: 0.3em;
         }
 
-        /* Code */
-        .reveal pre { width: 100%; border-radius: 8px; box-shadow: none; border: 1px solid var(--border); }
-        .reveal pre code { padding: 0.8em 1em !important; font-size: 0.8em; line-height: 1.5; }
+        /* ── Code ── */
+        .reveal pre { width: 100%; border-radius: 6px; box-shadow: none; border: 1px solid var(--border); margin: 0.2em 0; }
+        .reveal pre code { padding: 0.45em 0.7em !important; font-size: 0.62em; line-height: 1.4; }
         .code-label {
-            font-size: 0.6em; font-weight: 600; color: var(--muted);
-            text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.3em;
+            font-size: 0.48em; font-weight: 600; color: var(--muted);
+            text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.15em;
         }
 
-        /* Compare */
-        .vs { display: flex; align-items: center; justify-content: center; font-size: 1.5em; font-weight: 900; color: var(--muted); padding: 0 0.5em; }
-
-        /* Tag */
+        /* ── Tags ── */
         .tag {
-            display: inline-block; padding: 0.15em 0.6em; border-radius: 4px;
-            font-size: 0.55em; font-weight: 600;
+            display: inline-block; padding: 0.12em 0.5em; border-radius: 4px;
+            font-size: 0.48em; font-weight: 600;
         }
         .tag-green { background: rgba(16,185,129,0.15); color: var(--green); }
         .tag-purple { background: rgba(124,58,237,0.15); color: var(--purple); }
         .tag-red { background: rgba(239,68,68,0.15); color: var(--red); }
         .tag-amber { background: rgba(245,158,11,0.15); color: var(--amber); }
 
-        /* Key insight box */
+        /* ── Insight Box ── */
         .insight {
             background: rgba(74,158,255,0.06); border: 1px solid rgba(74,158,255,0.15);
-            border-radius: 8px; padding: 0.8em 1.2em; margin-top: 0.8em;
+            border-radius: 6px; padding: 0.4em 0.8em; margin-top: 0.4em;
         }
-        .insight p { font-size: 0.7em !important; color: var(--text); }
-        .insight .insight-label { font-size: 0.55em; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.2em; }
+        .insight p { font-size: 0.55em !important; color: var(--text); }
+        .insight .insight-label { font-size: 0.45em; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.1em; }
 
-        /* Lesson */
+        /* ── Lesson ── */
         .lesson {
-            background: var(--card); border-radius: 8px; padding: 0.7em 1em;
-            border-left: 3px solid var(--amber); margin-bottom: 0.5em;
+            background: var(--card); border-radius: 6px; padding: 0.4em 0.8em;
+            border-left: 3px solid var(--amber); margin-bottom: 0.35em;
         }
-        .lesson .lesson-q { font-size: 0.72em; font-weight: 600; color: #fff; }
-        .lesson .lesson-a { font-size: 0.6em; color: var(--muted); margin-top: 0.15em; }
+        .lesson .lesson-q { font-size: 0.6em; font-weight: 600; color: #fff; }
+        .lesson .lesson-a { font-size: 0.48em; color: var(--muted); margin-top: 0.08em; }
 
-        /* Flow */
-        .flow { display: flex; align-items: center; gap: 0.3em; flex-wrap: wrap; }
+        /* ── Flow ── */
+        .flow { display: flex; align-items: center; gap: 0.2em; flex-wrap: wrap; }
         .flow-step {
             background: var(--card); border: 1px solid var(--border);
-            border-radius: 6px; padding: 0.4em 0.8em; font-size: 0.65em; white-space: nowrap;
+            border-radius: 5px; padding: 0.25em 0.55em; font-size: 0.52em; white-space: nowrap;
         }
-        .flow-arrow { color: var(--muted); font-size: 0.8em; }
+        .flow-arrow { color: var(--muted); font-size: 0.7em; }
 
-        /* Trade-off */
-        .tradeoff { font-size: 0.65em !important; color: var(--muted); }
-        .tradeoff strong { color: var(--text); }
+        /* ── Architecture Diagram ── */
+        .arch-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr auto 1.2fr auto 0.9fr;
+            grid-template-rows: auto 0.3em auto;
+            gap: 0.3em 0.15em;
+            align-items: center;
+            margin: 0.5em 0;
+        }
+        .arch-box {
+            border-radius: 6px; padding: 0.5em 0.6em; text-align: center;
+        }
+        .arch-box h4 { font-size: 0.55em; margin: 0 0 0.1em 0; font-weight: 700; }
+        .arch-box p { font-size: 0.4em !important; margin: 0; line-height: 1.25; color: var(--muted); }
+        .arch-box.src-green { background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.25); }
+        .arch-box.src-green h4 { color: var(--green); }
+        .arch-box.proc-amber { background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.25); }
+        .arch-box.proc-amber h4 { color: var(--amber); }
+        .arch-box.rt-blue { background: rgba(74,158,255,0.12); border: 1px solid rgba(74,158,255,0.25); }
+        .arch-box.rt-blue h4 { color: var(--blue); }
+        .arch-box.game-purple { background: rgba(124,58,237,0.12); border: 1px solid rgba(124,58,237,0.25); }
+        .arch-box.game-purple h4 { color: var(--purple); }
+        .arch-arr { font-size: 0.9em; color: var(--muted); text-align: center; }
+        .arch-game-box {
+            grid-row: 1 / 4; display: flex; align-items: center; justify-content: center;
+            border-radius: 6px; padding: 0.5em 0.7em; text-align: center;
+            background: rgba(124,58,237,0.12); border: 1px solid rgba(124,58,237,0.25);
+        }
+        .arch-game-box h4 { font-size: 0.55em; margin: 0 0 0.1em 0; font-weight: 700; color: var(--purple); }
+        .arch-game-box p { font-size: 0.4em !important; margin: 0; color: var(--muted); }
+        .arch-legend {
+            display: flex; gap: 1.2em; margin-top: 0.3em; justify-content: center;
+        }
+        .arch-legend-item {
+            display: flex; align-items: center; gap: 0.3em; font-size: 0.42em; color: var(--muted);
+        }
+        .arch-legend-dot {
+            width: 8px; height: 8px; border-radius: 50%; display: inline-block;
+        }
 
+        /* ── Screenshot ── */
+        .ss-grid { display: flex; gap: 0.6em; margin-top: 0.4em; align-items: flex-start; justify-content: center; }
+        .ss-item { text-align: center; }
+        .ss-item img {
+            border-radius: 5px; border: 1px solid var(--border);
+            max-height: 190px; object-fit: contain; display: block;
+        }
+        .ss-item .ss-cap { font-size: 0.42em; color: var(--muted); margin-top: 0.2em; }
+
+        /* ── Utility ── */
         .highlight { color: var(--blue); font-weight: 600; }
         .text-green { color: var(--green); }
         .text-red { color: var(--red); }
         .text-amber { color: var(--amber); }
         .text-purple { color: var(--purple); }
         .text-muted { color: var(--muted); }
-        .text-sm { font-size: 0.65em !important; }
-        .text-xs { font-size: 0.55em !important; }
-        .mt-1 { margin-top: 0.8em; }
+        .text-sm { font-size: 0.55em !important; }
+        .text-xs { font-size: 0.45em !important; }
+        .mt-1 { margin-top: 0.5em; }
+        .mt-half { margin-top: 0.25em; }
         .mb-0 { margin-bottom: 0 !important; }
     </style>
 </head>
@@ -160,38 +201,38 @@
 <div class="reveal">
 <div class="slides">
 
-    <!-- ====== SLIDE 1: COVER ====== -->
+    <!-- ══════ SLIDE 1: COVER ══════ -->
     <section class="cover" data-background-gradient="radial-gradient(ellipse at 30% 50%, #111133 0%, #0a0a14 70%)">
         <h1>Data <span class="accent">Architecture</span><br>trong Unity Game</h1>
         <p class="sub">Bài học thiết kế hệ thống quản lý data<br>sau nhiều năm phát triển mobile game</p>
         <p class="meta"><strong>hnb-rabear</strong> · Unity Game Developer</p>
     </section>
 
-    <!-- ====== SLIDE 2: CONTEXT ====== -->
+    <!-- ══════ SLIDE 2: CONTEXT ══════ -->
     <section data-background-color="#0a0a14">
         <h2>Bối cảnh</h2>
         <p class="text-muted">Một mobile game mid-core điển hình có bao nhiêu data?</p>
         <div class="grid-3 mt-1">
             <div class="card bordered-blue fragment">
-                <h3 style="font-size: 2.5em; color: var(--blue); margin: 0;">200+</h3>
+                <h3 style="font-size: 2.2em; color: var(--blue); margin: 0;">200+</h3>
                 <p>config fields cần balance<br>(item stats, level curves, rewards...)</p>
             </div>
             <div class="card bordered-purple fragment">
-                <h3 style="font-size: 2.5em; color: var(--purple); margin: 0;">15+</h3>
-                <p>player data models cần persist<br>(profile, inventory, quests, settings...)</p>
+                <h3 style="font-size: 2.2em; color: var(--purple); margin: 0;">15+</h3>
+                <p>player data models cần persist<br>(profile, inventory, quests...)</p>
             </div>
             <div class="card bordered-green fragment">
-                <h3 style="font-size: 2.5em; color: var(--green); margin: 0;">3-5</h3>
+                <h3 style="font-size: 2.2em; color: var(--green); margin: 0;">3-5</h3>
                 <p>team members cùng sửa data layer<br>mỗi sprint</p>
             </div>
         </div>
         <div class="insight fragment">
             <div class="insight-label">Observation</div>
-            <p>Không có data architecture rõ ràng → phần lớn bugs trong game không phải logic sai,<br>mà là <strong>data sai chỗ, save sai lúc, hoặc đọc sai state</strong>.</p>
+            <p>Không có data architecture rõ ràng → phần lớn bugs không phải logic sai, mà là <strong>data sai chỗ, save sai lúc, hoặc đọc sai state</strong>.</p>
         </div>
     </section>
 
-    <!-- ====== SLIDE 3: EVOLUTION ====== -->
+    <!-- ══════ SLIDE 3: EVOLUTION ══════ -->
     <section data-background-color="#0a0a14">
         <h2>Quá trình tiến hóa</h2>
         <p class="text-muted">3 giai đoạn mà đa số team đều trải qua</p>
@@ -199,17 +240,17 @@
             <div class="evo-item fragment">
                 <div class="evo-label text-red">Gen 1</div>
                 <h3>PlayerPrefs trực tiếp</h3>
-                <p class="text-muted">SetInt/GetString rải khắp nơi. Config hardcode trong code. Ship nhanh nhưng 3 tháng sau không maintain được.</p>
+                <p class="text-muted">SetInt/GetString rải khắp nơi. Config hardcode. Ship nhanh nhưng 3 tháng sau không maintain được.</p>
             </div>
             <div class="evo-item fragment">
                 <div class="evo-label text-amber">Gen 2</div>
                 <h3>Centralized + JSON</h3>
-                <p class="text-muted">1 class SaveManager. Config từ ScriptableObject. Tốt hơn nhưng vẫn thiếu lifecycle management và validation.</p>
+                <p class="text-muted">1 class SaveManager, config từ ScriptableObject. Tốt hơn nhưng thiếu lifecycle management.</p>
             </div>
             <div class="evo-item fragment">
                 <div class="evo-label text-green">Gen 3</div>
                 <h3>Layered Architecture</h3>
-                <p class="text-muted">Tách Data / Logic / Lifecycle. Config pipeline từ Sheets. Auto-save. Event-driven. Test được.</p>
+                <p class="text-muted">Tách Data / Logic / Lifecycle. Config pipeline từ Sheets. Auto-save. Event-driven.</p>
             </div>
         </div>
         <div class="insight fragment">
@@ -218,7 +259,7 @@
         </div>
     </section>
 
-    <!-- ====== SLIDE 4: CORE PRINCIPLES ====== -->
+    <!-- ══════ SLIDE 4: CORE PRINCIPLES ══════ -->
     <section data-background-color="#0a0a14">
         <h2>3 nguyên tắc cốt lõi</h2>
         <p class="text-muted">Mọi quyết định thiết kế đều quay về 3 điều này</p>
@@ -227,71 +268,132 @@
                 <div class="principle-num">01</div>
                 <h3 class="text-green">Tách biệt mối quan tâm</h3>
                 <p>Data structure ≠ Business logic ≠ Persistence.</p>
-                <p>Ai quan tâm gì, người đó xử lý. Không trộn lẫn.</p>
+                <p>Ai quan tâm gì, người đó xử lý.</p>
             </div>
             <div class="card bordered-blue fragment" style="position: relative;">
                 <div class="principle-num">02</div>
                 <h3 class="highlight">Một cổng duy nhất</h3>
-                <p>Mọi thay đổi data đi qua đúng 1 nơi — "người gác cổng".</p>
-                <p>5 chỗ sửa coin trực tiếp = không ai kiểm soát.</p>
+                <p>Mọi thay đổi data đi qua 1 nơi — "người gác cổng".</p>
+                <p>5 chỗ sửa coin = không ai kiểm soát.</p>
             </div>
             <div class="card bordered-purple fragment" style="position: relative;">
                 <div class="principle-num">03</div>
                 <h3 class="text-purple">Không phụ thuộc ngầm</h3>
-                <p>Module A thay đổi data → phát event. Module B tự lắng nghe.</p>
-                <p>Thêm module = subscribe. Xóa = unsubscribe.</p>
+                <p>Module A thay đổi → phát event. Module B tự lắng nghe.</p>
+                <p>Thêm = subscribe. Xóa = unsubscribe.</p>
             </div>
         </div>
     </section>
 
-    <!-- ====== SLIDE 5: TWO PILLARS ====== -->
+    <!-- ══════ SLIDE 5: ARCHITECTURE OVERVIEW [NEW] ══════ -->
+    <section data-background-color="#0a0a14">
+        <h2>Kiến trúc tổng quan</h2>
+        <p class="text-muted">Hai luồng data song song, gặp nhau tại Game Logic</p>
+
+        <!-- Architecture Diagram -->
+        <div class="arch-grid mt-1">
+            <!-- Row 1: Static Config Data -->
+            <div class="arch-box src-green">
+                <h4>📊 Google Sheets / Excel</h4>
+                <p>Designer quản lý</p>
+            </div>
+            <div class="arch-arr">→</div>
+            <div class="arch-box proc-amber">
+                <h4>⚙️ SheetX Export</h4>
+                <p>JSON + C# Scripts</p>
+            </div>
+            <div class="arch-arr">→</div>
+            <div class="arch-box rt-blue">
+                <h4>ConfigCollection</h4>
+                <p>ScriptableObject · Read-Only</p>
+            </div>
+            <div class="arch-arr">→</div>
+            <!-- Game Logic spans 2 rows -->
+            <div class="arch-game-box">
+                <div>
+                    <h4>🎮 Game Logic</h4>
+                    <p>Controllers<br>Presenters</p>
+                </div>
+            </div>
+
+            <!-- Spacer row -->
+            <div></div><div></div><div></div><div></div><div></div><div></div>
+
+            <!-- Row 2: Dynamic Player Data -->
+            <div class="arch-box src-green">
+                <h4>💾 PlayerPrefs / File</h4>
+                <p>Local storage</p>
+            </div>
+            <div class="arch-arr">↔</div>
+            <div class="arch-box proc-amber">
+                <h4>⚙️ JObjectDB</h4>
+                <p>Serialize ↔ JSON</p>
+            </div>
+            <div class="arch-arr">↔</div>
+            <div class="arch-box rt-blue">
+                <h4>JObjectModel&lt;T&gt;</h4>
+                <p>ScriptableObject · Read/Write</p>
+            </div>
+            <div class="arch-arr">→</div>
+        </div>
+
+        <div class="arch-legend">
+            <div class="arch-legend-item"><span class="arch-legend-dot" style="background: var(--green);"></span> Nguồn dữ liệu</div>
+            <div class="arch-legend-item"><span class="arch-legend-dot" style="background: var(--amber);"></span> Xử lý</div>
+            <div class="arch-legend-item"><span class="arch-legend-dot" style="background: var(--blue);"></span> Runtime (ScriptableObject)</div>
+            <div class="arch-legend-item"><span class="arch-legend-dot" style="background: var(--purple);"></span> Tiêu thụ</div>
+        </div>
+
+        <div class="insight fragment">
+            <div class="insight-label">Quy tắc phân loại</div>
+            <p>Designer sửa nó → <strong class="text-green">Static Config</strong>. Player tạo ra nó → <strong class="text-purple">Dynamic Data</strong>. Không có loại thứ 3.</p>
+        </div>
+    </section>
+
+    <!-- ══════ SLIDE 6: TWO PILLARS ══════ -->
     <section data-background-color="#0a0a14">
         <h2>Hai trụ cột của data architecture</h2>
         <div class="grid-2 mt-1">
             <div class="card fragment" style="border-top: 3px solid var(--green);">
                 <span class="tag tag-green">Read-Only</span>
-                <h3 class="text-green" style="font-size: 1.1em !important; margin-top: 0.4em;">Static Config Data</h3>
-                <p style="font-size: 0.7em !important; color: var(--text);">Dữ liệu được <strong>Designer quản lý</strong>: item stats, level curves, rewards, localization.</p>
-                <div class="flow mt-1">
+                <h3 class="text-green" style="font-size: 1em !important; margin-top: 0.3em;">Static Config Data</h3>
+                <p style="font-size: 0.6em !important; color: var(--text);">Dữ liệu được <strong>Designer quản lý</strong>: item stats, level curves, rewards, localization.</p>
+                <div class="flow mt-half">
                     <span class="flow-step">Spreadsheet</span>
                     <span class="flow-arrow">→</span>
-                    <span class="flow-step">Export tool</span>
+                    <span class="flow-step">SheetX</span>
                     <span class="flow-arrow">→</span>
-                    <span class="flow-step">JSON + C# IDs</span>
+                    <span class="flow-step">JSON + C#</span>
                     <span class="flow-arrow">→</span>
                     <span class="flow-step">ScriptableObject</span>
                 </div>
-                <p class="mt-1">Thay đổi khi nào? <strong>Mỗi build mới</strong>. Hoặc qua Remote Config.</p>
+                <p class="mt-half">Thay đổi khi nào? <strong>Mỗi build mới</strong> hoặc Remote Config.</p>
             </div>
             <div class="card fragment" style="border-top: 3px solid var(--purple);">
                 <span class="tag tag-purple">Read / Write</span>
-                <h3 class="text-purple" style="font-size: 1.1em !important; margin-top: 0.4em;">Dynamic Player Data</h3>
-                <p style="font-size: 0.7em !important; color: var(--text);">Dữ liệu <strong>runtime</strong>: player profile, inventory, quest progress, settings.</p>
-                <div class="flow mt-1">
+                <h3 class="text-purple" style="font-size: 1em !important; margin-top: 0.3em;">Dynamic Player Data</h3>
+                <p style="font-size: 0.6em !important; color: var(--text);">Dữ liệu <strong>runtime</strong>: player profile, inventory, quest progress, settings.</p>
+                <div class="flow mt-half">
                     <span class="flow-step">Data Model</span>
                     <span class="flow-arrow">→</span>
-                    <span class="flow-step">Data Handler</span>
+                    <span class="flow-step">Handler</span>
                     <span class="flow-arrow">→</span>
                     <span class="flow-step">Collection</span>
                     <span class="flow-arrow">→</span>
                     <span class="flow-step">Persistence</span>
                 </div>
-                <p class="mt-1">Thay đổi khi nào? <strong>Mỗi action của player</strong>. Auto-save on pause/quit.</p>
+                <p class="mt-half">Thay đổi khi nào? <strong>Mỗi action của player</strong>. Auto-save on pause.</p>
             </div>
-        </div>
-        <div class="insight fragment">
-            <div class="insight-label">Quy tắc phân loại</div>
-            <p>Nếu Designer sửa nó → <strong class="text-green">Static Config</strong>. Nếu player tạo ra nó → <strong class="text-purple">Dynamic Data</strong>. Không có loại thứ 3.</p>
         </div>
     </section>
 
-    <!-- ====== SLIDE 6: CONFIG PIPELINE ====== -->
+    <!-- ══════ SLIDE 7: CONFIG PIPELINE ══════ -->
     <section data-background-color="#0a0a14">
         <h2>Pattern: Config Pipeline</h2>
-        <p class="text-muted">Một config pipeline tốt loại bỏ dev ra khỏi vòng lặp balance</p>
+        <p class="text-muted">Loại bỏ dev ra khỏi vòng lặp balance</p>
         <div class="grid-2 mt-1">
             <div>
-                <div class="code-label">Config class — auto-generated từ sheet schema</div>
+                <div class="code-label">Config class — tương ứng sheet schema</div>
                 <pre><code class="language-csharp">[Serializable]
 public class ShopItemConfig
 {
@@ -300,44 +402,42 @@ public class ShopItemConfig
     public int price;
     public int currencyType;
 }</code></pre>
-                <div class="code-label mt-1">Truy xuất — type-safe, compile-time checked</div>
-                <pre><code class="language-csharp">// Gõ sai ID? Compile error. Không đợi runtime.
-var item = configCollection.GetShopItem(IDs.Shop.COIN_PACK_1);
+                <div class="code-label mt-half">Truy xuất — type-safe, compile-time checked</div>
+                <pre><code class="language-csharp">// Gõ sai ID? Compile error.
+var item = config.GetShopItem(IDs.Shop.COIN_PACK_1);
 var price = item.price;</code></pre>
             </div>
             <div class="fragment">
                 <div class="card bordered-green">
                     <h3>Vì sao pattern này quan trọng?</h3>
                     <ul style="padding-left: 1em;">
-                        <li>Designer sửa giá item: <strong>5 phút</strong> (trước: 2 ngày)</li>
-                        <li>Thêm item mới: <strong>thêm row trong sheet</strong>, không sửa code</li>
-                        <li>Gõ sai tên ID: <strong>compile error ngay</strong>, không phải runtime null</li>
-                        <li>Ai đã sửa gì: <strong>Git history của sheet</strong></li>
+                        <li>Designer sửa giá: <strong>5 phút</strong> (trước: 2 ngày)</li>
+                        <li>Thêm item: <strong>thêm row</strong>, không sửa code</li>
+                        <li>Gõ sai ID: <strong>compile error</strong> ngay</li>
                     </ul>
                 </div>
-                <div class="card bordered-amber mt-1">
-                    <h3 class="text-amber">Lưu ý từ production</h3>
-                    <p>Dùng <code>partial class</code> để chia ConfigCollection theo feature. 1 file chung + N file riêng. Giảm merge conflict khi nhiều dev cùng thêm config.</p>
+                <div class="card bordered-amber mt-half">
+                    <h3 class="text-amber">Tip từ production</h3>
+                    <p>Dùng <code>partial class</code> chia ConfigCollection theo feature → giảm merge conflict khi nhiều dev cùng thêm config.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ====== SLIDE 7: REPOSITORY PATTERN ====== -->
+    <!-- ══════ SLIDE 8: REPOSITORY PATTERN ══════ -->
     <section data-background-color="#0a0a14">
         <h2>Pattern: Repository — "Người gác cổng"</h2>
-        <p class="text-muted">Tách data structure ra khỏi business logic — nguyên tắc #1 trong thực hành</p>
+        <p class="text-muted">Tách data structure ra khỏi business logic</p>
         <div class="grid-2 mt-1">
             <div>
-                <div class="code-label">Layer 1: Data Model (DTO) — chỉ chứa data</div>
+                <div class="code-label">Layer 1: Data Model — chỉ chứa data</div>
                 <pre><code class="language-csharp">[Serializable]
 public partial class PlayerData
 {
     public int coin;
     public int level;
     public List&lt;int&gt; ownedItems = new();
-    // Không có method. Không có logic.
-    // Serializable. Portable. Testable.
+    // Không method. Không logic.
 }</code></pre>
             </div>
             <div>
@@ -359,159 +459,148 @@ public partial class PlayerData
         </div>
         <div class="insight fragment">
             <div class="insight-label">Tại sao tách?</div>
-            <p><strong>Data Model</strong> cần serialize → JSON, gửi server, lưu disk. Nếu chứa logic → serialize dính logic → phức tạp.<br>
-            <strong>Data Handler</strong> là "người gác cổng" — validate, notify, track dirty. 1 nơi duy nhất sửa data = 0 bug "ai đã sửa coin?".</p>
+            <p><strong>Data Model</strong> cần serialize (JSON, gửi server). <strong>Data Handler</strong> là "người gác cổng" — validate, notify, track dirty. 1 nơi sửa data = 0 bug "ai đã sửa coin?".</p>
         </div>
     </section>
 
-    <!-- ====== SLIDE 8: LIFECYCLE ====== -->
+    <!-- ══════ SLIDE 9: LIFECYCLE ══════ -->
     <section data-background-color="#0a0a14">
         <h2>Pattern: Lifecycle Management</h2>
-        <p class="text-muted">Data không chỉ load/save. Nó có vòng đời phức tạp hơn nhiều.</p>
+        <p class="text-muted">Data có vòng đời phức tạp hơn chỉ load/save</p>
         <div class="grid-2 mt-1">
             <div>
-                <div class="card bordered-green" style="margin-bottom: 0.5em;">
+                <div class="card bordered-green" style="margin-bottom: 0.3em;">
                     <h3>Init()</h3>
-                    <p>Lần đầu chơi → set default values, tutorial flags</p>
+                    <p>Lần đầu chơi → set default values</p>
                 </div>
-                <div class="card bordered-blue fragment" style="margin-bottom: 0.5em;">
-                    <h3>OnPostLoad(utcNow, offlineSeconds)</h3>
-                    <p>Load xong → tính offline rewards, regenerate lives, check expired timers</p>
+                <div class="card bordered-blue fragment" style="margin-bottom: 0.3em;">
+                    <h3>OnPostLoad(utcNow, offlineSecs)</h3>
+                    <p>Load xong → tính offline rewards, check expired timers</p>
                 </div>
-                <div class="card bordered-purple fragment" style="margin-bottom: 0.5em;">
+                <div class="card bordered-purple fragment" style="margin-bottom: 0.3em;">
                     <h3>OnUpdate(deltaTime)</h3>
-                    <p>Mỗi frame → countdown timers, regen resources, check conditions</p>
+                    <p>Mỗi frame → countdown timers, regen resources</p>
                 </div>
-                <div class="card bordered-amber fragment" style="margin-bottom: 0.5em;">
+                <div class="card bordered-amber fragment">
                     <h3>OnPause() → OnPreSave()</h3>
-                    <p>App vào background → validate + auto-save. Không bao giờ mất data.</p>
+                    <p>App background → validate + auto-save</p>
                 </div>
             </div>
             <div class="fragment">
-                <div class="code-label">Ví dụ: Offline reward calculation</div>
+                <div class="code-label">Ví dụ: Offline reward</div>
                 <pre><code class="language-csharp">public override void OnPostLoad(
     int utcNow, int offlineSeconds)
 {
-    // Player rời game 3 giờ
-    // → tặng gold dựa trên thời gian offline
     int goldPerMin = ConfigCollection
         .Instance.offlineGoldRate;
-    int reward = offlineSeconds / 60 * goldPerMin;
+    int reward = offlineSeconds / 60
+        * goldPerMin;
     AddCoin(reward);
 
-    // Regenerate lives
     int livesRegen = offlineSeconds
         / LIVE_REGEN_SECONDS;
     Data.lives = Math.Min(
         Data.lives + livesRegen, MAX_LIVES);
 }</code></pre>
-                <p class="text-xs text-muted mt-1">Framework gọi đúng hook, đúng thời điểm. Dev chỉ viết logic.</p>
+                <p class="text-xs text-muted">Framework gọi đúng hook, đúng thời điểm. Dev chỉ viết logic.</p>
             </div>
         </div>
     </section>
 
-    <!-- ====== SLIDE 9: OBSERVER ====== -->
+    <!-- ══════ SLIDE 10: OBSERVER ══════ -->
     <section data-background-color="#0a0a14">
         <h2>Pattern: Observer — Decoupled Communication</h2>
         <p class="text-muted">Nguyên tắc #3: modules không phụ thuộc ngầm vào nhau</p>
         <div class="grid-2 mt-1">
             <div class="card bordered-red">
-                <h3 class="text-red">❌ Cách sai — tight coupling</h3>
+                <h3 class="text-red">❌ Tight coupling</h3>
                 <pre><code class="language-csharp">void SpendCoin(int amount) {
     coin -= amount;
     hudView.UpdateCoin(coin);    // biết HUD
     shopView.Refresh();          // biết Shop
     questMgr.CheckProgress();    // biết Quest
-    // Thêm feature = sửa file này
     // 10 features = 10 dependencies
 }</code></pre>
-                <p>PlayerModel phải <strong>biết tất cả consumers</strong>. Thêm 1 feature = sửa PlayerModel.</p>
+                <p>Thêm feature = sửa PlayerModel.</p>
             </div>
             <div class="card bordered-green fragment">
-                <h3 class="text-green">✅ Cách đúng — event-driven</h3>
+                <h3 class="text-green">✅ Event-driven</h3>
                 <pre><code class="language-csharp">void SpendCoin(int amount) {
     Data.coin -= amount;
     OnCoinChanged?.Invoke(Data.coin);
     MarkDirty();
     // Thêm feature? Subscribe event.
     // Xóa feature? Unsubscribe.
-    // PlayerModel không bao giờ sửa.
 }</code></pre>
-                <p>PlayerModel chỉ <strong>phát tín hiệu</strong>. Ai quan tâm tự lắng nghe. Zero coupling.</p>
+                <p>PlayerModel chỉ phát tín hiệu. Zero coupling.</p>
             </div>
         </div>
         <div class="insight fragment">
             <div class="insight-label">Kinh nghiệm thực tế</div>
-            <p>Khi project scale lên 15+ features, tight coupling khiến mỗi lần thêm feature mới phải sửa 3-4 file cũ.<br>Event-driven: thêm feature = <strong>1 file mới, 0 file cũ bị sửa</strong>.</p>
+            <p>15+ features với tight coupling: thêm feature = sửa 3-4 file cũ. Event-driven: thêm feature = <strong>1 file mới, 0 file cũ bị sửa</strong>.</p>
         </div>
     </section>
 
-    <!-- ====== SLIDE 10: SCALING ====== -->
+    <!-- ══════ SLIDE 11: SCALING ══════ -->
     <section data-background-color="#0a0a14">
         <h2>Scaling: Khi project lớn lên</h2>
         <p class="text-muted">3 kỹ thuật giữ cho data layer không trở thành "big ball of mud"</p>
         <div class="grid-3 mt-1">
             <div class="card bordered-blue fragment">
                 <h3>partial class</h3>
-                <pre style="font-size: 0.75em;"><code class="language-csharp">// PlayerData.cs
+                <pre style="font-size: 0.72em;"><code class="language-csharp">// PlayerData.cs
 // PlayerData.Inventory.cs
-// PlayerData.Avatar.cs
-
-// ConfigCollection.cs
-// ConfigCollection.Blitz.cs</code></pre>
-                <p>3 dev cùng sửa PlayerData → mỗi người 1 file → <strong>0 merge conflict</strong>.</p>
+// PlayerData.Avatar.cs</code></pre>
+                <p>3 dev sửa PlayerData → mỗi người 1 file → <strong>0 merge conflict</strong>.</p>
             </div>
             <div class="card bordered-green fragment">
                 <h3>Module boundaries</h3>
-                <pre style="font-size: 0.75em;"><code class="language-csharp">// Thêm feature Quest:
-// 1. QuestData.cs    (data)
-// 2. QuestsModel.cs  (logic)
+                <pre style="font-size: 0.72em;"><code class="language-csharp">// Thêm feature Quest:
+// 1. QuestData.cs   (data)
+// 2. QuestsModel.cs (logic)
 // 3. SaveDataCollection:
-[AutoFill] public QuestsModel quests;
-// Xong. Không sửa code cũ.</code></pre>
-                <p><strong>Open/Closed</strong>: mở rộng bằng thêm mới, không bằng sửa cũ.</p>
+[AutoFill] public QuestsModel q;</code></pre>
+                <p><strong>Open/Closed</strong>: mở rộng bằng thêm mới, không sửa cũ.</p>
             </div>
             <div class="card bordered-purple fragment">
                 <h3>Cross-model access</h3>
-                <pre style="font-size: 0.75em;"><code class="language-csharp">class PlayerModel : DataHandler
+                <pre style="font-size: 0.72em;"><code class="language-csharp">class PlayerModel
 {
     [SerializeField]
-    CompetitionModel m_competition;
-
-    // ✅ ĐỌC dữ liệu model khác
-    // ❌ KHÔNG SỬA dữ liệu model khác
-    // Sửa → dùng Events
+    CompetitionModel m_comp;
+    // ✅ ĐỌC model khác
+    // ❌ KHÔNG SỬA
 }</code></pre>
-                <p>Một chiều: <strong>đọc trực tiếp, sửa qua event</strong>.</p>
+                <p>Đọc trực tiếp, <strong>sửa qua event</strong>.</p>
             </div>
         </div>
     </section>
 
-    <!-- ====== SLIDE 11: MISTAKES ====== -->
+    <!-- ══════ SLIDE 12: MISTAKES ══════ -->
     <section data-background-color="#0a0a14">
         <h2>Những sai lầm đã trả giá</h2>
         <p class="text-muted">Kinh nghiệm không đến từ thành công — mà từ debug sessions lúc 2 giờ sáng</p>
-        <div style="margin-top: 0.8em;">
+        <div style="margin-top: 0.4em;">
             <div class="lesson fragment">
                 <div class="lesson-q">"Đặt logic trong Data Model"</div>
-                <div class="lesson-a">6 tháng sau: 15 chỗ gọi playerData.AddCoin() trực tiếp. Không ai validate. Không ai notify UI. Phải refactor toàn bộ.</div>
+                <div class="lesson-a">6 tháng sau: 15 chỗ gọi playerData.AddCoin() trực tiếp. Không validate. Không notify UI. Phải refactor toàn bộ.</div>
             </div>
             <div class="lesson fragment">
                 <div class="lesson-q">"1 file PlayerData.cs — 2000 dòng"</div>
-                <div class="lesson-a">Serialize toàn bộ mỗi lần save = 50ms lag spike trên low-end device. Merge conflict mỗi ngày. Chia partial class = hết cả hai.</div>
+                <div class="lesson-a">Serialize toàn bộ mỗi lần save = 50ms lag spike trên low-end device. Merge conflict mỗi ngày. partial class = hết cả hai.</div>
             </div>
             <div class="lesson fragment">
                 <div class="lesson-q">"Thêm field mới, không check version"</div>
-                <div class="lesson-a">Player cũ update app → field mới = default 0. Nhưng business cần default = 100 (quà chào mừng). Bỏ lỡ 50K users. Giờ luôn check dataVersion trong OnPostLoad().</div>
+                <div class="lesson-a">Player cũ update app → field mới = default 0, business cần 100. Bỏ lỡ 50K users. Giờ luôn check dataVersion trong OnPostLoad().</div>
             </div>
             <div class="lesson fragment">
                 <div class="lesson-q">"Quên test trên low-end device"</div>
-                <div class="lesson-a">PlayerPrefs write trên flagship: 2ms. Trên budget phone 2019: 80ms. Main thread. Frame drop rõ rệt. Solution: MarkDirty() + batch save on pause.</div>
+                <div class="lesson-a">PlayerPrefs write trên flagship: 2ms. Budget phone 2019: 80ms main thread. Solution: MarkDirty() + batch save on pause.</div>
             </div>
         </div>
     </section>
 
-    <!-- ====== SLIDE 12: TRADE-OFFS ====== -->
+    <!-- ══════ SLIDE 13: TRADE-OFFS ══════ -->
     <section data-background-color="#0a0a14">
         <h2>Trade-offs chúng tôi chấp nhận</h2>
         <p class="text-muted">Mọi kiến trúc đều có giá. Quan trọng là biết mình đang trả cái gì.</p>
@@ -522,49 +611,68 @@ public partial class PlayerData
                     <li>Designer <strong>tự sửa balance</strong> — không cần Dev</li>
                     <li><strong>Auto-save</strong> — 0 reports mất progress</li>
                     <li><strong>Type-safe</strong> IDs — compile error > runtime crash</li>
-                    <li><strong>Modular</strong> — thêm feature mà không sửa code cũ</li>
-                    <li><strong>Inspector-friendly</strong> — debug trực tiếp trong Editor</li>
-                    <li><strong>Proven</strong> — chạy ổn trên production apps</li>
+                    <li><strong>Modular</strong> — thêm feature không sửa code cũ</li>
+                    <li><strong>Inspector-friendly</strong> — debug trực tiếp Editor</li>
                 </ul>
             </div>
             <div class="card fragment">
                 <h3 class="text-red">Chúng tôi chấp nhận</h3>
                 <ul style="padding-left: 1em;">
-                    <li>Local storage <strong>không encrypt by default</strong> → cần thêm layer</li>
-                    <li><strong>Không có cloud save</strong> built-in → integrate riêng</li>
-                    <li>Singleton access → <strong>khó mock</strong> trong unit tests</li>
-                    <li>Config baked trong build → <strong>cần Remote Config</strong> cho hotfix</li>
-                    <li>Framework-dependent → <strong>migration cost</strong> nếu đổi stack</li>
+                    <li>Local storage <strong>không encrypt</strong> by default</li>
+                    <li><strong>Không cloud save</strong> built-in</li>
+                    <li>Singleton → <strong>khó mock</strong> trong unit tests</li>
+                    <li>Config baked → <strong>cần Remote Config</strong> cho hotfix</li>
+                    <li>Framework-dependent → <strong>migration cost</strong></li>
                 </ul>
             </div>
         </div>
         <div class="insight fragment">
-            <div class="insight-label">Khi nào kiến trúc này KHÔNG phù hợp?</div>
-            <p>Multiplayer cần server-authoritative data. AAA cần async file I/O. Nếu bạn đang làm game online competitive → cần thêm server validation layer.</p>
+            <div class="insight-label">Khi nào KHÔNG phù hợp?</div>
+            <p>Multiplayer cần server-authoritative data. AAA cần async file I/O. Game online competitive → cần thêm server validation layer.</p>
         </div>
     </section>
 
-    <!-- ====== SLIDE 13: SUMMARY ====== -->
+    <!-- ══════ SLIDE 14: EDITOR TOOLS [NEW] ══════ -->
+    <section data-background-color="#0a0a14">
+        <h2>Editor Tools — Điều tạo nên sự khác biệt</h2>
+        <p class="text-muted">Xem và chỉnh sửa player data trực tiếp trong Unity Editor, không cần build</p>
+        <div class="ss-grid mt-1">
+            <div class="ss-item">
+                <img src="image-2.png" alt="JObjectDB Editor">
+                <div class="ss-cap">JObjectDB Editor — View JSON data toàn bộ hệ thống</div>
+            </div>
+            <div class="ss-item">
+                <img src="image-3.png" alt="ScriptableObject Inspector">
+                <div class="ss-cap">ScriptableObject Inspector — Edit từng field trực tiếp</div>
+            </div>
+        </div>
+        <div class="insight fragment">
+            <div class="insight-label">Tác động thực tế</div>
+            <p><strong>Debug speed tăng 5-10x</strong> — thay vì print log → build → reproduce → check, bạn mở Inspector → thấy ngay state → sửa → test lại trong 3 giây.</p>
+        </div>
+    </section>
+
+    <!-- ══════ SLIDE 15: TAKEAWAYS + Q&A ══════ -->
     <section class="cover" data-background-gradient="radial-gradient(ellipse at 30% 50%, #111133 0%, #0a0a14 70%)">
-        <h2 style="text-align: center; font-size: 1.5em; margin-bottom: 0.3em;">Takeaways</h2>
-        <div class="grid-3" style="margin-top: 0.6em; text-align: left;">
+        <h2 style="text-align: center; font-size: 1.3em; margin-bottom: 0.2em;">Takeaways</h2>
+        <div class="grid-3" style="margin-top: 0.4em; text-align: left;">
             <div class="card bordered-green">
-                <h3 class="text-green" style="font-size: 0.8em !important;">Nguyên tắc</h3>
+                <h3 class="text-green" style="font-size: 0.72em !important;">Nguyên tắc</h3>
                 <p>Tách data / logic / persistence.<br>Một cổng duy nhất sửa data.<br>Event-driven, không coupling.</p>
             </div>
             <div class="card bordered-blue">
-                <h3 style="font-size: 0.8em !important;">Patterns</h3>
+                <h3 style="font-size: 0.72em !important;">Patterns</h3>
                 <p>Config Pipeline (sheets → SO).<br>Repository (data ≠ logic).<br>Lifecycle hooks (auto-save).<br>Observer (decoupled).</p>
             </div>
             <div class="card bordered-purple">
-                <h3 class="text-purple" style="font-size: 0.8em !important;">Scaling</h3>
+                <h3 class="text-purple" style="font-size: 0.72em !important;">Scaling</h3>
                 <p>partial class cho team lớn.<br>Module boundaries rõ ràng.<br>Cross-model: đọc OK, sửa qua event.</p>
             </div>
         </div>
-        <div style="margin-top: 0.8em; text-align: center;">
-            <a href="https://hnb-rabear.github.io/data_management_in_unity" target="_blank" style="color: var(--blue); font-size: 0.65em; text-decoration: none; border-bottom: 1px solid rgba(74,158,255,0.3); padding-bottom: 0.2em;">📖 hnb-rabear.github.io/data_management_in_unity</a>
+        <div style="margin-top: 0.5em; text-align: center;">
+            <a href="https://hnb-rabear.github.io/data_management_in_unity" target="_blank" style="color: var(--blue); font-size: 0.55em; text-decoration: none; border-bottom: 1px solid rgba(74,158,255,0.3); padding-bottom: 0.15em;">📖 hnb-rabear.github.io/data_management_in_unity</a>
         </div>
-        <p style="text-align: center; margin-top: 1em; font-size: 1.5em; font-weight: 700; color: #fff;">Q&A</p>
+        <p style="text-align: center; margin-top: 0.5em; font-size: 1.5em; font-weight: 700; color: #fff;">Q&A</p>
     </section>
 
 </div>
@@ -579,10 +687,11 @@ public partial class PlayerData
         transition: 'slide',
         transitionSpeed: 'default',
         backgroundTransition: 'fade',
-        center: false,
+        center: true,
         width: 1280,
         height: 720,
-        margin: 0.04,
+        margin: 0.06,
+        progress: true,
         plugins: [ RevealHighlight ]
     });
 </script>
