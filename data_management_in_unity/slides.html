@@ -1,0 +1,923 @@
+<!doctype html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Management trong Unity Game</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/night.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent-blue: #4a9eff;
+            --accent-purple: #7c3aed;
+            --accent-green: #059669;
+            --accent-amber: #f59e0b;
+            --accent-red: #dc2626;
+            --accent-pink: #ec4899;
+            --bg-dark: #0f0f1a;
+            --bg-card: rgba(255,255,255,0.05);
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+        }
+
+        .reveal {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+        }
+
+        .reveal .slides {
+            text-align: left;
+        }
+
+        .reveal h1, .reveal h2, .reveal h3 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            text-transform: none;
+            letter-spacing: -0.02em;
+        }
+
+        .reveal h1 {
+            font-size: 2.4em;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .reveal h2 {
+            font-size: 1.8em;
+            color: #fff;
+            margin-bottom: 0.6em;
+        }
+
+        .reveal h3 {
+            font-size: 1.1em;
+            color: var(--accent-blue);
+            margin-bottom: 0.4em;
+        }
+
+        .reveal p, .reveal li {
+            font-size: 0.75em;
+            line-height: 1.7;
+            color: var(--text-main);
+        }
+
+        .reveal .slide-number {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* Cover slide */
+        .cover-slide {
+            text-align: center !important;
+        }
+
+        .cover-slide h1 {
+            font-size: 2.8em !important;
+            margin-bottom: 0.2em;
+        }
+
+        .cover-slide .subtitle {
+            font-size: 1.1em;
+            color: var(--text-muted);
+            font-weight: 300;
+            margin-bottom: 2em;
+        }
+
+        .cover-slide .author {
+            font-size: 0.85em;
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+
+        /* Pain point cards */
+        .pain-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1.2em;
+            margin-top: 1em;
+        }
+
+        .pain-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.2em;
+            border-left: 4px solid var(--accent-red);
+            backdrop-filter: blur(10px);
+        }
+
+        .pain-card .pain-icon {
+            font-size: 2em;
+            margin-bottom: 0.3em;
+        }
+
+        .pain-card h3 {
+            font-size: 0.85em !important;
+            color: #fff !important;
+            margin-bottom: 0.3em;
+        }
+
+        .pain-card p {
+            font-size: 0.65em !important;
+            color: var(--text-muted);
+        }
+
+        /* Goal checklist */
+        .goal-list {
+            list-style: none !important;
+            padding-left: 0 !important;
+        }
+
+        .goal-list li {
+            font-size: 0.85em !important;
+            padding: 0.5em 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .goal-list li::before {
+            content: "✅ ";
+            margin-right: 0.3em;
+        }
+
+        /* Architecture diagram */
+        .arch-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2em;
+            margin-top: 1em;
+        }
+
+        .arch-box {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.5em;
+            border-top: 3px solid;
+            position: relative;
+        }
+
+        .arch-box.static {
+            border-color: var(--accent-green);
+        }
+
+        .arch-box.dynamic {
+            border-color: var(--accent-purple);
+        }
+
+        .arch-box h3 {
+            font-size: 1em !important;
+            margin-bottom: 0.6em;
+        }
+
+        .arch-box .arch-flow {
+            font-size: 0.65em;
+            color: var(--text-muted);
+            line-height: 2;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+
+        .arch-box .arch-tag {
+            display: inline-block;
+            padding: 0.15em 0.5em;
+            border-radius: 4px;
+            font-size: 0.6em;
+            font-weight: 600;
+            margin-top: 0.5em;
+        }
+
+        .tag-readonly {
+            background: rgba(5, 150, 105, 0.2);
+            color: var(--accent-green);
+        }
+
+        .tag-readwrite {
+            background: rgba(124, 58, 237, 0.2);
+            color: var(--accent-purple);
+        }
+
+        /* Before/After comparison */
+        .compare-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5em;
+            margin-top: 1em;
+        }
+
+        .compare-box {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.2em;
+            border-top: 3px solid;
+        }
+
+        .compare-box.bad {
+            border-color: var(--accent-red);
+        }
+
+        .compare-box.good {
+            border-color: var(--accent-green);
+        }
+
+        .compare-box h3 {
+            font-size: 0.85em !important;
+        }
+
+        .compare-box pre {
+            font-size: 0.55em !important;
+            margin: 0.5em 0 0 0 !important;
+        }
+
+        /* Layer stack */
+        .layer-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6em;
+            margin-top: 1em;
+        }
+
+        .layer {
+            background: var(--bg-card);
+            border-radius: 10px;
+            padding: 0.8em 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 1em;
+            border-left: 4px solid;
+        }
+
+        .layer .layer-name {
+            font-size: 0.8em;
+            font-weight: 700;
+            color: #fff;
+            min-width: 260px;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+
+        .layer .layer-desc {
+            font-size: 0.65em;
+            color: var(--text-muted);
+        }
+
+        .layer-4 { border-color: var(--accent-green); }
+        .layer-3 { border-color: var(--accent-purple); }
+        .layer-2 { border-color: var(--accent-blue); }
+        .layer-1 { border-color: var(--accent-amber); }
+
+        /* Golden rule */
+        .golden-rule {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 12px;
+            padding: 1em 1.5em;
+            margin-top: 1em;
+        }
+
+        .golden-rule h3 {
+            color: var(--accent-amber) !important;
+            font-size: 0.9em !important;
+        }
+
+        .golden-rule pre {
+            font-size: 0.6em !important;
+            margin: 0.5em 0 0 0 !important;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            margin-top: 1em;
+            padding-left: 2em;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0.5em;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--accent-green), var(--accent-amber), var(--accent-red));
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 0.6em 0 0.6em 1.5em;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -1.55em;
+            top: 1em;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+        }
+
+        .timeline-item h3 {
+            font-size: 0.8em !important;
+            margin-bottom: 0.1em;
+        }
+
+        .timeline-item p {
+            font-size: 0.6em !important;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        /* Pros/Cons table */
+        .proscons-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5em;
+            margin-top: 1em;
+        }
+
+        .proscons-box {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.2em;
+        }
+
+        .proscons-box h3 {
+            font-size: 0.9em !important;
+            margin-bottom: 0.6em;
+        }
+
+        .proscons-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .proscons-box li {
+            font-size: 0.62em !important;
+            padding: 0.35em 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+
+        /* Lesson cards */
+        .lesson-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7em;
+            margin-top: 0.8em;
+        }
+
+        .lesson-item {
+            background: var(--bg-card);
+            border-radius: 10px;
+            padding: 0.8em 1.2em;
+            border-left: 3px solid var(--accent-amber);
+        }
+
+        .lesson-item .lesson-title {
+            font-size: 0.75em;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .lesson-item .lesson-desc {
+            font-size: 0.6em;
+            color: var(--text-muted);
+            margin-top: 0.2em;
+        }
+
+        /* Summary steps */
+        .step-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1em;
+            margin-top: 1.5em;
+        }
+
+        .step-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.2em;
+            text-align: center;
+            border-top: 3px solid;
+        }
+
+        .step-card:nth-child(1) { border-color: var(--accent-blue); }
+        .step-card:nth-child(2) { border-color: var(--accent-green); }
+        .step-card:nth-child(3) { border-color: var(--accent-purple); }
+
+        .step-card .step-num {
+            font-size: 2em;
+            font-weight: 900;
+            opacity: 0.3;
+        }
+
+        .step-card h3 {
+            font-size: 0.85em !important;
+            color: #fff !important;
+        }
+
+        .step-card p {
+            font-size: 0.6em !important;
+            color: var(--text-muted);
+        }
+
+        /* Resources */
+        .resources {
+            margin-top: 1.5em;
+            text-align: center;
+        }
+
+        .resources a {
+            display: inline-block;
+            padding: 0.5em 1.2em;
+            margin: 0.3em;
+            background: var(--bg-card);
+            border-radius: 8px;
+            color: var(--accent-blue) !important;
+            font-size: 0.7em;
+            text-decoration: none;
+            border: 1px solid rgba(74, 158, 255, 0.2);
+            transition: all 0.3s;
+        }
+
+        .resources a:hover {
+            background: rgba(74, 158, 255, 0.1);
+            border-color: var(--accent-blue);
+        }
+
+        /* Keyword highlight */
+        .keyword {
+            color: var(--accent-amber);
+            font-weight: 600;
+        }
+
+        .highlight-blue { color: var(--accent-blue); font-weight: 600; }
+        .highlight-green { color: var(--accent-green); font-weight: 600; }
+        .highlight-purple { color: var(--accent-purple); font-weight: 600; }
+        .highlight-red { color: var(--accent-red); font-weight: 600; }
+
+        /* Custom code styling */
+        .reveal pre {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .reveal pre code {
+            padding: 1em !important;
+            font-size: 0.85em;
+            line-height: 1.5;
+            max-height: 500px;
+        }
+
+        /* Slide background */
+        .reveal .slides section {
+            padding: 1em 2em;
+        }
+
+        /* Big number */
+        .big-number {
+            font-size: 4em;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Footer */
+        .slide-footer {
+            position: absolute;
+            bottom: 1em;
+            right: 2em;
+            font-size: 0.5em;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+    <!-- ============================================ -->
+    <!-- SLIDE 1: Cover -->
+    <!-- ============================================ -->
+    <section class="cover-slide" data-background-gradient="radial-gradient(ellipse at center, #1a1a3e 0%, #0f0f1a 70%)">
+        <h1>Data Management<br>trong Unity Game</h1>
+        <p class="subtitle">Kinh nghiệm thiết kế hệ thống quản lý data từ production</p>
+        <p class="author">hnb-rabear</p>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SLIDE 2: Pain Points -->
+    <!-- ============================================ -->
+    <section data-background-color="#0f0f1a">
+        <h2>Vấn đề chúng tôi gặp phải</h2>
+        <div class="pain-grid">
+            <div class="pain-card fragment">
+                <div class="pain-icon">🔒</div>
+                <h3>Designer phụ thuộc Dev</h3>
+                <p>Muốn sửa giá item từ 100 → 150?<br>Phải nhờ Dev commit → build → QA test.<br><strong style="color: var(--accent-red);">Mất 2 ngày cho 1 con số.</strong></p>
+            </div>
+            <div class="pain-card fragment">
+                <div class="pain-icon">💾</div>
+                <h3>Save data rải khắp nơi</h3>
+                <p>PlayerPrefs.SetInt("coin", ...) ở 10 chỗ khác nhau.<br>Thêm 1 field mới → quên sửa 1 chỗ = bug.<br><strong style="color: var(--accent-red);">Không ai validate.</strong></p>
+            </div>
+            <div class="pain-card fragment">
+                <div class="pain-icon">💀</div>
+                <h3>Mất progress người chơi</h3>
+                <p>Quên gọi Save khi app bị kill.<br>Player mất 3 ngày progress.<br><strong style="color: var(--accent-red);">1-star review.</strong></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SLIDE 3: Design Goals -->
+    <!-- ============================================ -->
+    <section data-background-color="#0f0f1a">
+        <h2>Mục tiêu thiết kế</h2>
+        <ul class="goal-list">
+            <li class="fragment">Designer tự sửa data — <span class="keyword">không cần Dev can thiệp</span></li>
+            <li class="fragment">Auto-save — <span class="keyword">không bao giờ mất progress</span></li>
+            <li class="fragment">Type-safe — <span class="keyword">lỗi phát hiện khi viết code</span>, không phải khi chạy game</li>
+            <li class="fragment">Modular — <span class="keyword">thêm feature mới mà không sửa code cũ</span></li>
+            <li class="fragment">Unity-native — tận dụng <span class="keyword">Inspector, ScriptableObject, Editor Tools</span></li>
+        </ul>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SLIDE 4: Architecture Overview -->
+    <!-- ============================================ -->
+    <section data-background-color="#0f0f1a">
+        <h2>Kiến trúc tổng quan</h2>
+        <p style="font-size: 0.7em; color: var(--text-muted);">Mọi data trong game thuộc 1 trong 2 loại — không có ngoại lệ.</p>
+        <div class="arch-grid">
+            <div class="arch-box static fragment">
+                <h3><span class="highlight-green">Static Config Data</span></h3>
+                <div class="arch-flow">
+                    Google Sheets / Excel<br>
+                    &nbsp;&nbsp;↓ <span style="color: var(--accent-green);">SheetX Export</span><br>
+                    JSON + C# Scripts<br>
+                    &nbsp;&nbsp;↓ Deserialize<br>
+                    ConfigCollection (ScriptableObject)
+                </div>
+                <span class="arch-tag tag-readonly">Read-Only</span>
+            </div>
+            <div class="arch-box dynamic fragment">
+                <h3><span class="highlight-purple">Dynamic Player Data</span></h3>
+                <div class="arch-flow">
+                    JObjectData (POCO)<br>
+                    &nbsp;&nbsp;↓ <span style="color: var(--accent-purple);">wrapped by</span><br>
+                    JObjectModel&lt;T&gt; (ScriptableObject)<br>
+                    &nbsp;&nbsp;↓ managed by<br>
+                    DBManager → PlayerPrefs / JSON
+                </div>
+                <span class="arch-tag tag-readwrite">Read / Write</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SLIDE 5: Static Config — SheetX -->
+    <!-- ============================================ -->
+    <section data-background-color="#0f0f1a">
+        <h2>Static Config: Designer tự phục vụ</h2>
+        <div class="compare-grid">
+            <div class="compare-box bad fragment">
+                <h3><span class="highlight-red">❌ Before</span></h3>
+                <p style="font-size: 0.6em; color: var(--text-muted);">Designer gửi Excel → Dev copy số vào code → Build → Test → Fix typo → Build lại</p>
+            </div>
+            <div class="compare-box good fragment">
+                <h3><span class="highlight-green">✅ After</span></h3>
+                <p style="font-size: 0.6em; color: var(--text-muted);">Designer sửa Sheet → nhấn Export → Done.<br><strong style="color: #fff;">Zero Dev involvement.</strong></p>
+            </div>
+        </div>
+        <div class="fragment" style="margin-top: 1em;">
+            <h3>Type-Safe: Lỗi phát hiện ngay khi viết code</h3>
+            <pre><code class="language-csharp">// ❌ String — gõ sai chỉ biết khi CHẠY game
+var hero = GetHeroById("HEROS_1");  // Runtime: null → crash
+
+// ✅ Generated constant — gõ sai biết NGay khi VIẾT code
+var hero = GetHeroById(IDs.Hero.HERO_1);  // Compile-time checked</code></pre>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SLIDE 6: Why not just PlayerPrefs? -->
+    <!-- ============================================ -->
+    <section data-background-color="#0f0f1a">
+        <h2>Tại sao không dùng PlayerPrefs trực tiếp?</h2>
+        <div class="compare-grid">
+            <div class="compare-box bad">
+                <h3><span class="highlight-red">❌ PlayerPrefs trực tiếp</span></h3>
+                <pre><code class="language-csharp">// 10 chỗ sửa coin — không ai validate
+PlayerPrefs.SetInt("coin", coin - 100);
+// Coin có thể âm? Ai notify UI?
+// Ai biết cần save? Quên thì mất data.</code></pre>
+            </div>
+            <div class="compare-box good">
+                <h3><span class="highlight-green">✅ Data Handler</span></h3>
+                <pre><code class="language-csharp">// 1 chỗ duy nhất — validate + notify + save
+public bool TrySpendCoin(int amount) {
+    if (Data.coin < amount) return false;
+    Data.coin -= amount;
+    OnCoinChanged?.Invoke(Data.coin);
+    MarkDirty(); // Auto-save khi cần
+    return true;
+}</code></pre>
+            </div>
+        </div>
+        <p class="fragment" style="font-size: 0.75em; text-align: center; margin-top: 1em; color: var(--accent-amber);">
+            <strong>1 nơi validate. 1 nơi notify. 1 nơi save. Không bao giờ quên.</strong>
+        </p>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SLIDE 7: 4-Layer Architecture -->
+    <!-- ============================================ -->
+    <section data-background-color="#0f0f1a">
+        <h2>Dynamic Data: 4 lớp, 4 trách nhiệm</h2>
+        <div class="layer-stack">
+            <div class="layer layer-4 fragment">
+                <span class="layer-name">DBManager (MonoBehaviour)</span>
+                <span class="layer-desc">Unity lifecycle · DontDestroyOnLoad · auto-save on pause/quit</span>
+            </div>
+            <div class="layer layer-3 fragment">
+                <span class="layer-name">SaveDataCollection (ScriptableObject)</span>
+                <span class="layer-desc">Tập hợp tất cả Models · điều phối Load/Save/OnUpdate</span>
+            </div>
+            <div class="layer layer-2 fragment">
+                <span class="layer-name">JObjectModel&lt;T&gt; (ScriptableObject)</span>
+                <span class="layer-desc">Logic nghiệp vụ · validation · events · lifecycle hooks</span>
+            </div>
+            <div class="layer layer-1 fragment">
+                <span class="layer-name">JObjectData (POCO, Serializable)</span>
+                <span class="layer-desc">Dữ liệu thuần túy · chỉ chứa fields · không có logic</span>
+            </div>
+        </div>
+        <div class="golden-rule fragment">
+            <h3>⚡ Quy tắc vàng</h3>
+            <pre><code class="language-csharp">❌  playerData.coin -= 100;              // KHÔNG — sửa data trực tiếp
+✅  playerModel.TrySpendCoin(100);       // ĐÚNG  — đi qua "người gác cổng"</code></pre>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SLIDE 8: Code Example -->
+    <!-- ============================================ -->
+    <section data-background-color="#0f0f1a">
+        <h2>Code thực tế</h2>
+        <div class="compare-grid">
+            <div class="fragment">
+                <h3>Data Model — chỉ chứa dữ liệu</h3>
+                <pre><code class="language-csharp">[Serializable]
+public partial class PlayerData : JObjectData
+{
+    public string userName;
+    public int coin;
+    public int level;
+    public List&lt;int&gt; iapIdsBought = new();
+}</code></pre>
+            </div>
+            <div class="fragment">
+                <h3>Data Handler — chứa logic</h3>
+                <pre><code class="language-csharp">public partial class PlayerModel
+    : JObjectModel&lt;PlayerData&gt;
+{
+    public event Action&lt;int&gt; OnCoinChanged;
+
+    public void AddCoin(int amount) {
+        Data.coin += amount;
+        OnCoinChanged?.Invoke(Data.coin);
+        MarkDirty();
+    }
+}</code></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SLIDE 9: Designing for Extensibility -->
+    <!-- ============================================ -->
+    <section data-background-color="#0f0f1a">
+        <h2>Thiết kế dễ mở rộng & bảo trì</h2>
+        <div class="compare-grid">
+            <div>
+                <h3 class="fragment" data-fragment-index="1">🧩 Thêm feature mới = 3 bước</h3>
+                <pre class="fragment" data-fragment-index="1"><code class="language-csharp">// Bước 1: Tạo Data Model
+[Serializable]
+public class QuestData : JObjectData {
+    public List&lt;QuestProgress&gt; quests = new();
+}
+
+// Bước 2: Tạo Data Handler
+public class QuestsModel : JObjectModel&lt;QuestData&gt;
+{ /* logic */ }
+
+// Bước 3: 1 dòng trong Collection
+[AutoFill] public QuestsModel quests;</code></pre>
+                <p class="fragment" data-fragment-index="1" style="font-size: 0.6em; color: var(--accent-green);">Không sửa bất kỳ code cũ nào. Zero regression risk.</p>
+            </div>
+            <div>
+                <h3 class="fragment" data-fragment-index="2">📂 partial class phân tách modules</h3>
+                <pre class="fragment" data-fragment-index="2"><code class="language-csharp">// PlayerData.cs         → core fields
+// PlayerData.Inventory.cs → inventory logic
+// PlayerData.Misc.cs      → misc flags
+
+// DataConfigCollection.cs
+// DataConfigCollection.WeeklyContest.cs
+// DataConfigCollection.Blitz.cs</code></pre>
+                <p class="fragment" data-fragment-index="2" style="font-size: 0.6em; color: var(--accent-amber);">3 dev cùng sửa PlayerData → 0 merge conflicts.</p>
+
+                <h3 class="fragment" data-fragment-index="3">🔌 Cross-model: chỉ ĐỌC, không SỬA</h3>
+                <pre class="fragment" data-fragment-index="3"><code class="language-csharp">// PlayerModel cần check CompetitionModel
+[AutoFill, SerializeField]
+private CompetitionModel m_competition;
+
+// ✅ ĐỌC: m_competition.RaceUnlockLevel
+// ❌ SỬA: m_competition.Data.score = 0</code></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SLIDE 10: Lifecycle Hooks -->
+    <!-- ============================================ -->
+    <section data-background-color="#0f0f1a">
+        <h2>Lifecycle: Không bao giờ quên save</h2>
+        <p style="font-size: 0.7em; color: var(--text-muted);">Bạn chỉ viết logic. Framework lo timing và save.</p>
+        <div class="timeline">
+            <div class="timeline-item fragment">
+                <h3><span class="highlight-green">App Start</span> → Init() hoặc OnPostLoad()</h3>
+                <p>Lần đầu? Set default. Lần sau? Tính offline reward.</p>
+            </div>
+            <div class="timeline-item fragment">
+                <h3><span class="highlight-blue">Game Loop</span> → OnUpdate(deltaTime)</h3>
+                <p>Mỗi frame: regenerate lives, đếm ngược timer, cooldown...</p>
+            </div>
+            <div class="timeline-item fragment">
+                <h3><span class="highlight-purple">App Pause</span> → OnPause() + OnPreSave()</h3>
+                <p>Vào background → lưu timestamp → AUTO SAVE</p>
+            </div>
+            <div class="timeline-item fragment">
+                <h3><span class="highlight-red">App Quit</span> → OnPreSave() → AUTO SAVE</h3>
+                <p>Đóng app → validate data → save → không bao giờ mất progress</p>
+            </div>
+        </div>
+        <pre class="fragment"><code class="language-csharp">public override void OnPostLoad(int utcNow, int offlineSeconds) {
+    int offlineGold = offlineSeconds / 60 * GOLD_PER_MINUTE;
+    AddCoin(offlineGold); // Player rời game 3 giờ → +50 gold
+}</code></pre>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SLIDE 10: Events Pattern -->
+    <!-- ============================================ -->
+    <section data-background-color="#0f0f1a">
+        <h2>Events: Modules không biết nhau tồn tại</h2>
+        <div class="compare-grid">
+            <div class="compare-box bad fragment">
+                <h3><span class="highlight-red">❌ Tight coupling</span></h3>
+                <pre><code class="language-csharp">// PlayerModel biết MỌI THỨ
+public void SpendCoin(int amount) {
+    coin -= amount;
+    hudView.UpdateCoin(coin);
+    shopView.RefreshButtons();
+    achievementMgr.Check("spend");
+    // Thêm feature → sửa file này
+}</code></pre>
+            </div>
+            <div class="compare-box good fragment">
+                <h3><span class="highlight-green">✅ Decoupled events</span></h3>
+                <pre><code class="language-csharp">// PlayerModel chỉ phát event
+public void SpendCoin(int amount) {
+    Data.coin -= amount;
+    OnCoinChanged?.Invoke(Data.coin);
+    MarkDirty();
+    // Thêm feature? Subscribe event.
+    // KHÔNG sửa file này.
+}</code></pre>
+            </div>
+        </div>
+        <p class="fragment" style="font-size: 0.75em; text-align: center; margin-top: 1em;">
+            <span class="highlight-blue">HUD</span> tự lắng nghe → cập nhật text · 
+            <span class="highlight-purple">Shop</span> tự lắng nghe → enable/disable nút · 
+            <span class="highlight-green">Achievement</span> tự lắng nghe → check thành tựu
+        </p>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SLIDE 11: Pros & Cons -->
+    <!-- ============================================ -->
+    <section data-background-color="#0f0f1a">
+        <h2>Ưu điểm & Nhược điểm</h2>
+        <p style="font-size: 0.65em; color: var(--text-muted);">Không có kiến trúc hoàn hảo. Đây là trade-offs chúng tôi chấp nhận.</p>
+        <div class="proscons-grid">
+            <div class="proscons-box fragment">
+                <h3><span class="highlight-green">✅ Ưu điểm</span></h3>
+                <ul>
+                    <li>🚀 Designer iteration tăng <strong>3-5x</strong></li>
+                    <li>🔧 Unity-native — Inspector, SO, Editor Tools</li>
+                    <li>💾 Auto lifecycle — không quên save</li>
+                    <li>🔒 Type-safe — compile error &gt; runtime crash</li>
+                    <li>🧩 Modular — thêm Data + Model = xong</li>
+                    <li>🔌 Decoupled — events, modules độc lập</li>
+                </ul>
+            </div>
+            <div class="proscons-box fragment">
+                <h3><span class="highlight-red">❌ Nhược điểm</span></h3>
+                <ul>
+                    <li>🔓 PlayerPrefs không encrypt → dễ cheat</li>
+                    <li>☁️ Không có cloud save built-in</li>
+                    <li>📌 Singleton pattern → khó unit test</li>
+                    <li>📦 Config baked trong build → cần Remote Config</li>
+                    <li>🔗 Tight coupling với RCore framework</li>
+                    <li>📏 Không có data versioning built-in</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SLIDE 12: Lessons Learned -->
+    <!-- ============================================ -->
+    <section data-background-color="#0f0f1a">
+        <h2>Bài học từ production</h2>
+        <div class="lesson-list">
+            <div class="lesson-item fragment">
+                <div class="lesson-title">"Data Model KHÔNG chứa logic"</div>
+                <div class="lesson-desc">Đặt AddCoin() trong PlayerData → 6 tháng sau, 15 chỗ gọi trực tiếp, không ai notify UI.</div>
+            </div>
+            <div class="lesson-item fragment">
+                <div class="lesson-title">"Tách data thành nhiều model nhỏ"</div>
+                <div class="lesson-desc">1 model PlayerData 2000 dòng → serialize = lag spike trên low-end phone. Chia nhỏ = save nhanh.</div>
+            </div>
+            <div class="lesson-item fragment">
+                <div class="lesson-title">"partial class cứu merge conflicts"</div>
+                <div class="lesson-desc">3 dev cùng sửa PlayerData.cs = conflict mỗi ngày. Chia thành .cs, .Inventory.cs, .Misc.cs → hết.</div>
+            </div>
+            <div class="lesson-item fragment">
+                <div class="lesson-title">"OnPostLoad() là nơi xử lý migration"</div>
+                <div class="lesson-desc">Thêm field mới? Default C# = 0. Nhưng player cũ cần nhận 100 gem. Luôn check dataVersion.</div>
+            </div>
+            <div class="lesson-item fragment">
+                <div class="lesson-title">"Export IDs TRƯỚC, JSON SAU"</div>
+                <div class="lesson-desc">Export JSON trước khi IDs → tham chiếu ID sai giá trị. Thứ tự: IDs → Constants → JSON.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SLIDE 13: Summary & Q&A -->
+    <!-- ============================================ -->
+    <section class="cover-slide" data-background-gradient="radial-gradient(ellipse at center, #1a1a3e 0%, #0f0f1a 70%)">
+        <h2 style="text-align: center;">Bắt đầu từ đâu?</h2>
+        <div class="step-grid">
+            <div class="step-card fragment">
+                <div class="step-num">01</div>
+                <h3>Cài đặt</h3>
+                <p>UniTask + RCore + SheetX<br>qua Package Manager</p>
+            </div>
+            <div class="step-card fragment">
+                <div class="step-num">02</div>
+                <h3>Static Config</h3>
+                <p>Thiết kế Sheets → Export<br>→ ConfigCollection</p>
+            </div>
+            <div class="step-card fragment">
+                <div class="step-num">03</div>
+                <h3>Dynamic Data</h3>
+                <p>DataModel → DataHandler<br>→ DBManager</p>
+            </div>
+        </div>
+        <div class="resources fragment">
+            <a href="https://hnb-rabear.github.io/data_management_in_unity" target="_blank">📖 Tài liệu đầy đủ</a>
+            <a href="https://github.com/hnb-rabear/RCore" target="_blank">📦 RCore Framework</a>
+            <a href="https://github.com/hnb-rabear/hnb-rabear.github.io/blob/main/sheetx/SheetXExample.unitypackage" target="_blank">📊 SheetX Example</a>
+        </div>
+        <p class="fragment" style="text-align: center; margin-top: 1.5em; font-size: 1.2em; font-weight: 700;">
+            Q&A
+        </p>
+    </section>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script>
+    Reveal.initialize({
+        hash: true,
+        slideNumber: 'c/t',
+        transition: 'slide',
+        transitionSpeed: 'default',
+        backgroundTransition: 'fade',
+        center: false,
+        width: 1280,
+        height: 720,
+        margin: 0.04,
+        plugins: [ RevealHighlight ]
+    });
+</script>
+</body>
+</html>
