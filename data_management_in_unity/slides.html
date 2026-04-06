@@ -222,8 +222,8 @@
                 <p>player data models cần persist<br>(profile, inventory, quests...)</p>
             </div>
             <div class="card bordered-green fragment">
-                <h3 style="font-size: 2.2em; color: var(--green); margin: 0;">3-5</h3>
-                <p>team members cùng sửa data layer<br>mỗi sprint</p>
+                <h3 style="font-size: 2.2em; color: var(--green); margin: 0;">2-3</h3>
+                <p>devs làm 5-7 features khác nhau<br>đều đọc/ghi cùng data layer</p>
             </div>
         </div>
         <div class="insight fragment">
@@ -670,6 +670,12 @@ PlayerData.Misc.cs</code></pre>
                 <h3 class="text-purple" style="font-size: 0.72em !important;">Scaling</h3>
                 <p>partial class cho team lớn.<br>Module boundaries rõ ràng.<br>Cross-model: đọc OK, sửa qua event.</p>
             </div>
+        </div>
+        <div class="insight fragment" style="margin-top: 0.3em; text-align: left;">
+            <div class="insight-label">Bức tranh lớn hơn: MVP</div>
+            <p>Data Management là nền tảng của kiến trúc <strong>MVP (Model-View-Presenter)</strong>:<br>
+            <code style="font-size: 0.85em;">View → Presenter → <span style="color: var(--blue); font-weight: 700;">Data Handler → Data Model</span></code><br>
+            Presenter điều phối logic game, View chỉ hiển thị — cả hai đều <strong>không sửa data trực tiếp</strong>.</p>
         </div>
         <div style="margin-top: 0.5em; text-align: center;">
             <a href="https://hnb-rabear.github.io/data_management_in_unity" target="_blank" style="color: var(--blue); font-size: 0.55em; text-decoration: none; border-bottom: 1px solid rgba(74,158,255,0.3); padding-bottom: 0.15em;">📖 hnb-rabear.github.io/data_management_in_unity</a>
