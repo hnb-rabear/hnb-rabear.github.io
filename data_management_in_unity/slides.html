@@ -431,26 +431,30 @@ var price = item.price;</code></pre>
                 <div class="code-label">Layer 1: Data Model — chỉ chứa data</div>
                 <pre><code class="language-csharp">[Serializable]
 public partial class PlayerData
+    : JObjectData
 {
-    public int coin;
-    public int level;
-    public List&lt;int&gt; ownedItems = new();
-    // Không method. Không logic.
+    public int CurrentLevel = 1;
+    public int CurrentCoins;
+    public int live = 5;
+    public int liveRegenTime;
+    public List&lt;int&gt; iapIdsBought = new();
+    public bool noAds;
 }</code></pre>
             </div>
             <div>
                 <div class="code-label">Layer 2: Data Handler — chứa logic</div>
-                <pre><code class="language-csharp">public class PlayerModel : DataHandler&lt;PlayerData&gt;
+                <pre><code class="language-csharp">public partial class PlayerModel
+    : JObjectModel&lt;PlayerData&gt;
 {
-    public event Action&lt;int&gt; OnCoinChanged;
-
-    public bool TrySpendCoin(int amount)
+    public void SetCurrency(
+        IDs.Currency currency,
+        int pValue, string pPlacement)
     {
-        if (Data.coin < amount) return false;
-        Data.coin -= amount;
-        OnCoinChanged?.Invoke(Data.coin);
-        MarkDirty();  // Đánh dấu cần save
-        return true;
+        // validate + assign...
+        DispatchEvent(
+            new CurrencyChangedEvent(
+                currency, preValue,
+                pValue, pPlacement));
     }
 }</code></pre>
             </div>
@@ -485,19 +489,17 @@ public partial class PlayerData
                 </div>
             </div>
             <div class="fragment">
-                <div class="code-label">Ví dụ: Offline reward</div>
+                <div class="code-label">Ví dụ thực tế: Live regen khi offline</div>
                 <pre><code class="language-csharp">public override void OnPostLoad(
-    int utcNow, int offlineSeconds)
+    int utcNowTimestamp,
+    int offlineSeconds)
 {
-    int goldPerMin = ConfigCollection
-        .Instance.offlineGoldRate;
-    int reward = offlineSeconds / 60
-                 * goldPerMin;
-    AddCoin(reward);
+    ValidateAvatars();
+    data.ValidateLiveModifiers();
 
-    Data.lives = Math.Min(
-        Data.lives + offlineSeconds
-        / LIVE_REGEN_SECONDS, MAX_LIVES);
+    if (offlineSeconds > 0)
+        ProcessOfflineRegen(
+            offlineSeconds);
 }</code></pre>
                 <p class="text-xs text-muted">Framework gọi đúng hook, đúng thời điểm. Dev chỉ viết logic.</p>
             </div>
@@ -522,14 +524,16 @@ public partial class PlayerData
             </div>
             <div class="card bordered-green fragment">
                 <h3 class="text-green">✅ Event-driven</h3>
-                <pre><code class="language-csharp">void SpendCoin(int amount) {
-    Data.coin -= amount;
-    OnCoinChanged?.Invoke(Data.coin);
-    MarkDirty();
-    // Thêm feature? Subscribe event.
-    // Xóa feature? Unsubscribe.
-}</code></pre>
-                <p>PlayerModel chỉ phát tín hiệu. Zero coupling.</p>
+                <pre><code class="language-csharp">public void SetCurrency(...) {
+    // validate + assign
+    DispatchEvent(
+        new CurrencyChangedEvent(
+            currency, preValue,
+            pValue, pPlacement));
+}
+// UI subscribe CurrencyChangedEvent
+// Quest subscribe CurrencyChangedEvent</code></pre>
+                <p>PlayerModel chỉ phát event. Zero coupling.</p>
             </div>
         </div>
         <div class="insight fragment">
@@ -545,28 +549,28 @@ public partial class PlayerData
         <div class="grid-3 mt-1">
             <div class="card bordered-blue fragment">
                 <h3>partial class</h3>
-                <pre style="font-size: 0.72em;"><code class="language-csharp">// PlayerData.cs
-// PlayerData.Inventory.cs
-// PlayerData.Avatar.cs</code></pre>
-                <p>3 dev sửa PlayerData → mỗi người 1 file → <strong>0 merge conflict</strong>.</p>
+                <pre style="font-size: 0.72em;"><code class="language-csharp">PlayerData.cs
+PlayerData.Inventory.cs
+PlayerData.Avatar.cs
+PlayerData.Misc.cs</code></pre>
+                <p>4 file trong Goods-Jam → <strong>0 merge conflict</strong>.</p>
             </div>
             <div class="card bordered-green fragment">
                 <h3>Module boundaries</h3>
-                <pre style="font-size: 0.72em;"><code class="language-csharp">// Thêm feature Quest:
-// 1. QuestData.cs   (data)
-// 2. QuestsModel.cs (logic)
-// 3. SaveDataCollection:
-[AutoFill] public QuestsModel q;</code></pre>
-                <p><strong>Open/Closed</strong>: mở rộng bằng thêm mới, không sửa cũ.</p>
+                <pre style="font-size: 0.72em;"><code class="language-csharp">[AutoFill] public PlayerModel player;
+[AutoFill] public RewardModel reward;
+[AutoFill] public QuestsModel quest;
+[AutoFill] public CompetitionModel comp;
+[AutoFill] public StoreModel store;</code></pre>
+                <p>Goods-Jam: <strong>7 models</strong> trong SaveDataCollection.</p>
             </div>
             <div class="card bordered-purple fragment">
                 <h3>Cross-model access</h3>
-                <pre style="font-size: 0.72em;"><code class="language-csharp">class PlayerModel
+                <pre style="font-size: 0.72em;"><code class="language-csharp">public partial class PlayerModel
 {
-    [SerializeField]
-    CompetitionModel m_comp;
-    // ✅ ĐỌC model khác
-    // ❌ KHÔNG SỬA
+    [AutoFill, SerializeField]
+    private CompetitionModel
+        m_competitionModel;
 }</code></pre>
                 <p>Đọc trực tiếp, <strong>sửa qua event</strong>.</p>
             </div>
