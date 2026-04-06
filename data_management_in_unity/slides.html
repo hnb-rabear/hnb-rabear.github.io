@@ -465,23 +465,23 @@ public partial class PlayerData
     <section data-background-color="#0a0a14">
         <h2>Pattern: Lifecycle Management</h2>
         <p class="text-muted">Data có vòng đời phức tạp hơn chỉ load/save</p>
-        <div class="grid-2 mt-1">
+        <div class="grid-2" style="margin-top: 0.3em;">
             <div>
-                <div class="card bordered-green" style="margin-bottom: 0.3em;">
-                    <h3>Init()</h3>
-                    <p>Lần đầu chơi → set default values</p>
+                <div class="card bordered-green" style="margin-bottom: 0.2em; padding: 0.4em 0.7em;">
+                    <h3 style="margin-bottom: 0.1em;">Init()</h3>
+                    <p style="font-size: 0.5em !important;">Lần đầu chơi → set default values</p>
                 </div>
-                <div class="card bordered-blue fragment" style="margin-bottom: 0.3em;">
-                    <h3>OnPostLoad(utcNow, offlineSecs)</h3>
-                    <p>Load xong → tính offline rewards, check expired timers</p>
+                <div class="card bordered-blue fragment" style="margin-bottom: 0.2em; padding: 0.4em 0.7em;">
+                    <h3 style="margin-bottom: 0.1em;">OnPostLoad(utcNow, offlineSecs)</h3>
+                    <p style="font-size: 0.5em !important;">Load xong → tính offline rewards, check expired timers</p>
                 </div>
-                <div class="card bordered-purple fragment" style="margin-bottom: 0.3em;">
-                    <h3>OnUpdate(deltaTime)</h3>
-                    <p>Mỗi frame → countdown timers, regen resources</p>
+                <div class="card bordered-purple fragment" style="margin-bottom: 0.2em; padding: 0.4em 0.7em;">
+                    <h3 style="margin-bottom: 0.1em;">OnUpdate(deltaTime)</h3>
+                    <p style="font-size: 0.5em !important;">Mỗi frame → countdown timers, regen resources</p>
                 </div>
-                <div class="card bordered-amber fragment">
-                    <h3>OnPause() → OnPreSave()</h3>
-                    <p>App background → validate + auto-save</p>
+                <div class="card bordered-amber fragment" style="padding: 0.4em 0.7em;">
+                    <h3 style="margin-bottom: 0.1em;">OnPause() → OnPreSave()</h3>
+                    <p style="font-size: 0.5em !important;">App background → validate + auto-save</p>
                 </div>
             </div>
             <div class="fragment">
