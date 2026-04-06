@@ -299,7 +299,7 @@
                         <h4>📊 Google Sheets / Excel</h4>
                         <p>Designer quản lý balance, content</p>
                     </div>
-                    <div style="text-align: center; font-size: 0.6em; color: var(--muted);">↓ SheetX Export</div>
+                    <div style="text-align: center; font-size: 0.6em; color: var(--muted);">↓ Export Tool (auto-generate)</div>
                     <div class="arch-box proc-amber" style="padding: 0.2em 0.5em;">
                         <h4>JSON Data + C# IDs/Constants</h4>
                         <p>Type-safe, auto-generated</p>
@@ -317,27 +317,27 @@
                 <span class="tag tag-purple">DYNAMIC PLAYER · Read/Write</span>
                 <div style="display: flex; flex-direction: column; gap: 0.15em; margin-top: 0.2em;">
                     <div class="arch-box game-purple" style="padding: 0.2em 0.5em;">
-                        <h4>🎮 DBManager <span style="font-weight: 400; font-size: 0.85em;">(MonoBehaviour)</span></h4>
+                        <h4>🎮 DataManager <span style="font-weight: 400; font-size: 0.85em;">(MonoBehaviour)</span></h4>
                         <p>Unity lifecycle driver · Auto-save on pause/quit</p>
                     </div>
                     <div style="text-align: center; font-size: 0.6em; color: var(--muted);">↓ drives</div>
                     <div class="arch-box rt-blue" style="padding: 0.2em 0.5em;">
-                        <h4>JObjectModelCollection <span style="font-weight: 400; font-size: 0.85em;">(SO)</span></h4>
+                        <h4>DataHandlerCollection <span style="font-weight: 400; font-size: 0.85em;">(SO)</span></h4>
                         <p>Aggregator — chứa tất cả Data Handlers</p>
                     </div>
                     <div style="text-align: center; font-size: 0.6em; color: var(--muted);">↓ contains</div>
                     <div style="display: flex; gap: 0.3em;">
                         <div class="arch-box proc-amber" style="padding: 0.2em 0.5em; flex: 1;">
-                            <h4>JObjectModel&lt;T&gt;</h4>
+                            <h4>DataHandler&lt;T&gt;</h4>
                             <p>Handler · Logic + Events</p>
                         </div>
                         <div style="display: flex; align-items: center; font-size: 0.6em; color: var(--muted);">wraps→</div>
                         <div class="arch-box src-green" style="padding: 0.2em 0.5em; flex: 1;">
-                            <h4>JObjectData</h4>
-                            <p>Data Model · POCO</p>
+                            <h4>DataModel</h4>
+                            <p>POCO · Serializable</p>
                         </div>
                     </div>
-                    <div style="text-align: center; font-size: 0.6em; color: var(--muted);">↕ JObjectDB — JSON ↔ PlayerPrefs</div>
+                    <div style="text-align: center; font-size: 0.6em; color: var(--muted);">↕ LocalDB — JSON ↔ PlayerPrefs</div>
                 </div>
             </div>
         </div>
@@ -359,7 +359,7 @@
                 <div class="flow mt-half">
                     <span class="flow-step">Spreadsheet</span>
                     <span class="flow-arrow">→</span>
-                    <span class="flow-step">SheetX</span>
+                    <span class="flow-step">Export Tool</span>
                     <span class="flow-arrow">→</span>
                     <span class="flow-step">JSON + C#</span>
                     <span class="flow-arrow">→</span>
