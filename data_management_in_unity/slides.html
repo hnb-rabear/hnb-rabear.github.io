@@ -602,35 +602,39 @@ PlayerData.Misc.cs</code></pre>
         </div>
     </section>
 
-    <!-- ══════ SLIDE 13: TRADE-OFFS ══════ -->
+    <!-- ══════ SLIDE 13: BENEFITS ══════ -->
     <section data-background-color="#0a0a14">
-        <h2>Trade-offs chúng tôi chấp nhận</h2>
-        <p class="text-muted">Mọi kiến trúc đều có giá. Quan trọng là biết mình đang trả cái gì.</p>
+        <h2>Tại sao kiến trúc này hiệu quả?</h2>
+        <p class="text-muted">Những vấn đề thực tế được giải quyết</p>
         <div class="grid-2 mt-1">
-            <div class="card fragment">
-                <h3 class="text-green">Chúng tôi được</h3>
-                <ul style="padding-left: 1em;">
-                    <li>Designer <strong>tự sửa balance</strong> — không cần Dev</li>
-                    <li><strong>Auto-save</strong> — 0 reports mất progress</li>
-                    <li><strong>Type-safe</strong> IDs — compile error > runtime crash</li>
-                    <li><strong>Modular</strong> — thêm feature không sửa code cũ</li>
-                    <li><strong>Inspector-friendly</strong> — debug trực tiếp Editor</li>
-                </ul>
+            <div>
+                <div class="card fragment" style="padding: 0.3em 0.6em; margin-bottom: 0.15em; border-left: 3px solid var(--green);">
+                    <h3 style="font-size: 0.7em; margin-bottom: 0;" class="text-green">Single Source of Truth</h3>
+                    <p style="font-size: 0.45em !important; margin: 0;">Mỗi data chỉ tồn tại 1 nơi. Không còn PlayerPrefs.GetInt() rải khắp codebase.</p>
+                </div>
+                <div class="card fragment" style="padding: 0.3em 0.6em; margin-bottom: 0.15em; border-left: 3px solid var(--blue);">
+                    <h3 style="font-size: 0.7em; margin-bottom: 0;" class="highlight">Predictable Data Flow</h3>
+                    <p style="font-size: 0.45em !important; margin: 0;">Mọi thay đổi đều qua Handler → dễ trace, dễ debug. "Ai sửa coin?" — luôn trả lời được.</p>
+                </div>
+                <div class="card fragment" style="padding: 0.3em 0.6em; margin-bottom: 0.15em; border-left: 3px solid var(--purple);">
+                    <h3 style="font-size: 0.7em; margin-bottom: 0;" class="text-purple">Zero Coupling giữa Features</h3>
+                    <p style="font-size: 0.45em !important; margin: 0;">Thêm feature mới = subscribe event. Xóa feature = unsubscribe. Không sửa code cũ.</p>
+                </div>
             </div>
-            <div class="card fragment">
-                <h3 class="text-red">Chúng tôi chấp nhận</h3>
-                <ul style="padding-left: 1em;">
-                    <li>Local storage <strong>không encrypt</strong> by default</li>
-                    <li><strong>Không cloud save</strong> built-in</li>
-                    <li>Singleton → <strong>khó mock</strong> trong unit tests</li>
-                    <li>Config baked → <strong>cần Remote Config</strong> cho hotfix</li>
-                    <li>Framework-dependent → <strong>migration cost</strong></li>
-                </ul>
+            <div>
+                <div class="card fragment" style="padding: 0.3em 0.6em; margin-bottom: 0.15em; border-left: 3px solid var(--amber);">
+                    <h3 style="font-size: 0.7em; margin-bottom: 0;" class="text-amber">Giảm lỗi do con người</h3>
+                    <p style="font-size: 0.45em !important; margin: 0;">Auto-save, lifecycle hooks, validation — framework xử lý, dev không cần nhớ.</p>
+                </div>
+                <div class="card fragment" style="padding: 0.3em 0.6em; margin-bottom: 0.15em; border-left: 3px solid var(--green);">
+                    <h3 style="font-size: 0.7em; margin-bottom: 0;" class="text-green">Team làm việc song song</h3>
+                    <p style="font-size: 0.45em !important; margin: 0;">Partial class + module boundaries → mỗi dev 1 file, 0 merge conflict.</p>
+                </div>
+                <div class="card fragment" style="padding: 0.3em 0.6em; margin-bottom: 0.15em; border-left: 3px solid var(--blue);">
+                    <h3 style="font-size: 0.7em; margin-bottom: 0;" class="highlight">Thay đổi không sợ vỡ</h3>
+                    <p style="font-size: 0.45em !important; margin: 0;">Đổi cách lưu (JSON → encrypt → cloud)? Chỉ sửa persistence layer, game logic không đổi.</p>
+                </div>
             </div>
-        </div>
-        <div class="insight fragment">
-            <div class="insight-label">Khi nào KHÔNG phù hợp?</div>
-            <p>Multiplayer cần server-authoritative data. AAA cần async file I/O. Game online competitive → cần thêm server validation layer.</p>
         </div>
     </section>
 
