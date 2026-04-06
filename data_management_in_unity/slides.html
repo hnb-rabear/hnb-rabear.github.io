@@ -226,17 +226,20 @@
             <div class="card bordered-green fragment" style="position: relative;">
                 <div class="principle-num">01</div>
                 <h3 class="text-green">Tách biệt mối quan tâm</h3>
-                <p>Data structure ≠ Business logic ≠ Persistence.<br><br>Designer quan tâm "item có giá bao nhiêu". Dev quan tâm "validate trước khi trừ coin". Framework quan tâm "save khi nào".</p>
+                <p>Data structure ≠ Business logic ≠ Persistence.</p>
+                <p>Ai quan tâm gì, người đó xử lý. Không trộn lẫn.</p>
             </div>
             <div class="card bordered-blue fragment" style="position: relative;">
                 <div class="principle-num">02</div>
                 <h3 class="highlight">Một cổng duy nhất</h3>
-                <p>Mọi thay đổi data phải đi qua đúng 1 nơi — "người gác cổng".<br><br>Nếu 5 chỗ trong code đều sửa được coin trực tiếp → không ai kiểm soát coin có hợp lệ không.</p>
+                <p>Mọi thay đổi data đi qua đúng 1 nơi — "người gác cổng".</p>
+                <p>5 chỗ sửa coin trực tiếp = không ai kiểm soát.</p>
             </div>
             <div class="card bordered-purple fragment" style="position: relative;">
                 <div class="principle-num">03</div>
                 <h3 class="text-purple">Không phụ thuộc ngầm</h3>
-                <p>Module A thay đổi data → Module B tự biết và tự xử lý, không cần A gọi trực tiếp B.<br><br>Event-driven. Thêm module mới = subscribe. Xóa module = unsubscribe. Zero side effects.</p>
+                <p>Module A thay đổi data → phát event. Module B tự lắng nghe.</p>
+                <p>Thêm module = subscribe. Xóa = unsubscribe.</p>
             </div>
         </div>
     </section>
@@ -543,8 +546,8 @@ public partial class PlayerData
 
     <!-- ====== SLIDE 13: SUMMARY ====== -->
     <section class="cover" data-background-gradient="radial-gradient(ellipse at 30% 50%, #111133 0%, #0a0a14 70%)">
-        <h2 style="text-align: center; font-size: 1.6em;">Takeaways</h2>
-        <div class="grid-3" style="margin-top: 1em; text-align: left;">
+        <h2 style="text-align: center; font-size: 1.5em; margin-bottom: 0.3em;">Takeaways</h2>
+        <div class="grid-3" style="margin-top: 0.6em; text-align: left;">
             <div class="card bordered-green">
                 <h3 class="text-green" style="font-size: 0.8em !important;">Nguyên tắc</h3>
                 <p>Tách data / logic / persistence.<br>Một cổng duy nhất sửa data.<br>Event-driven, không coupling.</p>
@@ -558,10 +561,10 @@ public partial class PlayerData
                 <p>partial class cho team lớn.<br>Module boundaries rõ ràng.<br>Cross-model: đọc OK, sửa qua event.</p>
             </div>
         </div>
-        <div style="margin-top: 1.5em; text-align: center;">
-            <a href="https://hnb-rabear.github.io/data_management_in_unity" target="_blank" style="color: var(--blue); font-size: 0.7em; text-decoration: none; border-bottom: 1px solid rgba(74,158,255,0.3); padding-bottom: 0.2em;">📖 Tài liệu chi tiết: hnb-rabear.github.io/data_management_in_unity</a>
+        <div style="margin-top: 0.8em; text-align: center;">
+            <a href="https://hnb-rabear.github.io/data_management_in_unity" target="_blank" style="color: var(--blue); font-size: 0.65em; text-decoration: none; border-bottom: 1px solid rgba(74,158,255,0.3); padding-bottom: 0.2em;">📖 hnb-rabear.github.io/data_management_in_unity</a>
         </div>
-        <p style="text-align: center; margin-top: 1.8em; font-size: 1.3em; font-weight: 700; color: #fff;">Q&A</p>
+        <p style="text-align: center; margin-top: 1em; font-size: 1.5em; font-weight: 700; color: #fff;">Q&A</p>
     </section>
 
 </div>
