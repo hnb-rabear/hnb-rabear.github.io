@@ -1,92 +1,326 @@
-# **Kiến trúc dự án Game Unity**
+# Kiến Trúc Dự Án Game Unity
 
-## **1. Tổng quan và Triết lý Thiết kế**
+## 1. Tại sao cần kiến trúc?
 
-Kiến trúc này được xây dựng theo mô hình phân lớp (Layered Architecture), áp dụng các nguyên tắc từ **MVP (Model-View-Presenter)** để đạt được sự tách biệt rõ ràng giữa các thành phần.
+Trong quá trình phát triển game, khi dự án lớn dần, các vấn đề sau thường xuất hiện:
 
-*   **Mục tiêu chính:** Tách biệt **Logic Game (Presenter)** khỏi **Logic Dữ liệu (Data Handler)**, và tách biệt cả hai khỏi **Hiển thị (View)**.
-*   **Triết lý:** Mỗi lớp chỉ có một trách nhiệm duy nhất và chỉ giao tiếp với các lớp liền kề nó.
+- **Game Designer** muốn chỉnh sửa một giá trị (ví dụ: máu của nhân vật), nhưng phải nhờ **Developer** sửa code → mất thời gian, tạo bottleneck.
+- Khi thêm tính năng mới, việc sửa đổi ở một chỗ gây **lỗi lan tỏa** sang các phần khác vì code bị kết dính (tightly coupled).
+- Nhiều thành viên làm việc trên cùng một file lớn → **xung đột (merge conflict)** liên tục.
+- Logic game, dữ liệu, và giao diện trộn lẫn trong một script → **khó debug, khó test, khó mở rộng**.
 
-### **Sơ đồ Luồng Phụ thuộc**
+Kiến trúc phân lớp giải quyết tất cả các vấn đề trên bằng cách **tách biệt trách nhiệm** giữa các thành phần.
 
-Luồng phụ thuộc đi theo một chiều, từ lớp ngoài vào lớp trong. Lớp bên trong không biết sự tồn tại của lớp bên ngoài.
+### Mục lục
+
+- [2. Tổng Quan Kiến Trúc](#2-tổng-quan-kiến-trúc)
+- [3. Chi Tiết Các Lớp](#3-chi-tiết-các-lớp): [Services](#lớp-toàn-cục-dịch-vụ-services) · [Data Model](#lớp-1-dữ-liệu-gốc-data-model) · [Data Handler](#lớp-2-logic-xử-lý-dữ-liệu-data-handler) · [Presenter](#lớp-3-logic-game--điều-phối-presenter) · [View](#lớp-4-hiển-thị-view)
+- [4. Luồng Hoạt Động Mẫu](#4-luồng-hoạt-động-mẫu-mua-vật-phẩm)
+- [5. Tóm Tắt Nguyên Tắc](#5-tóm-tắt-nguyên-tắc)
+
+---
+
+## 2. Tổng Quan Kiến Trúc
+
+Kiến trúc được xây dựng theo mô hình **phân lớp (Layered Architecture)**, áp dụng các nguyên tắc từ **MVP (Model-View-Presenter)**.
+
+**Nguyên tắc cốt lõi:**
+
+- **Tách biệt trách nhiệm**: Logic Game (Presenter) tách khỏi Logic Dữ liệu (Data Handler), và cả hai tách khỏi Hiển thị (View).
+- **Phụ thuộc một chiều**: Mỗi lớp chỉ giao tiếp với lớp liền kề, lớp bên trong không biết sự tồn tại của lớp bên ngoài.
+- **Giao tiếp qua sự kiện**: Khi dữ liệu thay đổi, Data Handler phát ra event → Presenter lắng nghe → ra lệnh cho View cập nhật.
+
+### Sơ đồ Luồng Phụ thuộc
+
+<!-- 📸 TODO: Thay ASCII diagram bên dưới bằng hình ảnh thực (draw.io hoặc Figma).
+     Gợi ý: Sơ đồ 4 lớp (View → Presenter → Data Handler → Data Model) với màu sắc phân biệt,
+     mũi tên Dependency Flow đi từ trái sang phải, mũi tên Events đi ngược lại.
+     Thêm Services layer ở trên/dưới với đường nét đứt. -->
 
 ```
-+----------------+      +--------------+      +-----------------+      +---------------+
-|      View      |----->|  Presenter   |----->|  Data Handler   |----->|  Data Model   |
-| (Hiển thị UI)  |      | (Logic Game) |      | (Logic Dữ liệu) |      | (Dữ liệu gốc) |
-+----------------+      +--------------+      +-----------------+      +---------------+
+                    Luồng phụ thuộc (Dependency Flow)
+                    ─────────────────────────────────►
+
+  ┌─────────────┐     ┌─────────────┐     ┌───────────────┐     ┌─────────────┐
+  │    VIEW     │────►│  PRESENTER  │────►│ DATA HANDLER  │────►│ DATA MODEL  │
+  │ (Hiển thị)  │     │(Logic Game) │     │(Logic Dữ liệu)│     │(Dữ liệu gốc)│
+  └─────────────┘     └─────────────┘     └───────────────┘     └─────────────┘
+        ▲                    ▲                    │                     │
+        │                    │                    │                     │
+        └────── Events ──────┘                    │                     │
+                                                  ▼                     │
+                                         ┌───────────────┐             │
+                                         │  PERSISTENCE  │◄────────────┘
+                                         │   SERVICE     │
+                                         └───────────────┘
 ```
 
-## **2. Chi tiết các Lớp (Layers)**
+---
 
-### **Lớp Toàn cục: Dịch vụ (Services)**
+## 3. Chi Tiết Các Lớp
 
-*   **Vai trò:** Cung cấp các chức năng hạ tầng, nền tảng, có thể được truy cập từ bất kỳ đâu (thường thông qua Dependency Injection hoặc Service Locator).
-*   **Các dịch vụ tiêu biểu:**
-    *   `DataConfigCollection`: Là cơ sở dữ liệu trung tâm, chỉ đọc (read-only) cho toàn bộ dữ liệu **cấu hình tĩnh** của game.
-    *   `PersistenceService`: Chịu trách nhiệm **duy nhất** việc đọc và ghi dữ liệu xuống file, PlayerPrefs hoặc server.
-    *   `AssetProviderService` (**AssetsCollection**): Đóng vai trò thư viện trung tâm, cung cấp `assets` (Prefab, Icon, Audio...) dựa trên một `ID` định danh.
-    *   Các dịch vụ bên thứ ba: `APIService`, `AnalyticsService`, `IAPService`, `AdsService`.
+**Tổng quan nhanh — mapping giữa kiến trúc và RCore:**
+
+| Lớp | Vai trò | Class trong RCore | Loại |
+|---|---|---|---|
+| **Data Model** | Dữ liệu thuần túy | `JObjectData` | POCO (`[Serializable]`) |
+| **Data Handler** | Logic nghiệp vụ | `JObjectModel<T>` | `ScriptableObject` |
+| **Presenter** | Điều phối logic game | Tự tạo | `MonoBehaviour` |
+| **View** | Hiển thị UI/Game world | Tự tạo | `MonoBehaviour` |
+| **Services** | Hạ tầng dùng chung | `ConfigCollection`, `DBManager`... | Singleton/SO |
+
+### Lớp Toàn cục: Dịch vụ (Services)
+
+**Vai trò:** Cung cấp các chức năng hạ tầng, có thể được truy cập từ bất kỳ đâu (thông qua Singleton, Dependency Injection hoặc Service Locator).
+
+| Dịch vụ | Vai trò | Ghi chú |
+|---|---|---|
+| `DataConfigCollection` | Cơ sở dữ liệu trung tâm, **chỉ đọc** cho dữ liệu cấu hình tĩnh | Xuất từ SheetX |
+| `PersistenceService` | Đọc/ghi dữ liệu xuống file, PlayerPrefs hoặc server | Single Responsibility |
+| `AssetProviderService` | Thư viện trung tâm cung cấp assets (Prefab, Icon, Audio...) theo ID | AssetsCollection |
+| `APIService`, `AdsService`... | Các dịch vụ bên thứ ba | Analytics, IAP, Firebase... |
+
+> **Lưu ý:** Services là lớp đặc biệt – không thuộc luồng phụ thuộc chính nhưng có thể được truy cập bởi Data Handler và Presenter khi cần.
 
 ---
 
-### **Lớp 1: Dữ liệu Gốc (Data Models)**
+### Lớp 1: Dữ liệu Gốc (Data Model)
 
-*   **Vai trò:** Tương ứng với lớp **"Data Saved"**. Đây là lớp chỉ chứa dữ liệu trạng thái của game, không chứa bất kỳ logic xử lý nào.
-*   **Đặc điểm:**
-    *   Là các lớp C# thuần túy (POCO - Plain Old C# Object).
-    *   Hoàn toàn độc lập với Unity Engine.
-    *   Ví dụ: `PlayerData.cs` chứa `Level`, `Gold`, `Experience`; `SettingsData.cs` chứa `MusicVolume`, `SfxVolume`.
+**Vai trò:** Chỉ chứa dữ liệu trạng thái, **không chứa logic xử lý**.
 
----
+**Đặc điểm:**
+- Là các lớp C# thuần túy (**POCO** - Plain Old C# Object).
+- Hoàn toàn **độc lập với Unity Engine** – có thể dùng trong unit test.
+- Đánh dấu `[Serializable]` để hỗ trợ JSON serialization.
 
-### **Lớp 2: Logic Xử lý Dữ liệu (Data Handlers)**
+```csharp
+// ✅ Đúng: Data Model chỉ chứa dữ liệu
+[Serializable]
+public class PlayerData : JObjectData
+{
+    public string userName;
+    public int coin;
+    public int level;
+    public int experience;
+}
 
-*   **Vai trò:** Tương ứng với lớp **"Data Handler"**. Đây là lớp trung tâm quản lý và thực thi logic nghiệp vụ liên quan đến dữ liệu.
-*   **Đặc điểm:**
-    *   Quản lý một hoặc nhiều đối tượng `Data Model`. Ví dụ: `PlayerDataHandler` sẽ chứa và quản lý đối tượng `PlayerData`.
-    *   Cung cấp các phương thức công khai (public methods) để thay đổi dữ liệu một cách an toàn. Ví dụ: `playerDataHandler.AddGold(amount)`, `playerDataHandler.CompleteQuest(questId)`.
-    *   Giao tiếp với `PersistenceService` để yêu cầu lưu hoặc tải dữ liệu khi cần.
-    *   Phát ra các sự kiện (events) khi dữ liệu thay đổi (ví dụ: `OnGoldChanged`, `OnLevelUp`) để các lớp khác (chủ yếu là `Presenter`) lắng nghe.
-
----
-
-### **Lớp 3: Logic Game & Điều phối (Presenter)**
-
-*   **Vai trò:** Là bộ não xử lý logic của các tính năng và điều phối hoạt động giữa `View` và `Data Handler`.
-*   **Đặc điểm:**
-    *   Lắng nghe sự kiện từ `View` (ví dụ: người dùng nhấn nút).
-    *   Gọi các phương thức trên `Data Handler` để yêu cầu thay đổi trạng thái game. **Presenter không trực tiếp sửa đổi dữ liệu.**
-    *   Lắng nghe sự kiện từ `Data Handler` để biết khi nào dữ liệu đã thay đổi.
-    *   Sau khi nhận được thông báo, `Presenter` sẽ ra lệnh cho `View` tương ứng để cập nhật lại giao diện.
-*   **Phân loại Presenter:**
-    *   **UI Presenters:** Quản lý các màn hình giao diện. Ví dụ: `ShopPresenter`, `MainMenuPresenter`, `HUDPresenter`.
-    *   **Game World Presenters:** Quản lý các thực thể trong thế giới game. Ví dụ điển hình nhất chính là **`PlayerController`** hoặc `EnemyAIController`. Chúng nhận `input` (từ người chơi hoặc AI), xử lý logic hành động, và ra lệnh cho `View` (như `PlayerView`) để thực hiện `animation` hoặc hiệu ứng.
+// ❌ Sai: Không đặt logic trong Data Model
+[Serializable]
+public class PlayerData
+{
+    public int coin;
+    public void AddCoin(int amount) { coin += amount; } // Không nên!
+}
+```
 
 ---
 
-### **Lớp 4: Hiển thị (View)**
+### Lớp 2: Logic Xử lý Dữ liệu (Data Handler)
 
-*   **Vai trò:** Là lớp "thụ động" (dumb), chỉ chịu trách nhiệm hiển thị và chuyển tiếp tương tác của người dùng.
-*   **Đặc điểm:**
-    *   Chứa tham chiếu đến các thành phần UI (`Text`, `Button`, `Image`) hoặc các thành phần trong game (`Animator`, `ParticleSystem`).
-    *   Hiển thị thông tin do `Presenter` cung cấp.
-    *   Phát ra sự kiện khi người dùng tương tác (ví dụ: `OnClick`, `OnSliderValueChanged`).
-    *   Không chứa bất kỳ logic game hay logic dữ liệu nào.
+**Vai trò:** Quản lý và thực thi **logic nghiệp vụ** liên quan đến dữ liệu. Đây là "người gác cổng" đảm bảo dữ liệu luôn hợp lệ.
 
-## **3. Luồng hoạt động mẫu: Người chơi mua một vật phẩm**
+**Đặc điểm:**
+- Quản lý một hoặc nhiều đối tượng Data Model.
+- Cung cấp các **phương thức công khai** để thay đổi dữ liệu một cách **an toàn và có kiểm tra**.
+- Giao tiếp với `PersistenceService` để lưu/tải dữ liệu.
+- **Phát ra sự kiện** (events) khi dữ liệu thay đổi để các lớp khác lắng nghe.
 
-1.  **View:** Người chơi nhấn nút "Mua" trên `ShopView`. `ShopView` phát ra sự kiện `OnBuyItemClicked("item_id")`.
-2.  **Presenter:** `ShopPresenter` nhận được sự kiện này.
-3.  **Presenter → Data Handler:** `ShopPresenter` gọi phương thức `playerDataHandler.AttemptToPurchaseItem("item_id")`.
-4.  **Data Handler:** `PlayerDataHandler` thực thi logic:
-    * a. Lấy thông tin giá của vật phẩm từ cấu hình game (`Game Data Config`).
-    * b. Kiểm tra xem `playerData.Gold` có đủ không.
-    * c. Nếu đủ, nó sẽ thay đổi các `Data Model`: trừ `Gold`, thêm vật phẩm vào `Inventory`.
-    * d. Phát ra các sự kiện: `OnGoldChanged(newGoldAmount)` và `OnInventoryUpdated(newItem)`.
-    * e. Yêu cầu `PersistenceService.Save(playerData)`.
-5.  **Presenter (Lắng nghe):** `ShopPresenter` và `HUDPresenter` đang lắng nghe các sự kiện này.
-6.  **Presenter → View:**
-    * a. `HUDPresenter` nhận sự kiện `OnGoldChanged` và gọi `hudView.UpdateGoldText(newGoldAmount)`.
-    * b. `ShopPresenter` nhận sự kiện và gọi `shopView.SetItemAsPurchased("item_id")`.
+```csharp
+public class PlayerModel : JObjectModel<PlayerData>
+{
+    // Phương thức an toàn để thay đổi dữ liệu
+    public bool TrySpendCoin(int amount)
+    {
+        if (Data.coin < amount) return false;
+
+        Data.coin -= amount;
+        OnCoinChanged?.Invoke(Data.coin);   // Phát sự kiện
+        MarkDirty();                         // Đánh dấu cần lưu
+        return true;
+    }
+
+    public void AddCoin(int amount)
+    {
+        Data.coin += amount;
+        OnCoinChanged?.Invoke(Data.coin);
+        MarkDirty();
+    }
+
+    // Events
+    public event Action<int> OnCoinChanged;
+    public event Action<int> OnLevelUp;
+}
+```
+
+---
+
+### Lớp 3: Logic Game & Điều phối (Presenter)
+
+**Vai trò:** Là bộ não xử lý logic tính năng, **điều phối** giữa View và Data Handler.
+
+**Đặc điểm:**
+- Lắng nghe sự kiện từ View (ví dụ: người dùng nhấn nút).
+- Gọi phương thức trên Data Handler để thay đổi trạng thái. **Presenter không trực tiếp sửa đổi dữ liệu.**
+- Lắng nghe sự kiện từ Data Handler → ra lệnh cho View cập nhật giao diện.
+
+**Phân loại Presenter:**
+
+| Loại | Ví dụ | Vai trò |
+|---|---|---|
+| **UI Presenters** | `ShopPresenter`, `HUDPresenter` | Quản lý màn hình giao diện |
+| **Game World Presenters** | `PlayerController`, `EnemyAI` | Quản lý thực thể trong game world |
+
+```csharp
+public class ShopPresenter : MonoBehaviour
+{
+    [SerializeField] private ShopView shopView;
+    private PlayerModel playerModel;
+    private DataConfigCollection config;
+
+    private void OnEnable()
+    {
+        // Lắng nghe View
+        shopView.OnBuyClicked += HandleBuyClicked;
+        // Lắng nghe Data Handler
+        playerModel.OnCoinChanged += HandleCoinChanged;
+    }
+
+    private void OnDisable()
+    {
+        shopView.OnBuyClicked -= HandleBuyClicked;
+        playerModel.OnCoinChanged -= HandleCoinChanged;
+    }
+
+    private void HandleBuyClicked(string itemId)
+    {
+        var item = config.GetShopItem(itemId);
+        if (playerModel.TrySpendCoin(item.price))
+            shopView.SetItemAsPurchased(itemId);
+        else
+            shopView.ShowNotEnoughGold();
+    }
+
+    private void HandleCoinChanged(int newAmount)
+    {
+        shopView.UpdateCoinDisplay(newAmount);
+    }
+}
+```
+
+> **Lưu ý:** Presenter biết cả View và Data Handler, nhưng View và Data Handler **không biết** nhau. Đây là nguyên tắc then chốt.
+
+---
+
+### Lớp 4: Hiển thị (View)
+
+**Vai trò:** Là lớp **"thụ động" (dumb)**, chỉ hiển thị và chuyển tiếp tương tác.
+
+**Đặc điểm:**
+- Chứa tham chiếu đến UI components (`Text`, `Button`, `Image`) hoặc game components (`Animator`).
+- Hiển thị thông tin do Presenter cung cấp.
+- Phát ra sự kiện khi người dùng tương tác (`OnClick`, `OnValueChanged`).
+- **Không chứa bất kỳ logic game hay logic dữ liệu nào.**
+
+```csharp
+// ✅ Đúng: View chỉ hiển thị và chuyển tiếp sự kiện
+public class ShopView : MonoBehaviour
+{
+    [SerializeField] private Button buyButton;
+    [SerializeField] private TMP_Text priceText;
+    [SerializeField] private TMP_Text coinText;
+    [SerializeField] private string itemId;
+
+    public event Action<string> OnBuyClicked;
+
+    public void SetPrice(string price) => priceText.text = price;
+    public void SetItemAsPurchased(string id) => buyButton.interactable = false;
+    public void UpdateCoinDisplay(int amount) => coinText.text = amount.ToString();
+    public void ShowNotEnoughGold() { /* Hiển thị popup/animation */ }
+
+    private void OnEnable()
+    {
+        buyButton.onClick.AddListener(() => OnBuyClicked?.Invoke(itemId));
+    }
+
+    private void OnDisable()
+    {
+        buyButton.onClick.RemoveAllListeners();
+    }
+}
+```
+
+> **Anti-pattern cần tránh:**
+> ```csharp
+> // ❌ Sai: View chứa logic game
+> public class ShopView : MonoBehaviour
+> {
+>     public void OnBuyButtonClicked()
+>     {
+>         if (PlayerData.coin >= item.price)  // View truy cập data trực tiếp!
+>         {
+>             PlayerData.coin -= item.price;   // View sửa data trực tiếp!
+>             UpdateUI();
+>         }
+>     }
+> }
+> ```
+
+---
+
+## 4. Luồng Hoạt Động Mẫu: Mua Vật Phẩm
+
+<!-- 📸 TODO: Thay ASCII sequence diagram bên dưới bằng hình ảnh thực.
+     Gợi ý: Sequence diagram với 4 cột (ShopView, ShopPresenter, PlayerModel, PlayerData),
+     7 bước đánh số ①-⑦, mũi tên có label. Dùng draw.io hoặc Mermaid render. -->
+
+Ví dụ sau minh họa cách các lớp phối hợp khi người chơi mua một vật phẩm trong Shop:
+
+```
+  ┌──────────┐      ┌───────────────┐      ┌────────────────┐      ┌────────────┐
+  │ ShopView │      │ShopPresenter  │      │ PlayerModel    │      │ PlayerData │
+  └────┬─────┘      └──────┬────────┘      └──────┬─────────┘      └─────┬──────┘
+       │ ① Click "Mua"    │                       │                      │
+       │──────────────────►│                       │                      │
+       │                   │ ② AttemptPurchase()   │                      │
+       │                   │──────────────────────►│                      │
+       │                   │                       │ ③ Kiểm tra Gold     │
+       │                   │                       │─────────────────────►│
+       │                   │                       │ ④ Trừ Gold, thêm Item│
+       │                   │                       │─────────────────────►│
+       │                   │                       │                      │
+       │                   │ ⑤ Event: OnGoldChanged│                      │
+       │                   │◄──────────────────────│                      │
+       │ ⑥ UpdateGoldText()│                       │                      │
+       │◄──────────────────│                       │                      │
+       │ ⑦ SetPurchased()  │                       │                      │
+       │◄──────────────────│                       │                      │
+```
+
+**Chi tiết từng bước:**
+
+1. **View → Presenter:** Người chơi nhấn nút "Mua" trên `ShopView`. View phát ra sự kiện `OnBuyItemClicked("item_id")`.
+2. **Presenter → Data Handler:** `ShopPresenter` nhận sự kiện, gọi `playerModel.AttemptToPurchaseItem("item_id")`.
+3. **Data Handler (xử lý logic):**
+   - a. Lấy giá vật phẩm từ `DataConfigCollection` (dữ liệu cấu hình tĩnh).
+   - b. Kiểm tra `playerData.coin` có đủ không.
+   - c. Nếu đủ → trừ Gold, thêm vật phẩm vào Inventory.
+   - d. Phát events: `OnGoldChanged(newAmount)`, `OnInventoryUpdated(newItem)`.
+   - e. Yêu cầu `PersistenceService` lưu dữ liệu.
+4. **Presenter (lắng nghe):** `ShopPresenter` và `HUDPresenter` đều đang lắng nghe events.
+5. **Presenter → View:**
+   - `HUDPresenter` nhận `OnGoldChanged` → gọi `hudView.UpdateGoldText(newAmount)`.
+   - `ShopPresenter` nhận event → gọi `shopView.SetItemAsPurchased("item_id")`.
+
+> **Điểm then chốt:** `ShopPresenter` không biết HUD tồn tại. `HUDPresenter` tự lắng nghe event và tự cập nhật. Đây chính là sức mạnh của kiến trúc découple thông qua events.
+
+---
+
+## 5. Tóm Tắt Nguyên Tắc
+
+| Nguyên tắc | Mô tả | Vi phạm phổ biến |
+|---|---|---|
+| **View không chứa logic** | Chỉ hiển thị và phát sự kiện | View trực tiếp gọi `playerData.coin -= 100` |
+| **Presenter không sửa data trực tiếp** | Luôn đi qua Data Handler | Presenter viết `data.level++` |
+| **Data Model không chứa logic** | Chỉ là container dữ liệu | Thêm method `AddGold()` vào Data Model |
+| **Giao tiếp qua Events** | Dùng events thay vì tham chiếu trực tiếp | Data Handler gọi trực tiếp `view.UpdateText()` |
+| **Phụ thuộc một chiều** | View → Presenter → Handler → Model | Model import Presenter |
