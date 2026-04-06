@@ -467,21 +467,21 @@ public partial class PlayerData
         <p class="text-muted">Data có vòng đời phức tạp hơn chỉ load/save</p>
         <div class="grid-2" style="margin-top: 0.3em;">
             <div>
-                <div class="card bordered-green" style="margin-bottom: 0.2em; padding: 0.4em 0.7em;">
-                    <h3 style="margin-bottom: 0.1em;">Init()</h3>
-                    <p style="font-size: 0.5em !important;">Lần đầu chơi → set default values</p>
+                <div class="card" style="padding: 0.3em 0.6em; margin-bottom: 0.15em; border-left: 3px solid var(--green);">
+                    <h3 style="font-size: 0.7em; margin-bottom: 0;"><code>Init()</code></h3>
+                    <p style="font-size: 0.45em !important; margin: 0;">Lần đầu chơi → set default values</p>
                 </div>
-                <div class="card bordered-blue fragment" style="margin-bottom: 0.2em; padding: 0.4em 0.7em;">
-                    <h3 style="margin-bottom: 0.1em;">OnPostLoad(utcNow, offlineSecs)</h3>
-                    <p style="font-size: 0.5em !important;">Load xong → tính offline rewards, check expired timers</p>
+                <div class="card fragment" style="padding: 0.3em 0.6em; margin-bottom: 0.15em; border-left: 3px solid var(--blue);">
+                    <h3 style="font-size: 0.7em; margin-bottom: 0;"><code>OnPostLoad(utcNow, offlineSecs)</code></h3>
+                    <p style="font-size: 0.45em !important; margin: 0;">Load xong → tính offline rewards, check expired</p>
                 </div>
-                <div class="card bordered-purple fragment" style="margin-bottom: 0.2em; padding: 0.4em 0.7em;">
-                    <h3 style="margin-bottom: 0.1em;">OnUpdate(deltaTime)</h3>
-                    <p style="font-size: 0.5em !important;">Mỗi frame → countdown timers, regen resources</p>
+                <div class="card fragment" style="padding: 0.3em 0.6em; margin-bottom: 0.15em; border-left: 3px solid var(--purple);">
+                    <h3 style="font-size: 0.7em; margin-bottom: 0;"><code>OnUpdate(deltaTime)</code></h3>
+                    <p style="font-size: 0.45em !important; margin: 0;">Mỗi frame → countdown timers, regen</p>
                 </div>
-                <div class="card bordered-amber fragment" style="padding: 0.4em 0.7em;">
-                    <h3 style="margin-bottom: 0.1em;">OnPause() → OnPreSave()</h3>
-                    <p style="font-size: 0.5em !important;">App background → validate + auto-save</p>
+                <div class="card fragment" style="padding: 0.3em 0.6em; border-left: 3px solid var(--amber);">
+                    <h3 style="font-size: 0.7em; margin-bottom: 0;"><code>OnPause()</code> → <code>OnPreSave()</code></h3>
+                    <p style="font-size: 0.45em !important; margin: 0;">App background → validate + auto-save</p>
                 </div>
             </div>
             <div class="fragment">
@@ -492,13 +492,12 @@ public partial class PlayerData
     int goldPerMin = ConfigCollection
         .Instance.offlineGoldRate;
     int reward = offlineSeconds / 60
-        * goldPerMin;
+                 * goldPerMin;
     AddCoin(reward);
 
-    int livesRegen = offlineSeconds
-        / LIVE_REGEN_SECONDS;
     Data.lives = Math.Min(
-        Data.lives + livesRegen, MAX_LIVES);
+        Data.lives + offlineSeconds
+        / LIVE_REGEN_SECONDS, MAX_LIVES);
 }</code></pre>
                 <p class="text-xs text-muted">Framework gọi đúng hook, đúng thời điểm. Dev chỉ viết logic.</p>
             </div>
@@ -577,7 +576,7 @@ public partial class PlayerData
     <!-- ══════ SLIDE 12: MISTAKES ══════ -->
     <section data-background-color="#0a0a14">
         <h2>Những sai lầm đã trả giá</h2>
-        <p class="text-muted">Kinh nghiệm không đến từ thành công — mà từ debug sessions lúc 2 giờ sáng</p>
+        <p class="text-muted">Những bài học rút ra sau nhiều dự án</p>
         <div style="margin-top: 0.4em;">
             <div class="lesson fragment">
                 <div class="lesson-q">"Đặt logic trong Data Model"</div>
