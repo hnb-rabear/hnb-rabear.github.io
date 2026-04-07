@@ -204,8 +204,8 @@
     <!-- ══════ SLIDE 1: COVER ══════ -->
     <section class="cover" data-background-gradient="radial-gradient(ellipse at 30% 50%, #111133 0%, #0a0a14 70%)">
         <h1>Data <span class="accent">Architecture</span><br>trong Unity Game</h1>
-        <p class="sub">Bài học thiết kế hệ thống quản lý data<br>sau nhiều năm phát triển mobile game</p>
-        <p class="meta"><strong>hnb-rabear</strong> · Unity Game Developer</p>
+        <p class="sub">Bài học từ Production</p>
+        <p class="meta"><strong>hnb-rabear</strong></p>
     </section>
 
     <!-- ══════ SLIDE 2: CONTEXT ══════ -->
@@ -228,34 +228,34 @@
         </div>
         <div class="insight fragment">
             <div class="insight-label">Observation</div>
-            <p>Không có data architecture rõ ràng → phần lớn bugs không phải logic sai, mà là <strong>data sai chỗ, save sai lúc, hoặc đọc sai state</strong>.</p>
+            <p>Sự phức tạp lớn nhất không nằm ở logic từng tính năng, mà ở <strong>khả năng Scale và Bảo trì</strong>: Thiếu kiến trúc chuẩn dẫn đến Tight Coupling làm code dễ vỡ, State mất đồng bộ, và Data Layer biến thành 'God Class' cản trở team làm việc chung.</p>
         </div>
     </section>
 
     <!-- ══════ SLIDE 3: EVOLUTION ══════ -->
     <section data-background-color="#0a0a14">
         <h2>Quá trình tiến hóa</h2>
-        <p class="text-muted">3 giai đoạn mà đa số team đều trải qua</p>
+        <p class="text-muted">3 giai đoạn mà đa số dev đều trải qua</p>
         <div class="evo mt-1">
             <div class="evo-item fragment">
-                <div class="evo-label text-red">Gen 1</div>
-                <h3>PlayerPrefs trực tiếp</h3>
-                <p class="text-muted">SetInt/GetString rải khắp nơi. Config hardcode. Ship nhanh nhưng 3 tháng sau không maintain được.</p>
+                <div class="evo-label text-red">Gen 1: Spaghetti Data</div>
+                <h3>PlayerPrefs tùy tiện</h3>
+                <p class="text-muted">Set/GetInt rải khắp nơi. Hardcode config. Đổi 1 chỗ → vỡ 5 chỗ.</p>
             </div>
             <div class="evo-item fragment">
-                <div class="evo-label text-amber">Gen 2</div>
-                <h3>Centralized + JSON</h3>
-                <p class="text-muted">1 class SaveManager, config từ ScriptableObject. Tốt hơn nhưng thiếu lifecycle management.</p>
+                <div class="evo-label text-amber">Gen 2: God Class</div>
+                <h3>Central SaveManager</h3>
+                <p class="text-muted">1 Singleton gom hết. Gọn hơn, nhưng God Class 3000 dòng + dễ Merge Conflict.</p>
             </div>
             <div class="evo-item fragment">
-                <div class="evo-label text-green">Gen 3</div>
-                <h3>Layered Architecture</h3>
-                <p class="text-muted">Tách Data / Logic / Lifecycle. Config pipeline từ Sheets. Auto-save. Event-driven.</p>
+                <div class="evo-label text-green">Gen 3: Decoupled</div>
+                <h3>Layered System</h3>
+                <p class="text-muted">Tách Data - Logic - Persistence. Chia theo Domain. Event-driven.</p>
             </div>
         </div>
         <div class="insight fragment">
             <div class="insight-label">Key realization</div>
-            <p>Bước nhảy lớn nhất không phải Gen 1 → Gen 2 (thêm code). Mà là Gen 2 → Gen 3 (<strong>thay đổi tư duy thiết kế</strong>).</p>
+            <p>Gen 1 → 2: <strong>gom rác về một chỗ</strong> (Centralize). Gen 2 → 3: <strong>chia nhỏ có hệ thống</strong> (Decouple).</p>
         </div>
     </section>
 
@@ -266,21 +266,21 @@
         <div class="grid-3 mt-1">
             <div class="card bordered-green fragment" style="position: relative;">
                 <div class="principle-num">01</div>
-                <h3 class="text-green">Tách biệt mối quan tâm</h3>
-                <p>Data structure ≠ Business logic ≠ Persistence.</p>
-                <p>Ai quan tâm gì, người đó xử lý.</p>
+                <h3 class="text-green" style="font-size: 0.8em;">Separation of Concerns</h3>
+                <p>Data Model ≠ Game Logic ≠ Local Save.</p>
+                <p>Tách rõ ranh giới: Data chỉ lưu trạng thái, Handler xử lý luật. Không code gộp.</p>
             </div>
             <div class="card bordered-blue fragment" style="position: relative;">
                 <div class="principle-num">02</div>
-                <h3 class="highlight">Một cổng duy nhất</h3>
-                <p>Mọi thay đổi data đi qua 1 nơi — "người gác cổng".</p>
-                <p>5 chỗ sửa coin = không ai kiểm soát.</p>
+                <h3 class="highlight" style="font-size: 0.8em;">Single Point of Access</h3>
+                <p>Mọi lệnh Write data bắt buộc phải đi qua "người gác cổng" để Validate.</p>
+                <p>5 feature cùng tự ý trừ Coin = vỡ trận state!</p>
             </div>
             <div class="card bordered-purple fragment" style="position: relative;">
                 <div class="principle-num">03</div>
-                <h3 class="text-purple">Không phụ thuộc ngầm</h3>
-                <p>Module A thay đổi → phát event. Module B tự lắng nghe.</p>
-                <p>Thêm = subscribe. Xóa = unsubscribe.</p>
+                <h3 class="text-purple" style="font-size: 0.8em;">Event-Driven</h3>
+                <p>Các module không nhìn thấy nhau. Logic đổi state → phát Event.</p>
+                <p>Khả năng Plug & Play: Thêm tính năng = Subscribe, Xóa = Unsubscribe.</p>
             </div>
         </div>
     </section>
@@ -344,43 +344,34 @@
 
         <div class="insight fragment" style="margin-top: 0.2em;">
             <div class="insight-label">Luồng mutation</div>
-            <p>Game Logic → <strong>Handler.TrySpendCoin()</strong> → validate → sửa Data Model → phát <strong>Event</strong> → UI tự cập nhật. Save tự động khi app pause.</p>
+            <p>Mọi thay đổi data đều đi theo 1 chiều: <strong>Game Logic → Handler (validate) → Event → UI tự cập nhật.</strong> Không ai được sửa data trực tiếp.</p>
         </div>
     </section>
 
-    <!-- ══════ SLIDE 6: TWO PILLARS ══════ -->
+    <!-- ══════ SLIDE 6: PATTERNS ROADMAP ══════ -->
     <section data-background-color="#0a0a14">
-        <h2>Hai trụ cột của data architecture</h2>
-        <div class="grid-2 mt-1">
-            <div class="card fragment" style="border-top: 3px solid var(--green);">
-                <span class="tag tag-green">Read-Only</span>
-                <h3 class="text-green" style="font-size: 1em !important; margin-top: 0.3em;">Static Config Data</h3>
-                <p style="font-size: 0.6em !important; color: var(--text);">Dữ liệu được <strong>Designer quản lý</strong>: item stats, level curves, rewards, localization.</p>
-                <div class="flow mt-half">
-                    <span class="flow-step">Spreadsheet</span>
-                    <span class="flow-arrow">→</span>
-                    <span class="flow-step">Export Tool</span>
-                    <span class="flow-arrow">→</span>
-                    <span class="flow-step">JSON + C#</span>
-                    <span class="flow-arrow">→</span>
-                    <span class="flow-step">ScriptableObject</span>
-                </div>
-                <p class="mt-half">Thay đổi khi nào? <strong>Mỗi build mới</strong> hoặc Remote Config.</p>
+        <h2>4 Patterns sẽ tìm hiểu</h2>
+        <p class="text-muted">Mỗi pattern giải quyết một vấn đề cụ thể</p>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.7em; margin-top: 0.8em;">
+            <div class="card bordered-green fragment" style="text-align: center;">
+                <div style="font-size: 2em; margin-bottom: 0.1em;">📊</div>
+                <h3 class="text-green" style="font-size: 0.75em !important;">Config Pipeline</h3>
+                <p>Designer tự cập nhật balance mà không cần Dev?</p>
             </div>
-            <div class="card fragment" style="border-top: 3px solid var(--purple);">
-                <span class="tag tag-purple">Read / Write</span>
-                <h3 class="text-purple" style="font-size: 1em !important; margin-top: 0.3em;">Dynamic Player Data</h3>
-                <p style="font-size: 0.6em !important; color: var(--text);">Dữ liệu <strong>runtime</strong>: player profile, inventory, quest progress, settings.</p>
-                <div class="flow mt-half">
-                    <span class="flow-step">Data Model</span>
-                    <span class="flow-arrow">→</span>
-                    <span class="flow-step">Handler</span>
-                    <span class="flow-arrow">→</span>
-                    <span class="flow-step">Collection</span>
-                    <span class="flow-arrow">→</span>
-                    <span class="flow-step">Persistence</span>
-                </div>
-                <p class="mt-half">Thay đổi khi nào? <strong>Mỗi action của player</strong>. Auto-save on pause.</p>
+            <div class="card bordered-blue fragment" style="text-align: center;">
+                <div style="font-size: 2em; margin-bottom: 0.1em;">🔒</div>
+                <h3 class="highlight" style="font-size: 0.75em !important;">Repository</h3>
+                <p>Ai được phép sửa data? Làm sao trace được?</p>
+            </div>
+            <div class="card bordered-amber fragment" style="text-align: center;">
+                <div style="font-size: 2em; margin-bottom: 0.1em;">🔄</div>
+                <h3 class="text-amber" style="font-size: 0.75em !important;">Lifecycle</h3>
+                <p>Load xong thì làm gì? Offline rewards? Auto-save?</p>
+            </div>
+            <div class="card bordered-purple fragment" style="text-align: center;">
+                <div style="font-size: 2em; margin-bottom: 0.1em;">📡</div>
+                <h3 class="text-purple" style="font-size: 0.75em !important;">Observer</h3>
+                <p>Thêm feature mới mà không sửa code cũ?</p>
             </div>
         </div>
     </section>
@@ -510,7 +501,7 @@ public partial class PlayerData
     <!-- ══════ SLIDE 10: OBSERVER ══════ -->
     <section data-background-color="#0a0a14">
         <h2>Pattern: Observer — Decoupled Communication</h2>
-        <p class="text-muted">Nguyên tắc #3: modules không phụ thuộc ngầm vào nhau</p>
+        <p class="text-muted">Nguyên tắc #3: Event-Driven — modules không phụ thuộc ngầm vào nhau</p>
         <div class="grid-2 mt-1">
             <div class="card bordered-red">
                 <h3 class="text-red">❌ Tight coupling</h3>
@@ -539,7 +530,7 @@ public partial class PlayerData
         </div>
         <div class="insight fragment">
             <div class="insight-label">Kinh nghiệm thực tế</div>
-            <p>15+ features với tight coupling: thêm feature = sửa 3-4 file cũ. Event-driven: thêm feature = <strong>1 file mới, 0 file cũ bị sửa</strong>.</p>
+            <p>Code dính chặt: thêm feature mới phải sửa các module không liên quan (PlayerModel, HUD, Quest...). Event-driven: <strong>các module cũ không cần biết feature mới tồn tại.</strong></p>
         </div>
     </section>
 
@@ -721,7 +712,7 @@ var player = SaveDataCollection
                 </div>
                 <div class="card fragment" style="padding: 0.3em 0.6em; margin-bottom: 0.15em; border-left: 3px solid var(--purple);">
                     <h3 style="font-size: 0.7em; margin-bottom: 0;" class="text-purple">Zero Coupling giữa Features</h3>
-                    <p style="font-size: 0.45em !important; margin: 0;">Thêm feature mới = subscribe event. Xóa feature = unsubscribe. Không sửa code cũ.</p>
+                    <p style="font-size: 0.45em !important; margin: 0;">Thêm feature = subscribe event. Các module cũ không cần biết feature mới tồn tại.</p>
                 </div>
             </div>
             <div>
@@ -775,7 +766,7 @@ var player = SaveDataCollection
         <div class="grid-3" style="margin-top: 0.4em; text-align: left;">
             <div class="card bordered-green">
                 <h3 class="text-green" style="font-size: 0.72em !important;">Nguyên tắc</h3>
-                <p>Tách data / logic / persistence.<br>Một cổng duy nhất sửa data.<br>Event-driven, không coupling.</p>
+                <p>Separation of Concerns.<br>Single Point of Access.<br>Event-Driven.</p>
             </div>
             <div class="card bordered-blue">
                 <h3 style="font-size: 0.72em !important;">Patterns</h3>
@@ -783,7 +774,7 @@ var player = SaveDataCollection
             </div>
             <div class="card bordered-purple">
                 <h3 class="text-purple" style="font-size: 0.72em !important;">Scaling</h3>
-                <p>partial class cho team lớn.<br>Module boundaries rõ ràng.<br>Cross-model: đọc OK, sửa qua event.</p>
+                <p>partial class cho model phình to.<br>Module boundaries rõ ràng.<br>Cross-model: đọc OK, sửa qua event.</p>
             </div>
         </div>
         <div class="insight fragment" style="margin-top: 0.3em; text-align: left;">
