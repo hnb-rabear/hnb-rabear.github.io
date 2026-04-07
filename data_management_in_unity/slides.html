@@ -558,18 +558,18 @@ PlayerData.Misc.cs</code></pre>
             </div>
             <div class="card bordered-green fragment">
                 <h3>Module boundaries</h3>
-                <pre style="font-size: 0.72em;"><code class="language-csharp">[AutoFill] public PlayerModel player;
-[AutoFill] public RewardModel reward;
-[AutoFill] public QuestsModel quest;
-[AutoFill] public CompetitionModel comp;
-[AutoFill] public StoreModel store;</code></pre>
+                <pre style="font-size: 0.72em;"><code class="language-csharp">public PlayerModel player;
+public RewardModel reward;
+public QuestsModel quest;
+public CompetitionModel comp;
+public StoreModel store;</code></pre>
                 <p>Thực tế: <strong>7 models</strong> trong SaveDataCollection.</p>
             </div>
             <div class="card bordered-purple fragment">
                 <h3>Cross-model access</h3>
                 <pre style="font-size: 0.72em;"><code class="language-csharp">public partial class PlayerModel
 {
-    [AutoFill, SerializeField]
+    [SerializeField]
     private CompetitionModel
         m_competitionModel;
 }</code></pre>
