@@ -147,7 +147,6 @@ public partial class PlayerModel : JObjectModel<PlayerData>
 
         Data.coin -= amount;
         OnCoinChanged?.Invoke(Data.coin);
-        MarkDirty();  // Đánh dấu cần lưu
         return true;
     }
 
@@ -156,13 +155,11 @@ public partial class PlayerModel : JObjectModel<PlayerData>
     {
         Data.coin += amount;
         OnCoinChanged?.Invoke(Data.coin);
-        MarkDirty();
     }
 }
 ```
 
 **Pattern quan trọng:**
-- **`MarkDirty()`** — Đánh dấu data đã thay đổi → hệ thống sẽ auto-save khi cần
 - **Validation trước khi thay đổi** — `TrySpend` pattern: kiểm tra → thay đổi → thông báo
 - **Không expose Data trực tiếp** — Luôn đi qua methods của Handler
 
@@ -382,7 +379,7 @@ sequenceDiagram
 | Data bị reset khi cập nhật app | PlayerPrefs bị xóa (uninstall/reinstall) | Implement cloud save backup |
 | `Init()` không được gọi | Data đã tồn tại từ lần chơi trước | `Init()` chỉ gọi lần đầu. Dùng `OnPostLoad()` cho logic sau mỗi lần load |
 | `OnUpdate()` không chạy | Model chưa được thêm vào `SaveDataCollection` | Khai báo field trong `SaveDataCollection` và tạo ScriptableObject |
-| Data lớn gây lag khi save | JSON serialize object phức tạp | Tách data thành nhiều model nhỏ, dùng `MarkDirty()` để chỉ save khi thay đổi |
+| Data lớn gây lag khi save | JSON serialize object phức tạp | Tách data thành nhiều model nhỏ |
 | PlayerPrefs đầy (~1MB limit) | Quá nhiều data lưu trong PlayerPrefs | Cân nhắc migrate sang file-based storage |
 | Conflict khi nhiều model cùng sửa data | Thiếu single source of truth | Mỗi data field chỉ thuộc 1 model duy nhất, giao tiếp qua events |
 | Migration data khi thêm field mới | JSON cũ không có field → giá trị mặc định (0, null) | Xử lý migration trong `OnPostLoad()`: kiểm tra và set default cho field mới |

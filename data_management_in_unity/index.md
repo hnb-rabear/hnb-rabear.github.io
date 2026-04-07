@@ -128,7 +128,6 @@ sequenceDiagram
     PM->>PD: Kiểm tra coin >= price?
     PD-->>PM: true
     PM->>PD: coin -= price
-    PM->>PM: MarkDirty()
     PM-->>GL: Event OnCoinChanged(newAmount)
     Note over PM,DB: Auto-save khi app pause/quit
     PM->>DB: Save JSON to PlayerPrefs
@@ -150,17 +149,6 @@ sequenceDiagram
 | 5 | **Modular** — Thêm feature mới = thêm Data + Model + 1 dòng trong Collection | Scale nhanh theo feature |
 | 6 | **Type-Safe** — SheetX generate C# IDs/Constants | Compile-time error thay vì runtime crash |
 | 7 | **Decoupled** — Events pattern, các module không biết nhau tồn tại | Dễ maintain, dễ test |
-
-### Nhược điểm
-
-| # | Nhược điểm | Giải pháp |
-|---|---|---|
-| 1 | **PlayerPrefs backend** — không encrypt, dễ cheat trên Android | Dùng `RPlayerPrefs` (encrypt) hoặc file-based storage |
-| 2 | **Không có cloud save** — mất data khi reinstall/đổi máy | Integrate thêm Firebase/PlayFab |
-| 3 | **Không có data versioning built-in** — thêm/xóa field cần tự xử lý | Implement version check trong `OnPostLoad()` |
-| 4 | **Singleton pattern** — `ConfigCollection.Instance` khó unit test | Chấp nhận cho mobile game, hoặc inject via interface |
-| 5 | **Config baked trong build** — thay đổi balance sau release cần Remote Config | Kết hợp Firebase Remote Config |
-
 ### Phù hợp cho
 
 | Loại game | Phù hợp? | Ghi chú |

@@ -344,7 +344,7 @@
 
         <div class="insight fragment" style="margin-top: 0.2em;">
             <div class="insight-label">Luồng mutation</div>
-            <p>Game Logic → <strong>Handler.TrySpendCoin()</strong> → validate → sửa Data Model → <strong>MarkDirty()</strong> → phát <strong>Event</strong> → UI tự cập nhật. Save tự động khi app pause.</p>
+            <p>Game Logic → <strong>Handler.TrySpendCoin()</strong> → validate → sửa Data Model → phát <strong>Event</strong> → UI tự cập nhật. Save tự động khi app pause.</p>
         </div>
     </section>
 
@@ -581,23 +581,126 @@ public StoreModel store;</code></pre>
     <!-- ══════ SLIDE 12: ANTI-PATTERNS ══════ -->
     <section data-background-color="#0a0a14">
         <h2>Anti-patterns phổ biến</h2>
-        <p class="text-muted">Những lỗi thường gặp khi không có kiến trúc data rõ ràng — và cách framework ngăn chặn</p>
-        <div style="margin-top: 0.4em;">
-            <div class="lesson fragment">
-                <div class="lesson-q">❌ Sửa data trực tiếp từ bất kỳ đâu</div>
-                <div class="lesson-a"><code>playerData.coin -= 100</code> rải khắp codebase → không validate, không notify UI, không track dirty. <strong>Fix:</strong> Mọi thay đổi đi qua Data Handler.</div>
+        <p class="text-muted">Những lỗi thực tế từ production — không chỉ junior mà cả dev lâu năm code ẩu cũng mắc</p>
+        <div class="r-stack" style="margin-top: 0.4em;">
+            <!-- 1/5 -->
+            <div class="fragment fade-in-then-out" style="width: 100%;">
+                <div class="lesson" style="padding: 0.4em 0.5em;">
+                    <div class="lesson-q" style="margin-bottom: 0.3em;">❌ Trộn runtime state với persistent state <span class="text-muted" style="float: right; font-weight: normal; font-size: 0.7em;">1 / 5</span></div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5em;">
+                        <div><div style="color: #ff6b6b; font-size: 0.6em; margin-bottom: 0.15em;">SAI</div><pre style="margin: 0;"><code class="csharp" data-noescape>[Serializable]
+public class PlayerData : JObjectData
+{
+    public int coin;
+    public int level;
+    <span style="color:#ff6b6b;">public float tweenProgress;  // ← animation</span>
+    <span style="color:#ff6b6b;">public bool isDragging;      // ← input state</span>
+}</code></pre></div>
+                        <div><div style="color: #51cf66; font-size: 0.6em; margin-bottom: 0.15em;">ĐÚNG</div><pre style="margin: 0;"><code class="csharp" data-noescape>[Serializable]
+public class PlayerData : JObjectData
+{
+    public int coin;
+    public int level;
+}
+// tweenProgress, isDragging
+// → để trong MonoBehaviour (scene lifetime)</code></pre></div>
+                    </div>
+                </div>
             </div>
-            <div class="lesson fragment">
-                <div class="lesson-q">❌ Gọi Save() thủ công, quên edge case</div>
-                <div class="lesson-a">Quên save khi app bị kill, ALT+F4, low memory. <strong>Fix:</strong> DBManager auto-save on <code>OnApplicationPause</code> + <code>OnApplicationQuit</code>.</div>
+            <!-- 2/5 -->
+            <div class="fragment fade-in-then-out" style="width: 100%;">
+                <div class="lesson" style="padding: 0.4em 0.5em;">
+                    <div class="lesson-q" style="margin-bottom: 0.3em;">❌ Fat Data Model — "God Object" <span class="text-muted" style="float: right; font-weight: normal; font-size: 0.7em;">2 / 5</span></div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5em;">
+                        <div><div style="color: #ff6b6b; font-size: 0.6em; margin-bottom: 0.15em;">SAI — 1 file 500+ dòng</div><pre style="margin: 0;"><code class="csharp" data-noescape>// PlayerData.cs — MỌI THỨ ở đây
+public class PlayerData : JObjectData
+{
+    public int coin, level, live;
+    public List&lt;int&gt; unlockedAvatars;
+    public List&lt;Booster&gt; boosters;
+    public int questProgress, raceRank;
+    <span style="color:#ff6b6b;">// ... 50+ fields, 2 devs sửa = conflict</span>
+}</code></pre></div>
+                        <div><div style="color: #51cf66; font-size: 0.6em; margin-bottom: 0.15em;">ĐÚNG — partial class theo domain</div><pre style="margin: 0;"><code class="csharp" data-noescape><span style="color:#51cf66;">// PlayerData.cs</span> — core
+public partial class PlayerData : JObjectData
+{  public int coin, level, live; }
+
+<span style="color:#51cf66;">// PlayerData.Inventory.cs</span>
+public partial class PlayerData
+{  public List&lt;Booster&gt; boosters; }
+
+<span style="color:#51cf66;">// PlayerData.Avatar.cs</span>
+public partial class PlayerData
+{  public List&lt;int&gt; unlockedAvatars; }</code></pre></div>
+                    </div>
+                </div>
             </div>
-            <div class="lesson fragment">
-                <div class="lesson-q">❌ UI polling data mỗi frame</div>
-                <div class="lesson-a"><code>Update()</code> liên tục check <code>if (coin != lastCoin)</code> → waste CPU. <strong>Fix:</strong> Observer pattern — UI chỉ update khi nhận event.</div>
+            <!-- 3/5 -->
+            <div class="fragment fade-in-then-out" style="width: 100%;">
+                <div class="lesson" style="padding: 0.4em 0.5em;">
+                    <div class="lesson-q" style="margin-bottom: 0.3em;">❌ Config data bị mutate runtime <span class="text-muted" style="float: right; font-weight: normal; font-size: 0.7em;">3 / 5</span></div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5em;">
+                        <div><div style="color: #ff6b6b; font-size: 0.6em; margin-bottom: 0.15em;">SAI — sửa config từ SheetX trực tiếp</div><pre style="margin: 0;"><code class="csharp" data-noescape>// Config từ Google Sheets (Read-Only!)
+var hero = DataConfigCollection
+    .Instance.GetHero(heroId);
+
+// Buff bằng cách sửa thẳng config:
+<span style="color:#ff6b6b;">hero.attack += buffValue;</span>
+<span style="color:#ff6b6b;">hero.maxHp += 200;</span>
+// → Config sai vĩnh viễn trong session!</code></pre></div>
+                        <div><div style="color: #51cf66; font-size: 0.6em; margin-bottom: 0.15em;">ĐÚNG — tách runtime modifier riêng</div><pre style="margin: 0;"><code class="csharp" data-noescape>// Config giữ nguyên (Read-Only)
+var baseAtk = config.GetHero(heroId).attack;
+
+// Runtime modifier tách riêng:
+<span style="color:#51cf66;">int finalAtk = baseAtk + GetBuffTotal();</span>
+
+// Hoặc dùng LiveModifier pattern:
+<span style="color:#51cf66;">playerData.AddLiveModifier(id, value, endTime);</span></code></pre></div>
+                    </div>
+                </div>
             </div>
-            <div class="lesson fragment">
-                <div class="lesson-q">❌ Thêm field mới, quên migration</div>
-                <div class="lesson-a">Player cũ update app → field mới = default 0, business cần 100. <strong>Fix:</strong> Check <code>dataVersion</code> trong <code>OnPostLoad()</code>.</div>
+            <!-- 4/5 -->
+            <div class="fragment fade-in-then-out" style="width: 100%;">
+                <div class="lesson" style="padding: 0.4em 0.5em;">
+                    <div class="lesson-q" style="margin-bottom: 0.3em;">❌ Cross-model mutation — bypass "người gác cổng" <span class="text-muted" style="float: right; font-weight: normal; font-size: 0.7em;">4 / 5</span></div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5em;">
+                        <div><div style="color: #ff6b6b; font-size: 0.6em; margin-bottom: 0.15em;">SAI — StoreModel sửa data của PlayerModel</div><pre style="margin: 0;"><code class="csharp" data-noescape>// Trong StoreModel — mua item
+var player = SaveDataCollection
+    .Instance.player;
+
+<span style="color:#ff6b6b;">player.data.CurrentCoins -= item.price;</span>
+<span style="color:#ff6b6b;">player.data.iapIdsBought.Add(item.id);</span>
+// Bypass PlayerModel validation hoàn toàn!</code></pre></div>
+                        <div><div style="color: #51cf66; font-size: 0.6em; margin-bottom: 0.15em;">ĐÚNG — gọi qua PlayerModel methods</div><pre style="margin: 0;"><code class="csharp" data-noescape>// Trong StoreModel — mua item
+var player = SaveDataCollection
+    .Instance.player;
+
+<span style="color:#51cf66;">player.data.AddCurrency(</span>
+<span style="color:#51cf66;">    IDs.Currency.c_Coin, -price,</span>
+<span style="color:#51cf66;">    groupPlacement, placement);</span>
+// → validate + event + tracking</code></pre></div>
+                    </div>
+                </div>
+            </div>
+            <!-- 5/5 -->
+            <div class="fragment fade-in" style="width: 100%;">
+                <div class="lesson" style="padding: 0.4em 0.5em;">
+                    <div class="lesson-q" style="margin-bottom: 0.3em;">❌ ScriptableObject gọi MonoBehaviour <span class="text-muted" style="float: right; font-weight: normal; font-size: 0.7em;">5 / 5</span></div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5em;">
+                        <div><div style="color: #ff6b6b; font-size: 0.6em; margin-bottom: 0.15em;">SAI — SO phụ thuộc scene</div><pre style="margin: 0;"><code class="csharp" data-noescape>// Trong PlayerModel (ScriptableObject)
+<span style="color:#ff6b6b;">var hud = FindObjectOfType&lt;HUDView&gt;();</span>
+<span style="color:#ff6b6b;">hud.UpdateCoin(data.coin);</span>
+
+// Scene unload → hud = null → CRASH
+// SO tồn tại xuyên scene, MB thì không!</code></pre></div>
+                        <div><div style="color: #51cf66; font-size: 0.6em; margin-bottom: 0.15em;">ĐÚNG — phát event, MB tự lắng nghe</div><pre style="margin: 0;"><code class="csharp" data-noescape>// Trong PlayerModel (ScriptableObject)
+<span style="color:#51cf66;">DispatchEvent(new CurrencyChangedEvent(</span>
+<span style="color:#51cf66;">    currency, preValue, newValue, placement));</span>
+
+// HUDView (MB) tự subscribe event
+// Scene unload → tự unsubscribe → an toàn</code></pre></div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -638,23 +741,31 @@ public StoreModel store;</code></pre>
         </div>
     </section>
 
-    <!-- ══════ SLIDE 14: EDITOR TOOLS [NEW] ══════ -->
-    <section data-background-color="#0a0a14">
-        <h2>Editor Tools — Điều tạo nên sự khác biệt</h2>
-        <p class="text-muted">Xem và chỉnh sửa player data trực tiếp trong Unity Editor, không cần build</p>
-        <div class="ss-grid mt-1">
-            <div class="ss-item">
-                <img src="image-2.png" alt="JObjectDB Editor">
-                <div class="ss-cap">JObjectDB Editor — View JSON data toàn bộ hệ thống</div>
+    <!-- ══════ SLIDE 14: DEMO TRANSITION ══════ -->
+    <section data-background-gradient="radial-gradient(ellipse at 70% 50%, #111133 0%, #0a0a14 70%)">
+        <h2 style="text-align: center;">Demo: Dự án thực tế</h2>
+        <p class="text-muted" style="text-align: center;">Áp dụng kiến trúc vừa trình bày vào một mobile game thật</p>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.7em; margin-top: 0.8em;">
+            <div class="card bordered-green fragment" style="text-align: center;">
+                <div style="font-size: 2em; margin-bottom: 0.1em;">📊</div>
+                <h3 class="text-green" style="font-size: 0.75em !important;">Google Sheets / Excel</h3>
+                <p>Designer quản lý config, balance trực tiếp</p>
             </div>
-            <div class="ss-item">
-                <img src="image-3.png" alt="ScriptableObject Inspector">
-                <div class="ss-cap">ScriptableObject Inspector — Edit từng field trực tiếp</div>
+            <div class="card bordered-amber fragment" style="text-align: center;">
+                <div style="font-size: 2em; margin-bottom: 0.1em;">🔧</div>
+                <h3 class="text-amber" style="font-size: 0.75em !important;">SheetX</h3>
+                <p>Export → JSON + C# IDs + ScriptableObject</p>
             </div>
-        </div>
-        <div class="insight fragment">
-            <div class="insight-label">Tác động thực tế</div>
-            <p><strong>Debug speed tăng 5-10x</strong> — thay vì print log → build → reproduce → check, bạn mở Inspector → thấy ngay state → sửa → test lại trong 3 giây.</p>
+            <div class="card bordered-blue fragment" style="text-align: center;">
+                <div style="font-size: 2em; margin-bottom: 0.1em;">🎮</div>
+                <h3 class="highlight" style="font-size: 0.75em !important;">Unity Project</h3>
+                <p>Data Models, DBManager, Inspector</p>
+            </div>
+            <div class="card bordered-purple fragment" style="text-align: center;">
+                <div style="font-size: 2em; margin-bottom: 0.1em;">🔍</div>
+                <h3 class="text-purple" style="font-size: 0.75em !important;">Runtime Debug</h3>
+                <p>JObjectDB — xem/sửa player data live</p>
+            </div>
         </div>
     </section>
 

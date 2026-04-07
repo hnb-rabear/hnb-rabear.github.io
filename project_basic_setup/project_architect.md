@@ -135,7 +135,6 @@ public class PlayerModel : JObjectModel<PlayerData>
 
         Data.coin -= amount;
         OnCoinChanged?.Invoke(Data.coin);   // Phát sự kiện
-        MarkDirty();                         // Đánh dấu cần lưu
         return true;
     }
 
@@ -143,7 +142,6 @@ public class PlayerModel : JObjectModel<PlayerData>
     {
         Data.coin += amount;
         OnCoinChanged?.Invoke(Data.coin);
-        MarkDirty();
     }
 
     // Events
