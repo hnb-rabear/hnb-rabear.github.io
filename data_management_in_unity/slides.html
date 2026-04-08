@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Architecture trong Unity — Bài học từ Production</title>
+    <title>Data Architecture trong Unity</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/night.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
@@ -204,7 +204,6 @@
     <!-- ══════ SLIDE 1: COVER ══════ -->
     <section class="cover" data-background-gradient="radial-gradient(ellipse at 30% 50%, #111133 0%, #0a0a14 70%)">
         <h1>Data <span class="accent">Architecture</span><br>trong Unity Game</h1>
-        <p class="sub">Bài học từ Production</p>
         <p class="meta"><strong>hnb-rabear</strong></p>
     </section>
 
@@ -228,7 +227,7 @@
         </div>
         <div class="insight fragment">
             <div class="insight-label">Observation</div>
-            <p>Sự phức tạp lớn nhất không nằm ở logic từng tính năng, mà ở <strong>khả năng Scale và Bảo trì</strong>: Thiếu kiến trúc chuẩn dẫn đến Tight Coupling làm code dễ vỡ, State mất đồng bộ, và Data Layer biến thành 'God Class' cản trở team làm việc chung.</p>
+            <p>Sự phức tạp lớn nhất không nằm ở logic từng tính năng, mà ở <strong>khả năng Scale và Bảo trì</strong>: Thiếu kiến trúc chuẩn khiến các tính năng dính chặt vào nhau làm code dễ vỡ, State mất đồng bộ, và Data Layer biến thành 'God Class' cản trở team làm việc chung.</p>
         </div>
     </section>
 
@@ -240,7 +239,7 @@
             <div class="evo-item fragment">
                 <div class="evo-label text-red">Gen 1: Spaghetti Data</div>
                 <h3>PlayerPrefs tùy tiện</h3>
-                <p class="text-muted">Set/GetInt rải khắp nơi. Hardcode config. Đổi 1 chỗ → vỡ 5 chỗ.</p>
+                <p class="text-muted">Set/GetInt rải khắp nơi. Hardcode config. Side-effects khó lường: Đổi 1 chỗ → phát sinh lỗi dây chuyền.</p>
             </div>
             <div class="evo-item fragment">
                 <div class="evo-label text-amber">Gen 2: God Class</div>
@@ -255,7 +254,7 @@
         </div>
         <div class="insight fragment">
             <div class="insight-label">Key realization</div>
-            <p>Gen 1 → 2: <strong>gom rác về một chỗ</strong> (Centralize). Gen 2 → 3: <strong>chia nhỏ có hệ thống</strong> (Decouple).</p>
+            <p>Gen 1 → 2: <strong>tập trung độ phức tạp</strong> (Centralize). Gen 2 → 3: <strong>chia nhỏ có hệ thống</strong> (Decouple).</p>
         </div>
     </section>
 
@@ -268,13 +267,13 @@
                 <div class="principle-num">01</div>
                 <h3 class="text-green" style="font-size: 0.8em;">Separation of Concerns</h3>
                 <p>Data Model ≠ Game Logic ≠ Local Save.</p>
-                <p>Tách rõ ranh giới: Data chỉ lưu trạng thái, Handler xử lý luật. Không code gộp.</p>
+                <p>Tách rõ ranh giới: Data chỉ lưu trạng thái, Handler xử lý logic.</p>
             </div>
             <div class="card bordered-blue fragment" style="position: relative;">
                 <div class="principle-num">02</div>
                 <h3 class="highlight" style="font-size: 0.8em;">Single Point of Access</h3>
-                <p>Mọi lệnh Write data bắt buộc phải đi qua "người gác cổng" để Validate.</p>
-                <p>5 feature cùng tự ý trừ Coin = vỡ trận state!</p>
+                <p>Mọi lệnh Write data bắt buộc phải đi qua Data Gateway (Cổng kiểm soát) để Validate.</p>
+                <p>5 features đều có thể tự trừ coins -> code bị rối, khó bảo trì.</p>
             </div>
             <div class="card bordered-purple fragment" style="position: relative;">
                 <div class="principle-num">03</div>
@@ -356,7 +355,7 @@
             <div class="card bordered-green fragment" style="text-align: center;">
                 <div style="font-size: 2em; margin-bottom: 0.1em;">📊</div>
                 <h3 class="text-green" style="font-size: 0.75em !important;">Config Pipeline</h3>
-                <p>Designer tự cập nhật balance mà không cần Dev?</p>
+                <p>Tách bạch vòng lặp làm việc của Designer và Dev</p>
             </div>
             <div class="card bordered-blue fragment" style="text-align: center;">
                 <div style="font-size: 2em; margin-bottom: 0.1em;">🔒</div>
@@ -389,7 +388,7 @@ public class ShopItemConfig
     public int id;
     public string name;
     public int price;
-    public int currencyType;
+    public IDs.Currency currencyType;
 }</code></pre>
                 <div class="code-label mt-half">Truy xuất — type-safe, compile-time checked</div>
                 <pre><code class="language-csharp">// Gõ sai ID? Compile error.
@@ -415,7 +414,7 @@ var price = item.price;</code></pre>
 
     <!-- ══════ SLIDE 8: REPOSITORY PATTERN ══════ -->
     <section data-background-color="#0a0a14">
-        <h2>Pattern: Repository — "Người gác cổng"</h2>
+        <h2>Pattern: Repository — Data Gateway</h2>
         <p class="text-muted">Tách data structure ra khỏi business logic — ví dụ từ JObjectDB System</p>
         <div class="grid-2 mt-1">
             <div>
@@ -425,10 +424,10 @@ public partial class PlayerData
     : JObjectData
 {
     public int level = 1;
-    public int coin;
-    public int live = 5;
-    public int liveRegenTime;
-    public List&lt;int&gt; iapIdsBought = new();
+    public int coins;
+    public int lives = 5;
+    public int livesRegenTime;
+    public List<string> purchasedIapIds = new();
     public bool noAds;
 }</code></pre>
             </div>
@@ -439,20 +438,20 @@ public partial class PlayerData
 {
     public void SetCurrency(
         IDs.Currency currency,
-        int pValue, string pPlacement)
+        int value, string placement)
     {
         // validate + assign...
         DispatchEvent(
             new CurrencyChangedEvent(
                 currency, preValue,
-                pValue, pPlacement));
+                value, placement));
     }
 }</code></pre>
             </div>
         </div>
         <div class="insight fragment">
             <div class="insight-label">Tại sao tách?</div>
-            <p><strong>Data Model</strong> cần serialize (JSON, gửi server). <strong>Data Handler</strong> là "người gác cổng" — validate, notify, track dirty. 1 nơi sửa data = 0 bug "ai đã sửa coin?".</p>
+            <p><strong>Data Model</strong> cần serialize (JSON, gửi server). <strong>Data Handler</strong> là Data Gateway — validate, notify, track dirty. Đảm bảo khả năng truy vết (Traceability) cho Data.</p>
         </div>
     </section>
 
@@ -504,10 +503,10 @@ public partial class PlayerData
         <p class="text-muted">Nguyên tắc #3: Event-Driven — modules không phụ thuộc ngầm vào nhau</p>
         <div class="grid-2 mt-1">
             <div class="card bordered-red">
-                <h3 class="text-red">❌ Tight coupling</h3>
+                <h3 class="text-red">❌ Code dính chặt</h3>
                 <pre><code class="language-csharp">void SpendCoin(int amount) {
-    coin -= amount;
-    hudView.UpdateCoin(coin);    // biết HUD
+    coins -= amount;
+    hudView.UpdateCoin(coins);    // biết HUD
     shopView.Refresh();          // biết Shop
     questMgr.CheckProgress();    // biết Quest
     // 10 features = 10 dependencies
@@ -525,7 +524,7 @@ public partial class PlayerData
 }
 // UI subscribe CurrencyChangedEvent
 // Quest subscribe CurrencyChangedEvent</code></pre>
-                <p>PlayerModel chỉ phát event. Zero coupling.</p>
+                <p>PlayerModel chỉ phát event. Không còn dính chặt.</p>
             </div>
         </div>
         <div class="insight fragment">
@@ -551,7 +550,7 @@ PlayerData.Misc.cs</code></pre>
                 <h3>Module boundaries</h3>
                 <pre style="font-size: 0.72em;"><code class="language-csharp">public PlayerModel player;
 public RewardModel reward;
-public QuestsModel quest;
+public QuestModel quest;
 public CompetitionModel comp;
 public StoreModel store;</code></pre>
                 <p>Thực tế: <strong>7 models</strong> trong SaveDataCollection.</p>
@@ -606,7 +605,7 @@ public class PlayerData : JObjectData
                         <div><div style="color: #ff6b6b; font-size: 0.6em; margin-bottom: 0.15em;">SAI — 1 file 500+ dòng</div><pre style="margin: 0;"><code class="csharp" data-noescape>// PlayerData.cs — MỌI THỨ ở đây
 public class PlayerData : JObjectData
 {
-    public int coin, level, live;
+    public int coins, level, lives;
     public List&lt;int&gt; unlockedAvatars;
     public List&lt;Booster&gt; boosters;
     public int questProgress, raceRank;
@@ -614,7 +613,7 @@ public class PlayerData : JObjectData
 }</code></pre></div>
                         <div><div style="color: #51cf66; font-size: 0.6em; margin-bottom: 0.15em;">ĐÚNG — partial class theo domain</div><pre style="margin: 0;"><code class="csharp" data-noescape><span style="color:#51cf66;">// PlayerData.cs</span> — core
 public partial class PlayerData : JObjectData
-{  public int coin, level, live; }
+{  public int coins, level, lives; }
 
 <span style="color:#51cf66;">// PlayerData.Inventory.cs</span>
 public partial class PlayerData
@@ -659,8 +658,8 @@ var baseAtk = config.GetHero(heroId).attack;
 var player = SaveDataCollection
     .Instance.player;
 
-<span style="color:#ff6b6b;">player.data.CurrentCoins -= item.price;</span>
-<span style="color:#ff6b6b;">player.data.iapIdsBought.Add(item.id);</span>
+<span style="color:#ff6b6b;">player.data.coins -= item.price;</span>
+<span style="color:#ff6b6b;">player.data.purchasedIapIds.Add(item.id);</span>
 // Bypass PlayerModel validation hoàn toàn!</code></pre></div>
                         <div><div style="color: #51cf66; font-size: 0.6em; margin-bottom: 0.15em;">ĐÚNG — gọi qua PlayerModel methods</div><pre style="margin: 0;"><code class="csharp" data-noescape>// Trong StoreModel — mua item
 var player = SaveDataCollection
@@ -680,7 +679,7 @@ var player = SaveDataCollection
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5em;">
                         <div><div style="color: #ff6b6b; font-size: 0.6em; margin-bottom: 0.15em;">SAI — SO phụ thuộc scene</div><pre style="margin: 0;"><code class="csharp" data-noescape>// Trong PlayerModel (ScriptableObject)
 <span style="color:#ff6b6b;">var hud = FindObjectOfType&lt;HUDView&gt;();</span>
-<span style="color:#ff6b6b;">hud.UpdateCoin(data.coin);</span>
+<span style="color:#ff6b6b;">hud.UpdateCoin(data.coins);</span>
 
 // Scene unload → hud = null → CRASH
 // SO tồn tại xuyên scene, MB thì không!</code></pre></div>
@@ -708,10 +707,10 @@ var player = SaveDataCollection
                 </div>
                 <div class="card fragment" style="padding: 0.3em 0.6em; margin-bottom: 0.15em; border-left: 3px solid var(--blue);">
                     <h3 style="font-size: 0.7em; margin-bottom: 0;" class="highlight">Predictable Data Flow</h3>
-                    <p style="font-size: 0.45em !important; margin: 0;">Mọi thay đổi đều qua Handler → dễ trace, dễ debug. "Ai sửa coin?" — luôn trả lời được.</p>
+                    <p style="font-size: 0.45em !important; margin: 0;">Mọi thay đổi đều qua Handler → dễ trace, dễ debug. Đảm bảo tính truy vết (Traceability). Luôn trả lời được: Ai đã sửa data này?</p>
                 </div>
                 <div class="card fragment" style="padding: 0.3em 0.6em; margin-bottom: 0.15em; border-left: 3px solid var(--purple);">
-                    <h3 style="font-size: 0.7em; margin-bottom: 0;" class="text-purple">Zero Coupling giữa Features</h3>
+                    <h3 style="font-size: 0.7em; margin-bottom: 0;" class="text-purple">Các tính năng không dính chặt</h3>
                     <p style="font-size: 0.45em !important; margin: 0;">Thêm feature = subscribe event. Các module cũ không cần biết feature mới tồn tại.</p>
                 </div>
             </div>
@@ -774,7 +773,7 @@ var player = SaveDataCollection
             </div>
             <div class="card bordered-purple">
                 <h3 class="text-purple" style="font-size: 0.72em !important;">Scaling</h3>
-                <p>partial class cho model phình to.<br>Module boundaries rõ ràng.<br>Cross-model: đọc OK, sửa qua event.</p>
+                <p>partial class để tránh God Object.<br>Module boundaries rõ ràng.<br>Cross-model: đọc OK, sửa qua event.</p>
             </div>
         </div>
         <div class="insight fragment" style="margin-top: 0.3em; text-align: left;">

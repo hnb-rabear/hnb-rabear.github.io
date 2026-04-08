@@ -25,3 +25,11 @@
 ### DEC-006: CSS - No padding on sections
 - **Quyết định**: Không dùng padding trên `.reveal .slides section`. Dùng margin trên child elements nếu cần spacing.
 - **Lý do**: Padding conflict với Reveal.js center:true → gây horizontal layout shift.
+
+### DEC-007: Narrative & Terminology
+- **Quyết định**: Sử dụng thuật ngữ chuyên môn (Spaghetti, God Class, Decoupled, Separation of Concerns, Single Point of Access, Event-Driven) và ngôn ngữ phản ánh đúng đau đầu thực tế (ví dụ: "Code dính chặt").
+- **Lý do**: Cân bằng giữa đối tượng Junior (học thuật ngữ) và Senior (quen thuộc chuẩn ngành), tạo tính chuyên nghiệp và tính thực tế cho bài thuyết trình.
+
+### DEC-008: Professional Terminology & Traceability (Audit)
+- **Quyết định**: Nâng cấp toàn bộ văn phong và thuật ngữ sang chuẩn Senior (Data Gateway, Traceability, Cascading failures, God Object). Đồng nhất các ví dụ code mâu thuẫn (số nhiều `coins`, `lives`, `purchasedIapIds`). Giữ nguyên kiểu dữ liệu `int` cho Timestamp.
+- **Lý do**: Tăng tính chuyên nghiệp và "credibility" cho bài thuyết trình. Việc dùng `int` cho timestamp là do giới hạn của Unity Serialization thực tế, phản ánh kinh nghiệm production thay vì lý thuyết suông.
