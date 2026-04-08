@@ -46,17 +46,17 @@ Luồng chạy luôn là một chiều: Game logic gọi Handler để validate 
 
 ---
 
-## Slide 6: Patterns Roadmap (1 phút)
+## Slide 6: 4 Patterns sẽ tìm hiểu (1 phút)
 "Để hiện thực hoá bức tranh trên, hệ thống sử dụng 4 Patterns:
-1. **Config Pipeline:** Quy trình làm việc của Designer.
-2. **Repository:** Quản lý quyền truy cập Data.
-3. **Lifecycle:** Vòng đời dữ liệu.
-4. **Observer:** Cách các module nói chuyện với nhau.
+1. **Config Pipeline:** Tách vòng lặp làm việc của Designer ra khỏi Dev.
+2. **Data Gateway:** Mọi thay đổi data phải qua Handler để validate và truy vết.
+3. **Lifecycle:** Vòng đời dữ liệu — load, offline rewards, auto-save.
+4. **Observer:** Thêm feature chỉ cần subscribe event, không đụng code cũ.
 Chúng ta sẽ lướt nhanh từng pattern."
 
 ---
 
-## Slide 7: Config Pipeline (2 phút)
+## Slide 7: Pattern: Config Pipeline (2 phút)
 "Với Config Pipeline, chúng ta tách bạch hoàn toàn công việc của Dev và Designer. 
 Config Class phản chiếu chính xác cấu trúc trên Sheet. Chúng ta truy xuất thông qua ID được auto-generated. Gõ sai ID? Lỗi ngay từ lúc biên dịch (Compile-time).
 
@@ -64,7 +64,7 @@ Quy trình này trong project hiện tại được tự động hoá hoàn toà
 
 ---
 
-## Slide 8: Repository - Data Gateway (2.5 phút)
+## Slide 8: Pattern: Data Gateway (2.5 phút)
 "Pattern này áp dụng nguyên tắc Separation of Concerns.
 - **Layer 1 (Data Model):** Ví dụ như `PlayerData`, chỉ gồm các property thuần tuý. Lớp này làm nhiệm vụ Serialize/Gửi lên server.
 - **Layer 2 (Data Handler):** Ví dụ `PlayerModel`. Lớp này chứa các phương thức như `SetCurrency`. Nó validate dữ liệu, gán giá trị, và lập tức phát Event (`CurrencyChangedEvent`).
@@ -73,7 +73,7 @@ Tại sao phải chia 2? Để đảm bảo tính phân quyền và **Traceabili
 
 ---
 
-## Slide 9: Lifecycle Management (2.5 phút)
+## Slide 9: Pattern: Lifecycle Management (2.5 phút)
 "Vòng đời dữ liệu phức tạp hơn là chỉ Load rồi Save.
 Hệ thống cung cấp một luồng chuẩn:
 - `Init()` cho user mới.
@@ -81,11 +81,11 @@ Hệ thống cung cấp một luồng chuẩn:
 - `OnUpdate()` cho các timer realtime.
 - `OnPause()` dùng để validate và tự động lưu nền (auto-save).
 
-Ví dụ thực tế khi tính năng hồi thể lực lúc offline: Framework sẽ gọi hook `OnPostLoad` truyền vào số giây offline. Developer chỉ cần tập trung viết business logic ở bên trong hàm, framework tự động gọi đúng thời điểm."
+Ví dụ thực tế khi tính năng hồi thể lực lúc offline: Framework sẽ gọi callback `OnPostLoad` truyền vào số giây offline. Developer chỉ cần tập trung viết business logic ở bên trong hàm, framework tự động gọi đúng thời điểm."
 
 ---
 
-## Slide 10: Observer - Decoupled Communication (2 phút)
+## Slide 10: Pattern: Observer (2 phút)
 "Quay lại nguyên tắc Event-Driven. Ở phương pháp gọi trực tiếp, `SpendCoin` gọi thẳng đến HUD, Shop, Quest. Mỗi tính năng mới thêm vào, ta lại phải sửa hàm này. Sự liên kết quá chặt chẽ (tight-coupling).
 
 Ở phương pháp Event-Driven, hàm `SetCurrency` chỉ phân phát `CurrencyChangedEvent`. HUD, Quest tự subscribe vào hệ thống Event. Lúc này, tính năng cũ hoàn toàn không cần biết tính năng mới có tồn tại hay không, xoá hay thêm module đều an toàn."
@@ -111,12 +111,14 @@ Ví dụ thực tế khi tính năng hồi thể lực lúc offline: Framework s
 
 ---
 
-## Slide 13: Những lợi ích thực thế (1.5 phút)
-"Kiến trúc này cho chúng ta các giá trị kỹ thuật thực tế: 
-- **Single Source of Truth:** Quản lý State tập trung, dễ tìm kiếm. 
-- **Traceability:** Dự đoán được luồng chạy, dễ bug hunting. Đặt 1 breakpoint ở gateway là biết ngay chỗ nào gây lỗi Data.
-- **Safe Changes:** Thoải mái mở rộng hệ thống (event-driven), hoặc thay đổi core database ở dưới mà không ảnh hưởng logic bên trên.
-Quan trọng nhất: Giảm thiểu rủi ro con người thông qua kiến trúc phân quyền."
+## Slide 13: Tại sao kiến trúc này hiệu quả? (1.5 phút)
+"Kiến trúc này giải quyết được những vấn đề thực tế:
+- **Single Source of Truth:** Mỗi data chỉ tồn tại 1 nơi. Không còn PlayerPrefs.GetInt() rải rác khắp codebase.
+- **Predictable Data Flow:** Mọi thay đổi đều qua Handler — dễ trace, dễ debug. Luôn trả lời được: ai đã sửa data này?
+- **Các tính năng không dính chặt:** Thêm feature chỉ cần subscribe event. Các module cũ không cần biết feature mới tồn tại.
+- **Giảm lỗi do con người:** Auto-save, lifecycle callback, validation — framework tự xử lý, dev không cần nhớ.
+- **Team làm việc song song:** Partial class + module boundaries — mỗi dev một file, hạn chế tối đa merge conflict.
+- **Thay đổi không sợ vỡ:** Đổi cách lưu (JSON → encrypt → cloud)? Chỉ sửa persistence layer, game logic không đổi."
 
 ---
 

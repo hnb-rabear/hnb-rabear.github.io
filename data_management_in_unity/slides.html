@@ -266,7 +266,7 @@
             <div class="card bordered-green fragment" style="position: relative;">
                 <div class="principle-num">01</div>
                 <h3 class="text-green" style="font-size: 0.8em;">Separation of Concerns</h3>
-                <p>Data Model ≠ Game Logic ≠ Local Save.</p>
+                <p>Data Model ≠ Game Logic ≠ Persistence (Lưu trữ).</p>
                 <p>Tách rõ ranh giới: Data chỉ lưu trạng thái, Handler xử lý logic.</p>
             </div>
             <div class="card bordered-blue fragment" style="position: relative;">
@@ -342,8 +342,8 @@
         </div>
 
         <div class="insight fragment" style="margin-top: 0.2em;">
-            <div class="insight-label">Luồng mutation</div>
-            <p>Mọi thay đổi data đều đi theo 1 chiều: <strong>Game Logic → Handler (validate) → Event → UI tự cập nhật.</strong> Không ai được sửa data trực tiếp.</p>
+            <div class="insight-label">Luồng thay đổi data</div>
+            <p>Mọi thay đổi data đi theo 1 chiều: <strong>Game Logic gọi Handler → Handler validate và ghi vào Data Model → phát Event → các module liên quan (UI, Quest, Store...) tự cập nhật.</strong> Không ai được sửa Data Model trực tiếp — kể cả UI, kể cả các Handler khác.</p>
         </div>
     </section>
 
@@ -359,8 +359,8 @@
             </div>
             <div class="card bordered-blue fragment" style="text-align: center;">
                 <div style="font-size: 2em; margin-bottom: 0.1em;">🔒</div>
-                <h3 class="highlight" style="font-size: 0.75em !important;">Repository</h3>
-                <p>Ai được phép sửa data? Làm sao trace được?</p>
+                <h3 class="highlight" style="font-size: 0.75em !important;">Data Gateway</h3>
+                <p>Mọi thay đổi data phải qua Handler để validate và truy vết</p>
             </div>
             <div class="card bordered-amber fragment" style="text-align: center;">
                 <div style="font-size: 2em; margin-bottom: 0.1em;">🔄</div>
@@ -370,7 +370,7 @@
             <div class="card bordered-purple fragment" style="text-align: center;">
                 <div style="font-size: 2em; margin-bottom: 0.1em;">📡</div>
                 <h3 class="text-purple" style="font-size: 0.75em !important;">Observer</h3>
-                <p>Thêm feature mới mà không sửa code cũ?</p>
+                <p>Thêm feature chỉ cần subscribe event, không đụng code cũ</p>
             </div>
         </div>
     </section>
@@ -412,9 +412,9 @@ var price = item.price;</code></pre>
         </div>
     </section>
 
-    <!-- ══════ SLIDE 8: REPOSITORY PATTERN ══════ -->
+    <!-- ══════ SLIDE 8: DATA GATEWAY ══════ -->
     <section data-background-color="#0a0a14">
-        <h2>Pattern: Repository — Data Gateway</h2>
+        <h2>Pattern: Data Gateway</h2>
         <p class="text-muted">Tách data structure ra khỏi business logic — ví dụ từ JObjectDB System</p>
         <div class="grid-2 mt-1">
             <div>
@@ -499,7 +499,7 @@ public partial class PlayerData
 
     <!-- ══════ SLIDE 10: OBSERVER ══════ -->
     <section data-background-color="#0a0a14">
-        <h2>Pattern: Observer — Decoupled Communication</h2>
+        <h2>Pattern: Observer</h2>
         <p class="text-muted">Nguyên tắc #3: Event-Driven — modules không phụ thuộc ngầm vào nhau</p>
         <div class="grid-2 mt-1">
             <div class="card bordered-red">
@@ -578,7 +578,7 @@ public StoreModel store;</code></pre>
                 <div class="lesson" style="padding: 0.4em 0.5em;">
                     <div class="lesson-q" style="margin-bottom: 0.3em;">❌ Trộn runtime state với persistent state <span class="text-muted" style="float: right; font-weight: normal; font-size: 0.7em;">1 / 5</span></div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5em;">
-                        <div><div style="color: #ff6b6b; font-size: 0.6em; margin-bottom: 0.15em;">SAI</div><pre style="margin: 0;"><code class="csharp" data-noescape>[Serializable]
+                        <div><div style="color: #ff6b6b; font-size: 0.6em; margin-bottom: 0.15em;">SAI</div><pre style="margin: 0;"><code class="language-csharp" data-noescape>[Serializable]
 public class PlayerData : JObjectData
 {
     public int coin;
@@ -586,7 +586,7 @@ public class PlayerData : JObjectData
     <span style="color:#ff6b6b;">public float tweenProgress;  // ← animation</span>
     <span style="color:#ff6b6b;">public bool isDragging;      // ← input state</span>
 }</code></pre></div>
-                        <div><div style="color: #51cf66; font-size: 0.6em; margin-bottom: 0.15em;">ĐÚNG</div><pre style="margin: 0;"><code class="csharp" data-noescape>[Serializable]
+                        <div><div style="color: #51cf66; font-size: 0.6em; margin-bottom: 0.15em;">ĐÚNG</div><pre style="margin: 0;"><code class="language-csharp" data-noescape>[Serializable]
 public class PlayerData : JObjectData
 {
     public int coin;
@@ -602,7 +602,7 @@ public class PlayerData : JObjectData
                 <div class="lesson" style="padding: 0.4em 0.5em;">
                     <div class="lesson-q" style="margin-bottom: 0.3em;">❌ Fat Data Model — "God Object" <span class="text-muted" style="float: right; font-weight: normal; font-size: 0.7em;">2 / 5</span></div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5em;">
-                        <div><div style="color: #ff6b6b; font-size: 0.6em; margin-bottom: 0.15em;">SAI — 1 file 500+ dòng</div><pre style="margin: 0;"><code class="csharp" data-noescape>// PlayerData.cs — MỌI THỨ ở đây
+                        <div><div style="color: #ff6b6b; font-size: 0.6em; margin-bottom: 0.15em;">SAI — 1 file 500+ dòng</div><pre style="margin: 0;"><code class="language-csharp" data-noescape>// PlayerData.cs — MỌI THỨ ở đây
 public class PlayerData : JObjectData
 {
     public int coins, level, lives;
@@ -611,7 +611,7 @@ public class PlayerData : JObjectData
     public int questProgress, raceRank;
     <span style="color:#ff6b6b;">// ... 50+ fields, 2 devs sửa = conflict</span>
 }</code></pre></div>
-                        <div><div style="color: #51cf66; font-size: 0.6em; margin-bottom: 0.15em;">ĐÚNG — partial class theo domain</div><pre style="margin: 0;"><code class="csharp" data-noescape><span style="color:#51cf66;">// PlayerData.cs</span> — core
+                        <div><div style="color: #51cf66; font-size: 0.6em; margin-bottom: 0.15em;">ĐÚNG — partial class theo domain</div><pre style="margin: 0;"><code class="language-csharp" data-noescape><span style="color:#51cf66;">// PlayerData.cs</span> — core
 public partial class PlayerData : JObjectData
 {  public int coins, level, lives; }
 
@@ -630,7 +630,7 @@ public partial class PlayerData
                 <div class="lesson" style="padding: 0.4em 0.5em;">
                     <div class="lesson-q" style="margin-bottom: 0.3em;">❌ Config data bị mutate runtime <span class="text-muted" style="float: right; font-weight: normal; font-size: 0.7em;">3 / 5</span></div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5em;">
-                        <div><div style="color: #ff6b6b; font-size: 0.6em; margin-bottom: 0.15em;">SAI — sửa config từ SheetX trực tiếp</div><pre style="margin: 0;"><code class="csharp" data-noescape>// Config từ Google Sheets (Read-Only!)
+                        <div><div style="color: #ff6b6b; font-size: 0.6em; margin-bottom: 0.15em;">SAI — sửa config từ SheetX trực tiếp</div><pre style="margin: 0;"><code class="language-csharp" data-noescape>// Config từ Google Sheets (Read-Only!)
 var hero = DataConfigCollection
     .Instance.GetHero(heroId);
 
@@ -638,7 +638,7 @@ var hero = DataConfigCollection
 <span style="color:#ff6b6b;">hero.attack += buffValue;</span>
 <span style="color:#ff6b6b;">hero.maxHp += 200;</span>
 // → Config sai vĩnh viễn trong session!</code></pre></div>
-                        <div><div style="color: #51cf66; font-size: 0.6em; margin-bottom: 0.15em;">ĐÚNG — tách runtime modifier riêng</div><pre style="margin: 0;"><code class="csharp" data-noescape>// Config giữ nguyên (Read-Only)
+                        <div><div style="color: #51cf66; font-size: 0.6em; margin-bottom: 0.15em;">ĐÚNG — tách runtime modifier riêng</div><pre style="margin: 0;"><code class="language-csharp" data-noescape>// Config giữ nguyên (Read-Only)
 var baseAtk = config.GetHero(heroId).attack;
 
 // Runtime modifier tách riêng:
@@ -654,14 +654,14 @@ var baseAtk = config.GetHero(heroId).attack;
                 <div class="lesson" style="padding: 0.4em 0.5em;">
                     <div class="lesson-q" style="margin-bottom: 0.3em;">❌ Cross-model mutation — bypass "người gác cổng" <span class="text-muted" style="float: right; font-weight: normal; font-size: 0.7em;">4 / 5</span></div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5em;">
-                        <div><div style="color: #ff6b6b; font-size: 0.6em; margin-bottom: 0.15em;">SAI — StoreModel sửa data của PlayerModel</div><pre style="margin: 0;"><code class="csharp" data-noescape>// Trong StoreModel — mua item
+                        <div><div style="color: #ff6b6b; font-size: 0.6em; margin-bottom: 0.15em;">SAI — StoreModel sửa data của PlayerModel</div><pre style="margin: 0;"><code class="language-csharp" data-noescape>// Trong StoreModel — mua item
 var player = SaveDataCollection
     .Instance.player;
 
 <span style="color:#ff6b6b;">player.data.coins -= item.price;</span>
 <span style="color:#ff6b6b;">player.data.purchasedIapIds.Add(item.id);</span>
 // Bypass PlayerModel validation hoàn toàn!</code></pre></div>
-                        <div><div style="color: #51cf66; font-size: 0.6em; margin-bottom: 0.15em;">ĐÚNG — gọi qua PlayerModel methods</div><pre style="margin: 0;"><code class="csharp" data-noescape>// Trong StoreModel — mua item
+                        <div><div style="color: #51cf66; font-size: 0.6em; margin-bottom: 0.15em;">ĐÚNG — gọi qua PlayerModel methods</div><pre style="margin: 0;"><code class="language-csharp" data-noescape>// Trong StoreModel — mua item
 var player = SaveDataCollection
     .Instance.player;
 
@@ -677,13 +677,13 @@ var player = SaveDataCollection
                 <div class="lesson" style="padding: 0.4em 0.5em;">
                     <div class="lesson-q" style="margin-bottom: 0.3em;">❌ ScriptableObject gọi MonoBehaviour <span class="text-muted" style="float: right; font-weight: normal; font-size: 0.7em;">5 / 5</span></div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5em;">
-                        <div><div style="color: #ff6b6b; font-size: 0.6em; margin-bottom: 0.15em;">SAI — SO phụ thuộc scene</div><pre style="margin: 0;"><code class="csharp" data-noescape>// Trong PlayerModel (ScriptableObject)
+                        <div><div style="color: #ff6b6b; font-size: 0.6em; margin-bottom: 0.15em;">SAI — SO phụ thuộc scene</div><pre style="margin: 0;"><code class="language-csharp" data-noescape>// Trong PlayerModel (ScriptableObject)
 <span style="color:#ff6b6b;">var hud = FindObjectOfType&lt;HUDView&gt;();</span>
 <span style="color:#ff6b6b;">hud.UpdateCoin(data.coins);</span>
 
 // Scene unload → hud = null → CRASH
 // SO tồn tại xuyên scene, MB thì không!</code></pre></div>
-                        <div><div style="color: #51cf66; font-size: 0.6em; margin-bottom: 0.15em;">ĐÚNG — phát event, MB tự lắng nghe</div><pre style="margin: 0;"><code class="csharp" data-noescape>// Trong PlayerModel (ScriptableObject)
+                        <div><div style="color: #51cf66; font-size: 0.6em; margin-bottom: 0.15em;">ĐÚNG — phát event, MB tự lắng nghe</div><pre style="margin: 0;"><code class="language-csharp" data-noescape>// Trong PlayerModel (ScriptableObject)
 <span style="color:#51cf66;">DispatchEvent(new CurrencyChangedEvent(</span>
 <span style="color:#51cf66;">    currency, preValue, newValue, placement));</span>
 
@@ -769,7 +769,7 @@ var player = SaveDataCollection
             </div>
             <div class="card bordered-blue">
                 <h3 style="font-size: 0.72em !important;">Patterns</h3>
-                <p>Config Pipeline (sheets → SO).<br>Repository (data ≠ logic).<br>Lifecycle hooks (auto-save).<br>Observer (decoupled).</p>
+                <p>Config Pipeline (sheets → SO).<br>Data Gateway (data ≠ logic).<br>Lifecycle hooks (auto-save).<br>Observer (decoupled).</p>
             </div>
             <div class="card bordered-purple">
                 <h3 class="text-purple" style="font-size: 0.72em !important;">Scaling</h3>
