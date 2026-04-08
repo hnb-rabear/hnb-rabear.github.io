@@ -33,3 +33,7 @@
 ### DEC-008: Professional Terminology & Traceability (Audit)
 - **Quyết định**: Nâng cấp toàn bộ văn phong và thuật ngữ sang chuẩn Senior (Data Gateway, Traceability, Cascading failures, God Object). Đồng nhất các ví dụ code mâu thuẫn (số nhiều `coins`, `lives`, `purchasedIapIds`). Giữ nguyên kiểu dữ liệu `int` cho Timestamp.
 - **Lý do**: Tăng tính chuyên nghiệp và "credibility" cho bài thuyết trình. Việc dùng `int` cho timestamp là do giới hạn của Unity Serialization thực tế, phản ánh kinh nghiệm production thay vì lý thuyết suông.
+
+### DEC-009: Không sử dụng TECHNICAL.md và CHANGELOG.md
+- **Quyết định**: Không duy trì các file tài liệu kỹ thuật phụ (`TECHNICAL.md` và `CHANGELOG.md`) ở root.
+- **Lý do**: Yêu cầu trực tiếp từ người dùng (User preference). Bối cảnh kỹ thuật sẽ được duy trì thông qua Agent Memory và nội dung chính của site.
