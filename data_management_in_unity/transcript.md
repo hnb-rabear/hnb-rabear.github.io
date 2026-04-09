@@ -10,138 +10,168 @@ title: Transcript - Data Architecture trong Unity Game
 ---
 
 ## Slide 1: Cover (1 phút)
-"Chào mọi người. Hôm nay chúng ta sẽ trao đổi về **Data Architecture trong Unity Game**. Mục tiêu của buổi này không phải là hướng dẫn code tính năng, mà là chia sẻ cách thiết kế một hệ thống quản lý dữ liệu sao cho dễ bảo trì, dễ scale, và giúp nhiều dev có thể làm việc chung mà không dẫm chân lên nhau."
+"Chào mọi người. Hôm nay chúng ta sẽ trao đổi về **Data Architecture trong Unity Game**. Mục tiêu của buổi này không phải là hướng dẫn code tính năng, mà là chia sẻ cách thiết kế một hệ thống quản lý dữ liệu — sao cho dễ bảo trì, dễ mở rộng, và giúp nhiều dev có thể làm việc chung mà không dẫm chân lên nhau."
 
 ---
 
-## Slide 2: Bối cảnh vấn đề (2 phút)
-"Hãy nhìn vào thực tế của một dự án game mid-core:
-- Chúng ta có hàng trăm trường data config cần cân bằng.
-- Hàng chục model dữ liệu người chơi cần lưu trữ. 
-- Và quan trọng nhất: một team 2-3 dev, ai cũng cần đọc/ghi vào cùng một data layer.
+## Slide 2: Bối cảnh (2 phút)
+"Trước tiên, hãy nhìn vào thực tế. Một mobile game mid-core điển hình có bao nhiêu data?
 
-Vấn đề lớn nhất ở đây không nằm ở logic từng tính năng, mà là ở khả năng Scale (mở rộng). Nếu thiếu kiến trúc chuẩn, các module sẽ dính chặt vào nhau, code dễ vỡ, state mất đồng bộ và hệ thống Data dần biến thành một 'God Class' nguyên khối gây cản trở toàn team."
+Con số đầu tiên: **200+** config fields cần balance — item stats, level curves, rewards... Tiếp theo: **15+** player data models cần persist — profile, inventory, quests... Và quan trọng nhất: chỉ **2-3 devs** làm 5-7 features khác nhau, mà tất cả đều đọc/ghi vào cùng một data layer.
+
+Vấn đề lớn nhất ở đây không nằm ở logic từng tính năng. Nó nằm ở **khả năng Scale và Bảo trì**. Thiếu kiến trúc chuẩn thì các tính năng dính chặt vào nhau, code dễ vỡ, state mất đồng bộ, và data layer dần biến thành một 'God Class' cản trở cả team."
 
 ---
 
 ## Slide 3: Quá trình tiến hóa (2 phút)
-"Đa số chúng ta trải qua 3 giai đoạn xây dựng hệ thống data:
-- **Gen 1 - Spaghetti:** Lưu PlayerPrefs rải rác và Hard code. Ship nhanh nhưng khó kiểm soát rủi ro và khó scale. Phải sửa nhiều chỗ cho một thay đổi nhỏ, hoặc sửa 1 chỗ hỏng 3 chỗ khác.
-- **Gen 2 - God Class:** Gom tất cả vào 1 file `SaveManager`. Gọn hơn về quy trình save, nhưng file phình to hàng ngàn dòng, dễ gây merge conflict.
-- **Gen 3 - Decoupled:** Đây là đích đến. Chia tách lớp Data ra khỏi Logic và lớp Persist. Sử dụng Event để giao tiếp.
+"Hầu hết dev đều trải qua 3 giai đoạn khi xây dựng hệ thống data.
 
-Nhìn chung, tiến hóa từ Gen 1 sang 2 là quá trình **tập trung hóa sự phức tạp**. Từ Gen 2 sang 3 là quá trình **chia nhỏ sự phức tạp một cách có hệ thống**."
+Giai đoạn đầu — **Spaghetti Data**: PlayerPrefs tùy tiện, Set/GetInt rải khắp nơi, hardcode config. Side-effects khó lường — đổi 1 chỗ thì phát sinh lỗi dây chuyền.
+
+Giai đoạn hai — **God Class**: Gom hết vào 1 Central SaveManager. Gọn hơn, nhưng file phình to thành God Class 3000 dòng, merge conflict liên tục.
+
+Giai đoạn ba — **Decoupled**: Đây mới là đích đến. Layered System — tách Data, Logic, Persistence. Chia theo Domain. Giao tiếp qua Event.
+
+Nhìn lại thì, Gen 1 sang 2 là quá trình **tập trung độ phức tạp**. Còn Gen 2 sang 3 là **chia nhỏ có hệ thống**."
 
 ---
 
 ## Slide 4: 3 nguyên tắc cốt lõi (2 phút)
-"Mọi quyết định thiết kế từ giờ trở đi đều bám vào 3 nguyên tắc:
-1. **Separation of Concerns:** Data Model và Game Logic phải tách rời. Model chỉ chứa data thuần, Handler chứa logic xử lý data đó.
-2. **Single Point of Access:** Mọi thao tác ghi (Write) bắt buộc phải qua lớp kiểm soát (Data Gateway). Không có chuyện tính năng A hay B tự trừ tiền trực tiếp. 
-3. **Event-Driven:** Các tính năng không được trỏ thẳng vào nhau. Một module thay đổi data sẽ phát Event, module nào quan tâm thì tự lắng nghe."
+"Mọi quyết định thiết kế trong hệ thống này đều quay về 3 điều.
+
+Thứ nhất, **Separation of Concerns**: Data Model, Game Logic, và Persistence — ba thứ này phải tách rời. Data chỉ lưu trạng thái, Handler xử lý logic.
+
+Thứ hai, **Single Point of Access**: Mọi lệnh ghi data bắt buộc phải đi qua Data Gateway để validate. Nếu 5 features đều có thể tự trừ coins thì code sẽ rối, khó bảo trì.
+
+Thứ ba, **Event-Driven**: Các module không nhìn thấy nhau. Khi logic đổi state thì phát Event. Thêm tính năng chỉ cần Subscribe, xóa thì Unsubscribe — Plug & Play."
 
 ---
 
 ## Slide 5: Kiến trúc tổng quan (3 phút)
-"Đây là thiết kế tổng thể chia làm 2 luồng rõ rệt:
-- **Luồng Static Config (Read-Only):** Designer cấu hình trên Google Sheets -> Tool tự sinh ra JSON và mã C# tương ứng. Chúng ta có hệ thống type-safe, không hardcode.
-- **Luồng Dynamic Player (Read/Write):** DataManager điều khiển lifecycle của game, kết nối với chuỗi Handler (DataModel được quản lý bởi Handler).
+"Đây là thiết kế tổng thể. Hệ thống chia làm 2 luồng data chạy song song.
 
-Luồng chạy luôn là một chiều: Game logic gọi Handler để validate -> Event phát ra -> UI tự động cập nhật. Đảm bảo luôn thực thi theo luồng một chiều."
+Bên trái là **luồng Static Config — Read-Only**. Designer quản lý balance và content trên Google Sheets hoặc Excel. Export Tool — cụ thể là SheetX — tự động sinh ra JSON Data cùng C# IDs và Constants, tất cả đều type-safe. Sau đó deserialize vào ConfigCollection — một ScriptableObject Singleton chứa toàn bộ config.
+
+Bên phải là **luồng Dynamic Player — Read/Write**. Trên cùng là DataManager, một MonoBehaviour đóng vai trò Unity lifecycle driver — tự động save khi app pause hoặc quit. DataManager điều khiển DataHandlerCollection — đây là một ScriptableObject tập hợp tất cả Data Handlers. Mỗi DataHandler bọc lấy một DataModel: Handler chứa logic và events, còn DataModel chỉ là POCO serializable. Bên dưới là LocalDB — chuyển đổi JSON qua lại với PlayerPrefs.
+
+Điểm quan trọng nhất: **luồng thay đổi data luôn đi 1 chiều**. Game Logic gọi Handler, Handler validate rồi ghi vào Data Model, sau đó phát Event, và các module liên quan như UI, Quest, Store tự cập nhật. Không ai được sửa Data Model trực tiếp — kể cả UI, kể cả các Handler khác."
 
 ---
 
 ## Slide 6: 4 Patterns sẽ tìm hiểu (1 phút)
-"Để hiện thực hoá bức tranh trên, hệ thống sử dụng 4 Patterns:
-1. **Config Pipeline:** Tách vòng lặp làm việc của Designer ra khỏi Dev.
-2. **Data Gateway:** Mọi thay đổi data phải qua Handler để validate và truy vết.
-3. **Lifecycle:** Vòng đời dữ liệu — load, offline rewards, auto-save.
-4. **Observer:** Thêm feature chỉ cần subscribe event, không đụng code cũ.
-Chúng ta sẽ lướt nhanh từng pattern."
+"Để hiện thực hoá bức tranh trên, chúng ta sử dụng 4 patterns — mỗi cái giải quyết một vấn đề cụ thể.
+
+**Config Pipeline** — tách bạch vòng lặp làm việc của Designer và Dev. **Data Gateway** — mọi thay đổi data phải qua Handler để validate và truy vết. **Lifecycle** — load xong thì làm gì? Offline rewards? Auto-save? Và **Observer** — thêm feature chỉ cần subscribe event, không đụng code cũ.
+
+Chúng ta sẽ đi qua từng pattern."
 
 ---
 
 ## Slide 7: Pattern: Config Pipeline (2 phút)
-"Với Config Pipeline, chúng ta tách bạch hoàn toàn công việc của Dev và Designer. 
-Config Class phản chiếu chính xác cấu trúc trên Sheet. Chúng ta truy xuất thông qua ID được auto-generated. Gõ sai ID? Lỗi ngay từ lúc biên dịch (Compile-time).
+"Pattern đầu tiên giúp loại bỏ dev ra khỏi vòng lặp balance.
 
-Quy trình này trong project hiện tại được tự động hoá hoàn toàn bởi công cụ **SheetX** - xử lý toàn bộ từ Google Sheets xuống JSON và ScriptableObject."
+Ý tưởng là: Config class phản chiếu chính xác cấu trúc trên Sheet. Ví dụ `ShopItemConfig` có id, name, price, currencyType. Khi truy xuất thì dùng ID được auto-generated — type-safe, compile-time checked. Gõ sai ID? Compile error ngay, không đợi đến lúc chạy game.
+
+Vì sao pattern này quan trọng? Vì khi Designer muốn sửa giá trị, họ **tự làm** trên Sheet, không cần Dev. Khi Dev cần thêm field mới, chỉ **bổ sung field** trong config class. Và vì ID là auto-generated nên dev **không bao giờ phải hardcode string**.
+
+Toàn bộ pipeline này được tự động hoá bởi **SheetX** — một Unity Editor tool xử lý từ Google Sheets hoặc Excel, xuất ra JSON, C# IDs, và ScriptableObject."
 
 ---
 
 ## Slide 8: Pattern: Data Gateway (2.5 phút)
-"Pattern này áp dụng nguyên tắc Separation of Concerns.
-- **Layer 1 (Data Model):** Ví dụ như `PlayerData`, chỉ gồm các property thuần tuý. Lớp này làm nhiệm vụ Serialize/Gửi lên server.
-- **Layer 2 (Data Handler):** Ví dụ `PlayerModel`. Lớp này chứa các phương thức như `SetCurrency`. Nó validate dữ liệu, gán giá trị, và lập tức phát Event (`CurrencyChangedEvent`).
+"Pattern tiếp theo tách data structure ra khỏi business logic. Tôi sẽ lấy ví dụ từ JObjectDB System.
 
-Tại sao phải chia 2? Để đảm bảo tính phân quyền và **Traceability (khả năng truy vết)**. Bất cứ ai muốn sửa Data đều phải bước qua 'người gác cổng' là Handler."
+Có 2 layer. **Layer 1 là Data Model** — chỉ chứa data thuần. `PlayerData` kế thừa `JObjectData`, gồm các property như level, coins, lives, livesRegenTime, purchasedIapIds, noAds. Không có logic, không có method xử lý — chỉ là data.
+
+**Layer 2 là Data Handler** — đây mới là nơi chứa logic. `PlayerModel` kế thừa `JObjectModel<PlayerData>`, có các phương thức như `SetCurrency`. Khi gọi method này, nó validate dữ liệu, gán giá trị, rồi lập tức phát Event `CurrencyChangedEvent`.
+
+Tại sao phải tách? Vì Data Model cần serialize — gửi JSON lên server, lưu local. Còn Data Handler đóng vai trò Data Gateway — validate, notify, track dirty. Nhờ vậy mà đảm bảo được khả năng truy vết: bất cứ ai muốn sửa data đều phải đi qua Data Gateway."
 
 ---
 
 ## Slide 9: Pattern: Lifecycle Management (2.5 phút)
-"Vòng đời dữ liệu phức tạp hơn là chỉ Load rồi Save.
-Hệ thống cung cấp một luồng chuẩn:
-- `Init()` cho user mới.
-- `OnPostLoad()` để tính toán logic bù đắp khi game vừa load xong (ví dụ offline regen).
-- `OnUpdate()` cho các timer realtime.
-- `OnPause()` dùng để validate và tự động lưu nền (auto-save).
+"Data có vòng đời phức tạp hơn nhiều so với chỉ load rồi save. Hệ thống cung cấp 5 callback chuẩn.
 
-Ví dụ thực tế khi tính năng hồi thể lực lúc offline: Framework sẽ gọi callback `OnPostLoad` truyền vào số giây offline. Developer chỉ cần tập trung viết business logic ở bên trong hàm, framework tự động gọi đúng thời điểm."
+Đầu tiên là `Init()` — gọi lần đầu khi user mới, set default values. Tiếp theo `OnPostLoad` — nhận vào utcNow và offlineSecs, dùng để tính offline rewards, check expired. Rồi `OnUpdate` — gọi mỗi frame cho countdown timers, regen. Khi app vào background thì `OnPause` kích hoạt `OnPreSave` — validate rồi auto-save. Và cuối cùng `OnRemoteConfigFetched` — khi remote config thay đổi thì cập nhật data theo config mới.
+
+Ví dụ thực tế: tính năng hồi thể lực khi offline. Trong hàm `OnPostLoad`, code gọi `ValidateAvatars()`, `ValidateLiveModifiers()`, rồi kiểm tra nếu `offlineSeconds > 0` thì chạy `ProcessOfflineRegen()`. Framework gọi đúng callback, đúng thời điểm — developer chỉ cần tập trung viết business logic bên trong."
 
 ---
 
 ## Slide 10: Pattern: Observer (2 phút)
-"Quay lại nguyên tắc Event-Driven. Ở phương pháp gọi trực tiếp, `SpendCoin` gọi thẳng đến HUD, Shop, Quest. Mỗi tính năng mới thêm vào, ta lại phải sửa hàm này. Sự liên kết quá chặt chẽ (tight-coupling).
+"Quay lại nguyên tắc Event-Driven. Slide này so sánh 2 cách tiếp cận.
 
-Ở phương pháp Event-Driven, hàm `SetCurrency` chỉ phân phát `CurrencyChangedEvent`. HUD, Quest tự subscribe vào hệ thống Event. Lúc này, tính năng cũ hoàn toàn không cần biết tính năng mới có tồn tại hay không, xoá hay thêm module đều an toàn."
+Cách sai trước: hàm `SpendCoin` gọi thẳng `hudView.UpdateCoin()`, `shopView.Refresh()`, `questMgr.CheckProgress()`... Cứ mỗi feature mới là thêm một dependency. 10 features thì 10 dòng gọi trực tiếp. Mỗi lần thêm feature mới lại phải mở PlayerModel ra sửa.
+
+Cách đúng: hàm `SetCurrency` chỉ validate, assign, rồi gọi `DispatchEvent(new CurrencyChangedEvent(...))`. UI tự subscribe, Quest cũng tự subscribe. PlayerModel chỉ phát event, không biết và không cần biết ai đang lắng nghe.
+
+Kinh nghiệm thực tế: với code dính chặt, thêm feature mới buộc phải sửa các module không liên quan. Với event-driven thì ngược lại — **các module cũ hoàn toàn không cần biết feature mới tồn tại.**"
 
 ---
 
 ## Slide 11: Scaling khi project lớn lên (2 phút)
-"Khi tính năng bùng nổ, làm sao ngăn Data Layer phình to thành God Class?
-1. **Partial class:** `PlayerData` được chẻ ra thành `Inventory`, `Avatar`, `Misc`. Một class duy nhất nhưng dev làm độc lập, giảm thiểu tối đa rủi ro merge conflict.
-2. **Module boundaries:** Phân chia rõ 6-7 cụm model (Reward, Quest, Shop...). Không nhét hết vào Player.
-3. **Cross-model access:** Các handler có tham chiếu đến nhau qua Inspector để Đọc trực tiếp, nhưng Sửa thì bắt buộc qua Event."
+"Khi tính năng bùng nổ, làm sao giữ data layer không biến thành 'big ball of mud'? Có 3 kỹ thuật.
+
+Đầu tiên là **partial class**. `PlayerData` được chẻ thành 4 file: `PlayerData.cs`, `PlayerData.Inventory.cs`, `PlayerData.Avatar.cs`, `PlayerData.Misc.cs`. Vẫn là 1 class duy nhất, nhưng 4 file riêng biệt — mỗi dev làm 1 file, không ai đụng vào file của người khác.
+
+Tiếp theo là **module boundaries**. Không nhét hết vào Player — chia rõ thành `PlayerModel`, `RewardModel`, `QuestModel`, `CompetitionModel`, `StoreModel`... Thực tế trong dự án là **7 models** trong SaveDataCollection.
+
+Và cuối cùng là **cross-model access**. Các handler có tham chiếu đến nhau qua Inspector — ví dụ PlayerModel giữ reference đến CompetitionModel. Nguyên tắc là: **đọc trực tiếp thì OK, nhưng muốn sửa thì bắt buộc đi qua event.**"
 
 ---
 
 ## Slide 12: Anti-patterns phổ biến (4 phút)
-*Chú ý: Click nhanh qua từng phần, nhấn mạnh lỗi thường gặp nhất trong dự án thực.*
-"Cùng nhìn vào 5 anti-patterns từ các lỗi production thực tế:
-1. Trộn trạng thái runtime (như tween animation, drag state) vào class serialize data. Đây là thiết kế sai cấu trúc. Runtime gắn trên MonoBehaviour, data persistent phải hoàn toàn sạch.
-2. Bỏ qua partial class, để nguyên 1 file 500 dòng gây God Object. 
-3. Sửa thẳng config lúc runtime để buff chỉ số. Config là Read-Only. Xin hãy dùng Runtime Modifier pattern.
-4. Một tính năng ngầm chọc thẳng data của tính năng khác, bỏ qua Handler. Bỏ đi nguyên tắc Data Gateway.
-5. Để ScriptableObject lưu giữ reference của MonoBehaviour. Chuyển scene, MonoBehaviour bị huỷ, ScriptableObject vẫn trỏ đến null -> Crash game."
+*Chú ý: Click qua từng phần (5 slides con), nhấn mạnh lỗi thường gặp nhất trong dự án thực.*
+
+"Bây giờ cùng nhìn vào 5 anti-patterns từ production thực tế. Đây không chỉ là lỗi của junior — dev lâu năm code ẩu cũng mắc.
+
+**Lỗi thứ nhất: Trộn runtime state với persistent state.** Ví dụ đưa `tweenProgress`, `isDragging` vào class `PlayerData`. Sai hoàn toàn. Runtime state phải gắn trên MonoBehaviour — nó chỉ tồn tại trong scene. Persistent data phải hoàn toàn sạch, chỉ chứa những gì cần lưu.
+
+**Lỗi thứ hai: Fat Data Model — God Object.** Bỏ qua partial class, để nguyên 1 file `PlayerData.cs` 500+ dòng gom hết coins, level, lives, unlockedAvatars, boosters, questProgress, raceRank... 2 devs cùng sửa file này là conflict ngay. Giải pháp đơn giản: dùng partial class chia theo domain.
+
+**Lỗi thứ ba: Config data bị sửa lúc runtime.** Sửa thẳng config từ SheetX để buff chỉ số — `hero.attack += buffValue`. Nghe có vẻ nhanh, nhưng config sẽ sai vĩnh viễn trong session đó. Config là Read-Only, muốn buff thì dùng runtime modifier: `finalAtk = baseAtk + GetBuffTotal()`.
+
+**Lỗi thứ tư: Cross-model mutation — bypass Data Gateway.** StoreModel chọc thẳng `player.data.coins -= item.price`, bỏ qua PlayerModel validation hoàn toàn. Như vậy thì mất hết validate, mất event, mất tracking. Phải gọi qua methods của PlayerModel.
+
+**Lỗi thứ năm: ScriptableObject gọi MonoBehaviour.** Trong PlayerModel — một ScriptableObject — gọi `FindObjectOfType<HUDView>()` rồi `hud.UpdateCoin()`. Vấn đề là khi scene unload, HUDView bị huỷ nhưng ScriptableObject vẫn tồn tại — kết quả là null reference, crash game. Cách đúng: phát event, MonoBehaviour tự lắng nghe và tự unsubscribe khi scene unload."
 
 ---
 
 ## Slide 13: Tại sao kiến trúc này hiệu quả? (1.5 phút)
-"Kiến trúc này giải quyết được những vấn đề thực tế:
-- **Single Source of Truth:** Mỗi data chỉ tồn tại 1 nơi. Không còn PlayerPrefs.GetInt() rải rác khắp codebase.
-- **Predictable Data Flow:** Mọi thay đổi đều qua Handler — dễ trace, dễ debug. Luôn trả lời được: ai đã sửa data này?
-- **Các tính năng không dính chặt:** Thêm feature chỉ cần subscribe event. Các module cũ không cần biết feature mới tồn tại.
-- **Giảm lỗi do con người:** Auto-save, lifecycle callback, validation — framework tự xử lý, dev không cần nhớ.
-- **Team làm việc song song:** Partial class + module boundaries — mỗi dev một file, hạn chế tối đa merge conflict.
-- **Thay đổi không sợ vỡ:** Đổi cách lưu (JSON → encrypt → cloud)? Chỉ sửa persistence layer, game logic không đổi."
+"Vậy kiến trúc này mang lại gì?
+
+Thứ nhất, **Single Source of Truth** — mỗi data chỉ tồn tại đúng 1 nơi. Không còn cảnh `PlayerPrefs.GetInt()` rải khắp codebase mà không biết đâu mới là giá trị đúng.
+
+Thứ hai, **Predictable Data Flow** — mọi thay đổi đều đi qua Handler. Nghĩa là lúc nào cũng trả lời được câu hỏi: ai đã sửa data này? Đặt 1 breakpoint ở Handler là trace được ngay.
+
+Thứ ba, **các tính năng không dính chặt vào nhau**. Thêm feature mới chỉ cần subscribe event — các module cũ hoàn toàn không bị ảnh hưởng.
+
+Thứ tư, **giảm lỗi do con người**. Auto-save, lifecycle callback, validation — framework lo hết, dev không cần nhớ phải gọi save hay check null.
+
+Thứ năm, **team làm việc song song** được. Partial class + module boundaries — mỗi dev một file, gần như không có merge conflict.
+
+Và cuối cùng, **thay đổi không sợ vỡ**. Muốn đổi cách lưu từ JSON sang encrypt hay cloud? Chỉ sửa persistence layer, toàn bộ game logic phía trên không đổi một dòng."
 
 ---
 
-## Slide 14: Demo Dự án (1 phút)
-"Lý thuyết thì luôn hay, nhưng thực tiễn ra sao? 
-Bây giờ chúng ta sẽ đi vào phần Demo live dự án thực.
-Tôi sẽ chạy qua quy trình:
-1. Chỉnh sửa Google Sheets.
-2. Export config qua SheetX.
-3. Xem C# IDs được generate ra.
-4. Chạy game, sử dụng thanh runtime debug JObjectDB để inject data live."
+## Slide 14: Demo: Dự án thực tế (1 phút)
+"Lý thuyết thì luôn hay, nhưng thực tiễn ra sao? Bây giờ chúng ta sẽ áp dụng kiến trúc vừa trình bày vào một mobile game thật.
+
+Tôi sẽ chạy qua 4 bước. Đầu tiên là **Google Sheets** — xem Designer quản lý config và balance trực tiếp như thế nào. Tiếp theo là **SheetX** — export ra JSON, C# IDs, và ScriptableObject. Sau đó vào **Unity Project** — xem Data Models, DBManager, và Inspector. Cuối cùng là **Runtime Debug** — dùng JObjectDB để xem và sửa player data trực tiếp khi game đang chạy."
+
 *(Chuyển sang Unity để Demo)*
 
 ---
 
 ## Slide 15: Takeaways & Q&A (1 phút)
-"Trước khi kết thúc, tóm tắt lại:
-- Nhớ kỹ 3 nguyên tắc: Separation of Concerns, Single Point of Access, Event-Driven.
-- Cả bức tranh này thực ra là đang xây dựng cho kiến trúc Model-View-Presenter (MVP). View (Hiển thị) và Presenter (Điều phối logic) tuyệt đối không tự chọc vào Data Model, mà phải qua Data Handler.
+"Trước khi kết thúc, tóm tắt lại 3 nhóm chính.
+
+Về **nguyên tắc**: Separation of Concerns, Single Point of Access, và Event-Driven — ba cái này là nền tảng cho mọi quyết định thiết kế.
+
+Về **patterns**: Config Pipeline đưa sheets thành ScriptableObject. Data Gateway tách data khỏi logic. Lifecycle callback lo auto-save. Observer giúp các module không dính chặt.
+
+Về **scaling**: Partial class để tránh God Object. Module boundaries rõ ràng. Cross-model thì đọc trực tiếp OK, sửa thì phải qua event.
+
+Và bức tranh lớn hơn: toàn bộ Data Management này thực ra là nền tảng của kiến trúc **MVP — Model-View-Presenter**. View chỉ hiển thị, Presenter điều phối logic, và cả hai đều **không sửa data trực tiếp** — luôn phải đi qua Data Handler rồi mới đến Data Model.
 
 Cảm ơn mọi người đã lắng nghe. Mọi người có câu hỏi gì không?"
