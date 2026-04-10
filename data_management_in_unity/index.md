@@ -236,19 +236,4 @@ Cấu hình trong `RCore > SheetX > Settings`:
 2. Dán vào `RCore > SheetX > Settings`.
 3. Thêm ID Google Sheet vào `RCore > SheetX > Google Spreadsheets`.
 
----
-
-## Dự Án Mẫu
-
-**LiveOps Template** — dự án mẫu tích hợp RCore và SheetX:
-
-🔗 **Repository:** https://gitlab.ikameglobal.com/hungnb/liveopstemplate.git
-
-| Nhóm | Tính năng |
-|---|---|
-| **Store** | Store, Special Offers, Piggy Bank |
-| **Reward** | Daily Bonus, Star Chest, Level Chest, Free Reward |
-| **Quest** | Daily Quest, Rocket Rush, Collection, Pinata |
-| **Competition** | Race, Volcano Quest, Global Leaderboard, Weekly Contest |
-
 > Toàn bộ hệ thống này là nền tảng cho kiến trúc **MVP (Model-View-Presenter)** — View và Presenter luôn đi qua Data Handler, không sửa data trực tiếp.
