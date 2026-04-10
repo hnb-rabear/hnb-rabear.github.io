@@ -380,7 +380,7 @@ public partial class DataConfigCollection : ConfigCollection
 
     public ShopItemConfig GetShopItem(string packId)
     {
-        return shopItems.Find(x => x.PackId == packId);
+        return shopItems.Find(x => x.packId == packId);
     }
 }
 ```
@@ -399,10 +399,23 @@ var allItems = DataConfigCollection.Instance.shopItems;
 
 > **Lưu ý:** File ScriptableObject asset phải nằm trong thư mục `Resources` để `Resources.Load<T>()` hoạt động. Nếu dùng **Addressable Assets**, thay bằng load async.
 
-> **Tip:** Sử dụng `partial class` để chia `DataConfigCollection` theo feature — mỗi file chứa data và `LoadData` cho 1 tính năng:
+> **Tip:** Sử dụng `partial class` để chia `DataConfigCollection` theo feature — mỗi file chứa data và load logic cho 1 tính năng:
 
 ```csharp
-// DataConfigCollection.WeeklyContest.cs
+// DataConfigCollection.cs — gọi các partial methods
+public partial class DataConfigCollection : ConfigCollection
+{
+    public override void LoadData()
+    {
+        LoadData_Shop();
+        LoadData_WeeklyContest();
+    }
+
+    partial void LoadData_Shop();
+    partial void LoadData_WeeklyContest();
+}
+
+// DataConfigCollection.WeeklyContest.cs — feature riêng
 public partial class DataConfigCollection
 {
     public WeeklyContestConfig[] weeklyContestConfigs;
@@ -421,7 +434,7 @@ public partial class DataConfigCollection
 ### 6.1. Khởi tạo
 
 ```csharp
-LocalizationManager.Init();
+LocalizationsManager.Init();
 ```
 
 ### 6.2. Thay đổi ngôn ngữ
@@ -468,7 +481,7 @@ Sử dụng các tệp bộ ký tự tự động tạo từ sheet localization:
 | Ngôn ngữ | Font gợi ý |
 |---|---|
 | Tiếng Nhật | NotoSerif-Bold |
-| Tiếng Hàn | NotoSerifJP-Bold |
+| Tiếng Hàn | NotoSerifKR-Bold |
 | Tiếng Trung | NotoSerifTC-Bold |
 
 **Cách tạo:**
@@ -499,5 +512,5 @@ Sử dụng các tệp bộ ký tự tự động tạo từ sheet localization:
 | ID tham chiếu sai giá trị | Tên ID bị đánh sai hoặc chưa export sheet IDs | Export sheet IDs trước, sau đó export JSON |
 | Google Auth thất bại | Client ID/Secret sai hoặc hết hạn | Tạo lại credentials từ Google Console |
 | `LoadToArray<T>()` trả về null | Tên parameter không khớp tên file JSON | Đảm bảo tên truyền vào `LoadToArray()` khớp chính xác tên file JSON (không có extension) |
-| Localization không hiển thị | Chưa gọi `LocalizationManager.Init()` | Gọi Init ở đầu game hoặc trong Awake |
+| Localization không hiển thị | Chưa gọi `LocalizationsManager.Init()` | Gọi Init ở đầu game hoặc trong Awake |
 | Ký tự CJK bị ☐ | Font chưa có bộ ký tự tương ứng | Tạo Font Asset với character set từ file được export |

@@ -665,7 +665,7 @@ var player = SaveDataCollection
 var player = SaveDataCollection
     .Instance.player;
 
-<span style="color:#51cf66;">player.data.AddCurrency(</span>
+<span style="color:#51cf66;">player.AddCurrency(</span>
 <span style="color:#51cf66;">    IDs.Currency.c_Coin, -price,</span>
 <span style="color:#51cf66;">    groupPlacement, placement);</span>
 // → validate + event + tracking</code></pre></div>
@@ -675,20 +675,24 @@ var player = SaveDataCollection
             <!-- 5/5 -->
             <div class="fragment fade-in" style="width: 100%;">
                 <div class="lesson" style="padding: 0.4em 0.5em;">
-                    <div class="lesson-q" style="margin-bottom: 0.3em;">❌ ScriptableObject gọi MonoBehaviour <span class="text-muted" style="float: right; font-weight: normal; font-size: 0.7em;">5 / 5</span></div>
+                    <div class="lesson-q" style="margin-bottom: 0.3em;">❌ Data Handler xử lý UI / Audio <span class="text-muted" style="float: right; font-weight: normal; font-size: 0.7em;">5 / 5</span></div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5em;">
-                        <div><div style="color: #ff6b6b; font-size: 0.6em; margin-bottom: 0.15em;">SAI — SO phụ thuộc scene</div><pre style="margin: 0;"><code class="language-csharp" data-noescape>// Trong PlayerModel (ScriptableObject)
-<span style="color:#ff6b6b;">var hud = FindObjectOfType&lt;HUDView&gt;();</span>
-<span style="color:#ff6b6b;">hud.UpdateCoin(data.coins);</span>
-
-// Scene unload → hud = null → CRASH
-// SO tồn tại xuyên scene, MB thì không!</code></pre></div>
-                        <div><div style="color: #51cf66; font-size: 0.6em; margin-bottom: 0.15em;">ĐÚNG — phát event, MB tự lắng nghe</div><pre style="margin: 0;"><code class="language-csharp" data-noescape>// Trong PlayerModel (ScriptableObject)
-<span style="color:#51cf66;">DispatchEvent(new CurrencyChangedEvent(</span>
-<span style="color:#51cf66;">    currency, preValue, newValue, placement));</span>
-
-// HUDView (MB) tự subscribe event
-// Scene unload → tự unsubscribe → an toàn</code></pre></div>
+                        <div><div style="color: #ff6b6b; font-size: 0.6em; margin-bottom: 0.15em;">SAI — Handler làm việc của View</div><pre style="margin: 0;"><code class="language-csharp" data-noescape>// Trong PlayerModel (ScriptableObject)
+public void AddCurrency(int amount) {
+    Data.coin += amount;
+    <span style="color:#ff6b6b;">coinText.text = Data.coin.ToString();</span>
+    <span style="color:#ff6b6b;">AudioManager.Play("coin_collect");</span>
+    <span style="color:#ff6b6b;">coinVfx.Play();</span>
+}
+// Handler dính chặt vào UI + Audio</code></pre></div>
+                        <div><div style="color: #51cf66; font-size: 0.6em; margin-bottom: 0.15em;">ĐÚNG — Handler chỉ phát event</div><pre style="margin: 0;"><code class="language-csharp" data-noescape>// Trong PlayerModel (ScriptableObject)
+public void AddCurrency(int amount) {
+    Data.coin += amount;
+    <span style="color:#51cf66;">OnCoinChanged?.Invoke(Data.coin);</span>
+}
+// HUDView subscribe → cập nhật text + VFX
+// AudioView subscribe → play sound
+// Handler không biết UI tồn tại</code></pre></div>
                     </div>
                 </div>
             </div>

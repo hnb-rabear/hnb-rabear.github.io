@@ -192,12 +192,12 @@ playerModel.OnLevelUp += (newLevel) => {
 
 ### 3.4. Giao tiếp giữa các Models
 
-Khi một Model cần truy cập dữ liệu từ Model khác (ví dụ: `PlayerModel` cần kiểm tra `CompetitionModel`), sử dụng **`[SerializeField]` reference** — được gán tự động qua Inspector hoặc attribute `[AutoFill]`:
+Khi một Model cần truy cập dữ liệu từ Model khác (ví dụ: `PlayerModel` cần kiểm tra `CompetitionModel`), sử dụng **`[SerializeField]` reference** kết hợp với **`[AutoFill]`** — attribute từ RCore tự động tìm và gán ScriptableObject reference trong project, không cần kéo thả thủ công trong Inspector:
 
 ```csharp
 public partial class PlayerModel : JObjectModel<PlayerData>
 {
-    // Reference đến model khác — gán qua Inspector hoặc [AutoFill]
+    // Reference đến model khác — [AutoFill] tự động gán
     [AutoFill, SerializeField] private CompetitionModel m_competitionModel;
 
     public bool CanJoinRace()
@@ -289,7 +289,7 @@ graph TD
 
 RCore cung cấp Editor Tools giúp debug và chỉnh sửa dữ liệu trong quá trình phát triển.
 
-### 7.1. JObjectDB Editor
+### 6.1. JObjectDB Editor
 
 Công cụ xem và chỉnh sửa dữ liệu người chơi dưới dạng JSON ngay trong Unity Editor.
 
@@ -308,7 +308,7 @@ Công cụ xem và chỉnh sửa dữ liệu người chơi dưới dạng JSON 
 
 ![JObjectDB Text Editor](image-4.png)
 
-### 7.2. ScriptableObject Inspector
+### 6.2. ScriptableObject Inspector
 
 Mỗi `JObjectModel` hiển thị dữ liệu trực tiếp trong Inspector, hỗ trợ chỉnh sửa nhanh:
 
