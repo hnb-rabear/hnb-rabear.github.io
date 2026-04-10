@@ -24,15 +24,6 @@ graph LR
 
 > Designer sửa Sheets → nhấn Export → code tự cập nhật. **Không cần Developer can thiệp.**
 
-### Cài đặt
-
-**Unity Package Manager:**
-```
-https://github.com/hnb-rabear/RCore.git?path=Assets/RCore.SheetX
-```
-
-**Phiên bản Winform:** [excel-to-unity](https://github.com/hnb-rabear/excel-to-unity)
-
 **Tài nguyên:**
 - 📦 [Tải Example Package](https://github.com/hnb-rabear/hnb-rabear.github.io/blob/main/sheetx/SheetXExample.unitypackage)
 - 📊 [Xem trước các kiểu dữ liệu](https://docs.google.com/spreadsheets/d/1_9BqoKwRsod5cMwML5n_pLpuWk045lD3Jd7nrizqVBo/edit?usp=sharing)
@@ -294,8 +285,6 @@ public class PowerUpItemConfig : ConsumableItemConfig
 }
 ```
 
-> **Tip:** Sử dụng **kế thừa** (`ConsumableItemConfig`) để tái sử dụng các trường chung giữa các loại item.
-
 ### 5.2. Tạo ConfigCollection
 
 ```csharp
@@ -431,25 +420,15 @@ public partial class DataConfigCollection
 
 ## 6. Localization API
 
-### 6.1. Khởi tạo
+### 6.1. Setup
 
 ```csharp
 LocalizationsManager.Init();
+LocalizationsManager.CurrentLanguage = "jp"; // Thay đổi ngôn ngữ
+LocalizationsManager.OnLanguageChanged += OnLanguageChanged; // Đăng ký sự kiện
 ```
 
-### 6.2. Thay đổi ngôn ngữ
-
-```csharp
-LocalizationsManager.CurrentLanguage = "jp"; // Tiếng Nhật
-```
-
-### 6.3. Đăng ký sự kiện
-
-```csharp
-LocalizationsManager.OnLanguageChanged += OnLanguageChanged;
-```
-
-### 6.4. Truy xuất nội dung (3 cách)
+### 6.2. Truy xuất nội dung (3 cách)
 
 **Cách 1 — Truy xuất bằng key** (không tự cập nhật khi đổi ngôn ngữ):
 
@@ -474,7 +453,7 @@ Localization.UnregisterDynamicText(m_textGameObject);
 
 ![Localization Component](https://github.com/user-attachments/assets/0f0214b9-51ed-44bf-9b27-f2a210e6f0f6)
 
-### 6.5. Font cho ngôn ngữ CJK
+### 6.3. Font cho ngôn ngữ CJK
 
 Sử dụng các tệp bộ ký tự tự động tạo từ sheet localization:
 
@@ -491,7 +470,7 @@ Sử dụng các tệp bộ ký tự tự động tạo từ sheet localization:
 
 ![Font JP](https://github.com/user-attachments/assets/7bc98c77-9994-4551-8e5a-dae51eba9f45)
 
-### 6.6. Addressable Assets
+### 6.4. Addressable Assets
 
 1. Cài đặt **Addressable Assets System**.
 2. Thêm `ADDRESSABLES` vào scripting define symbols.
