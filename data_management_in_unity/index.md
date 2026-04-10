@@ -2,41 +2,22 @@
 
 ## Giới thiệu
 
-Tài liệu này hướng dẫn cách thiết kế và xây dựng **hệ thống quản lý data** trong dự án Unity, sử dụng framework **RCore** và công cụ **SheetX**. Kiến trúc này là kết quả tiến hóa qua 3 giai đoạn: từ Spaghetti PlayerPrefs rải khắp nơi → God Class SaveManager 3000 dòng → Layered System tách Data, Logic, Persistence theo domain.
+Tài liệu này hướng dẫn cách thiết kế **hệ thống quản lý data** trong dự án Unity, sử dụng framework **RCore** và công cụ **SheetX**.
 
-### Vấn đề cần giải quyết
+Nếu không có hệ thống quản lý data tốt, Designer phụ thuộc Dev cho mọi thay đổi số liệu, save data dễ lỗi khi cập nhật, và code logic/data/UI trộn lẫn khó mở rộng.
 
-Trong phát triển game, data là nền tảng của mọi thứ — từ chỉ số nhân vật, giá vật phẩm, đến nội dung bản địa hóa. Nếu không có hệ thống quản lý data tốt:
-
-| Vấn đề | Hậu quả |
-|---|---|
-| **Designer phụ thuộc Developer** | Mỗi khi muốn thay đổi một con số, Designer phải nhờ Dev sửa code → tạo bottleneck |
-| **Dữ liệu người chơi không ổn định** | Save data dễ bị lỗi, mất mát, hoặc không migrate được khi cập nhật |
-| **Code kết dính** | Logic game, dữ liệu và giao diện trộn lẫn → khó debug, khó test, khó mở rộng |
-
-### Giải pháp
-
-Sử dụng **hai hệ thống data riêng biệt**, mỗi hệ thống phục vụ một mục đích khác nhau:
+**Giải pháp:** tách thành hai hệ thống data riêng biệt:
 
 | Loại Data | Công cụ | Đặc điểm | Ví dụ |
 |---|---|---|---|
-| **Static Config Data** | SheetX + `ConfigCollection` | Chỉ đọc, do Designer quản lý qua Sheets | Chỉ số Hero, giá vật phẩm, level design |
-| **Dynamic Player Data** | JObjectDB + `JObjectModel<T>` | Đọc/ghi, lưu tiến trình người chơi | Gold, level, inventory, quest progress |
+| **Static Config Data** | SheetX + `ConfigCollection` | Chỉ đọc, Designer quản lý qua Sheets | Chỉ số Hero, giá vật phẩm |
+| **Dynamic Player Data** | JObjectDB + `JObjectModel<T>` | Đọc/ghi, lưu tiến trình người chơi | Gold, inventory, quest progress |
 
-### Tài liệu chi tiết
-
-| Tài liệu | Nội dung |
-|---|---|
-| [**Static Config Data**](static_config_data) | **Config Pipeline** — Thiết kế bảng dữ liệu, SheetX export, ConfigCollection, Localization |
-| [**Dynamic Player Data**](dynamic_player_data) | **Data Gateway, Lifecycle, Observer** — JObjectDB, Data Model, Data Handler, Events, Editor Tools |
+**Tài liệu chi tiết:** [Static Config Data](static_config_data) | [Dynamic Player Data](dynamic_player_data)
 
 ---
 
 ## Kiến Trúc Data
-
-Kiến trúc data được xây dựng theo mô hình **phân lớp**, áp dụng nguyên tắc tách biệt giữa **dữ liệu thuần túy** và **logic xử lý dữ liệu**.
-
-### Sơ đồ tổng quan
 
 ```mermaid
 graph LR
@@ -65,38 +46,22 @@ graph LR
 
 ### Các lớp data
 
-Trong kiến trúc game, data được tổ chức thành các lớp với trách nhiệm riêng biệt:
-
 | Lớp | Vai trò | Class trong RCore | Loại |
 |---|---|---|---|
-| **Data Model** | Chứa dữ liệu thuần túy, không có logic | `JObjectData` | POCO (`[Serializable]`) |
+| **Data Model** | Dữ liệu thuần túy, không có logic | `JObjectData` | POCO (`[Serializable]`) |
 | **Data Handler** | Đóng gói Data Model + logic nghiệp vụ | `JObjectModel<T>` | `ScriptableObject` |
-| **Data Collection** | Tập hợp và điều phối tất cả Data Handlers | `JObjectModelCollection` | `ScriptableObject` |
+| **Data Collection** | Tập hợp và điều phối tất cả Handlers | `JObjectModelCollection` | `ScriptableObject` |
 | **Data Manager** | Kết nối Unity lifecycle, auto-save/load | `DBManager` | `MonoBehaviour` |
 
 ### Nguyên tắc cốt lõi
 
-```mermaid
-graph LR
-    A["Data Handler<br/>(Logic nghiệp vụ)"] -->|wraps| B["Data Model<br/>(Dữ liệu gốc)"]
-    A -->|consumed by| C["Game Logic<br/>(Presenter/Controller)"]
-    C -->|displays| D["View<br/>(UI/Game World)"]
-
-    style A fill:#7c3aed,color:#fff
-    style B fill:#4a9eff,color:#fff
-    style C fill:#059669,color:#fff
-    style D fill:#6b7280,color:#fff
-```
-
 | Nguyên tắc | Mô tả | Vi phạm phổ biến |
 |---|---|---|
 | **Data Model không chứa logic** | Chỉ là container dữ liệu thuần túy | Thêm method `AddGold()` vào Data Model |
-| **Data Handler kiểm soát mọi thay đổi** | Luôn thay đổi data qua Handler, không sửa trực tiếp | Code bên ngoài viết `data.coin -= 100` |
+| **Thay đổi data qua Handler** | Luôn đi qua Handler, không sửa trực tiếp | Code bên ngoài viết `data.coin -= 100` |
 | **Giao tiếp qua Events** | Handler phát event khi data thay đổi | Handler gọi trực tiếp `view.UpdateText()` |
 
 ### Luồng hoạt động mẫu: Mua vật phẩm
-
-Ví dụ minh họa cách các lớp data phối hợp khi người chơi mua vật phẩm:
 
 ```mermaid
 sequenceDiagram
@@ -117,28 +82,24 @@ sequenceDiagram
     PM->>DB: Save JSON to PlayerPrefs
 ```
 
-**Điểm then chốt:**
-- Game Logic **không trực tiếp sửa** `PlayerData.coin` — luôn đi qua `PlayerModel.TrySpendCoin()`
-- `PlayerModel` phát event `OnCoinChanged` → bất kỳ ai subscribe đều tự cập nhật (HUD, Quest, Shop...)
-- Persistence xảy ra **tự động** — không cần gọi Save thủ công
-
 ### Ưu điểm
 
-| # | Ưu điểm | Tác động |
-|---|---|---|
-| 1 | **Designer Independence** — Config data sửa trên Sheets, không cần Dev | Tăng tốc iteration 3-5x |
-| 2 | **Unity-Native** — ScriptableObject, Inspector-friendly, asset-based | Zero friction với Unity workflow |
-| 3 | **Auto Lifecycle** — Init/OnUpdate/OnPause/OnPreSave tự động | Không quên save, không quên offline calculation |
-| 4 | **Editor Tooling** — View/edit JSON data trực tiếp trong Editor | Debug speed tăng đáng kể |
-| 5 | **Modular** — Thêm feature mới = thêm Data + Model + 1 dòng trong Collection | Scale nhanh theo feature |
-| 6 | **Type-Safe** — SheetX generate C# IDs/Constants | Compile-time error thay vì runtime crash |
-| 7 | **Decoupled** — Events pattern, các module không biết nhau tồn tại | Dễ maintain, dễ test |
+| Ưu điểm | Tác động |
+|---|---|
+| **Designer Independence** — Config sửa trên Sheets, không cần Dev | Tăng tốc iteration 3-5x |
+| **Auto Lifecycle** — Init/OnUpdate/OnPause/OnPreSave tự động | Không quên save, không quên offline calculation |
+| **Modular** — Thêm feature = thêm Data + Model + 1 dòng trong Collection | Scale nhanh theo feature |
+| **Decoupled** — Events pattern, các module không biết nhau | Dễ maintain, dễ test |
 
-### Anti-Patterns phổ biến
+Phù hợp nhất cho **mobile casual / mid-core**. Với hardcore RPG cần bổ sung cloud save, anti-cheat. Không phù hợp cho multiplayer online hoặc PC/Console AAA.
 
-#### 1. Fat Data Model — "God Object"
+---
 
-Gom tất cả fields vào 1 file `PlayerData.cs` 500+ dòng — 2 devs cùng sửa là merge conflict.
+## Anti-Patterns
+
+### 1. Fat Data Model — "God Object"
+
+Gom tất cả fields vào 1 file 500+ dòng — merge conflict liên tục.
 
 ```csharp
 // ❌ Sai: 1 file chứa mọi thứ
@@ -165,40 +126,38 @@ public partial class PlayerData
 {  public List<int> unlockedAvatars; }
 ```
 
-> Khi một domain phức tạp đến mức partial class không đủ (ví dụ: inventory có logic riêng, quest có lifecycle riêng), hãy tách thành **model riêng** (`InventoryModel`, `QuestModel`) thay vì tiếp tục nhét vào `PlayerData`.
+> Khi domain phức tạp hơn, tách thành **model riêng** (`InventoryModel`, `QuestModel`).
 
-#### 2. Config data bị mutate runtime
+### 2. Config data bị mutate runtime
 
-Sửa trực tiếp config từ SheetX để buff chỉ số — config sẽ sai vĩnh viễn trong session đó.
+Sửa trực tiếp config từ SheetX — config sẽ sai vĩnh viễn trong session đó.
 
 ```csharp
 // ❌ Sai: sửa thẳng config (Read-Only!)
 var hero = DataConfigCollection.Instance.GetHero(heroId);
 hero.attack += buffValue;
-hero.maxHp += 200;
 
 // ✅ Đúng: tách runtime modifier riêng
 var baseAtk = DataConfigCollection.Instance.GetHero(heroId).attack;
 int finalAtk = baseAtk + GetBuffTotal();
 ```
 
-#### 3. Cross-model mutation — bypass Data Gateway
+### 3. Cross-model mutation — bypass Data Gateway
 
-Model khác chọc thẳng vào `.data` để sửa, bỏ qua validation và event của Handler.
+Model khác chọc thẳng vào `.data`, bỏ qua validation và event của Handler.
 
 ```csharp
 // ❌ Sai: StoreModel sửa trực tiếp data của PlayerModel
 var player = SaveDataCollection.Instance.player;
 player.data.coins -= item.price;
-player.data.purchasedIapIds.Add(item.id);
 
 // ✅ Đúng: gọi qua Handler methods
 player.AddCurrency(IDs.Currency.c_Coin, -price, groupPlacement, placement);
 ```
 
-#### 4. Data Handler xử lý UI / Audio
+### 4. Data Handler xử lý UI / Audio
 
-Handler nhét presentation logic (update text, play sound, play VFX) — dính chặt vào View, không test được.
+Handler nhét presentation logic — dính chặt vào View, không test được.
 
 ```csharp
 // ❌ Sai: Handler làm việc của View
@@ -206,7 +165,6 @@ public void AddCurrency(int amount) {
     Data.coin += amount;
     coinText.text = Data.coin.ToString();  // UI
     AudioManager.Play("coin_collect");     // Audio
-    coinVfx.Play();                        // VFX
 }
 
 // ✅ Đúng: Handler chỉ phát event
@@ -218,45 +176,31 @@ public void AddCurrency(int amount) {
 // AudioView subscribe → play sound
 ```
 
-### Phù hợp cho
-
-| Loại game | Phù hợp? | Ghi chú |
-|---|---|---|
-| Mobile Casual / Mid-core | ✅ Rất phù hợp | Sweet spot của kiến trúc này |
-| Prototype / Game Jam | ✅ Tốt | Setup nhanh, có sẵn lifecycle + tools |
-| Mobile Hardcore RPG | ⚠️ Cần bổ sung | Thêm cloud save, anti-cheat, data versioning |
-| Multiplayer Online | ⚠️ Thiếu | Không có server-authoritative data |
-| PC/Console AAA | ❌ Không phù hợp | Cần file-based + async I/O |
-
 ---
 
 ## SheetX
 
-**SheetX** là công cụ chuyển đổi dữ liệu từ **Google Sheets** hoặc **Excel** thành tệp sẵn sàng sử dụng trong Unity — bao gồm C# scripts (IDs, Constants, Localization API) và JSON data. Designer sửa Sheets → nhấn Export → code tự cập nhật, không cần Developer can thiệp.
+**SheetX** chuyển đổi dữ liệu từ **Google Sheets / Excel** thành C# scripts và JSON data cho Unity. Designer sửa Sheets → nhấn Export → code tự cập nhật.
 
 | Khả năng | Mô tả |
 |---|---|
-| **IDs & Constants** | Auto-generate C# enums và hằng số từ sheet, type-safe, compile-time checked |
-| **JSON Data** | Export bảng dữ liệu thành JSON, hỗ trợ mảng, JSON object, attribute system cho RPG |
-| **Localization** | Đa ngôn ngữ, hỗ trợ dynamic text, CJK character set cho TextMeshPro |
-| **Google Sheets** | Kết nối trực tiếp Google Sheets qua API, download và export trong Unity Editor |
-
-SheetX có 2 phiên bản:
+| **IDs & Constants** | Auto-generate C# enums và hằng số, type-safe, compile-time checked |
+| **JSON Data** | Export bảng dữ liệu thành JSON, hỗ trợ mảng, JSON object, attribute system |
+| **Localization** | Đa ngôn ngữ, dynamic text, CJK character set cho TextMeshPro |
+| **Google Sheets** | Kết nối trực tiếp qua API, download và export trong Unity Editor |
 
 | Phiên bản | Mô tả | Link |
 |---|---|---|
-| **Unity Editor** | Tích hợp trực tiếp trong Unity, export từ menu `RCore > SheetX` | [SheetX](https://hnb-rabear.github.io/sheetx) |
+| **Unity Editor** | Tích hợp trong Unity, export từ menu `RCore > SheetX` | [SheetX](https://hnb-rabear.github.io/sheetx) |
 | **Winform** | Ứng dụng Windows độc lập, xử lý data ngoài Unity Editor | [excel-to-unity](https://github.com/hnb-rabear/excel-to-unity) |
 
-> Chi tiết cách thiết kế sheet, quy tắc đặt tên, và export workflow xem tại [Static Config Data](static_config_data).
+> Chi tiết thiết kế sheet, quy tắc đặt tên, và export workflow xem tại [Static Config Data](static_config_data).
 
 ---
 
 ## Cài Đặt
 
-### Yêu cầu
-
-Cài đặt các thư viện sau qua **Unity Package Manager** → *"Add package from git URL..."*:
+Cài đặt qua **Unity Package Manager** → *"Add package from git URL..."*:
 
 | Thứ tự | Thư viện | Git URL |
 |:---:|---|---|
@@ -267,8 +211,6 @@ Cài đặt các thư viện sau qua **Unity Package Manager** → *"Add package
 > **Lưu ý:** UniTask là dependency bắt buộc — cần cài trước RCore.
 
 ### Thiết lập thư mục xuất dữ liệu
-
-Tạo các thư mục sau trong dự án Unity:
 
 ```
 Assets/
@@ -291,14 +233,14 @@ Cấu hình trong `RCore > SheetX > Settings`:
 ### Cấu hình Google Sheets (tùy chọn)
 
 1. Lấy **Google Client ID** và **Client Secret** từ Google Console ([Hướng dẫn](https://hnb-rabear.github.io/sheetx/how-get-google-client-id-and-secret-id)).
-2. Dán vào các trường tương ứng trong `RCore > SheetX > Settings`.
+2. Dán vào `RCore > SheetX > Settings`.
 3. Thêm ID Google Sheet vào `RCore > SheetX > Google Spreadsheets`.
 
 ---
 
 ## Dự Án Mẫu
 
-**LiveOps Template** là dự án mẫu hoàn chỉnh tích hợp RCore và SheetX, minh họa cách xây dựng hệ thống data cho các tính năng LiveOps phổ biến:
+**LiveOps Template** — dự án mẫu tích hợp RCore và SheetX:
 
 🔗 **Repository:** https://gitlab.ikameglobal.com/hungnb/liveopstemplate.git
 
@@ -309,16 +251,4 @@ Cấu hình trong `RCore > SheetX > Settings`:
 | **Quest** | Daily Quest, Rocket Rush, Collection, Pinata |
 | **Competition** | Race, Volcano Quest, Global Leaderboard, Weekly Contest |
 
-> Mỗi feature trong template được xây dựng theo kiến trúc phân lớp data đã trình bày ở trên, có thể tham khảo trực tiếp source code làm ví dụ thực tế.
-
----
-
-## Tổng Kết
-
-| Bước | Nội dung | Tài liệu |
-|:---:|---|---|
-| 1 | Cài đặt RCore + SheetX + UniTask | Trang này |
-| 2 | Thiết kế Sheets → Export → ConfigCollection | [Static Config Data](static_config_data) |
-| 3 | Tạo `JObjectData` → `JObjectModel<T>` → `DBManager` | [Dynamic Player Data](dynamic_player_data) |
-
-> Toàn bộ hệ thống Data Management này là nền tảng cho kiến trúc **MVP (Model-View-Presenter)** — View và Presenter không sửa data trực tiếp, luôn đi qua Data Handler.
+> Toàn bộ hệ thống này là nền tảng cho kiến trúc **MVP (Model-View-Presenter)** — View và Presenter luôn đi qua Data Handler, không sửa data trực tiếp.
