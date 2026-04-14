@@ -1,3 +1,8 @@
+---
+layout: default
+title: Unity Addressables
+---
+
 # Unity Addressables
 
 > Tài liệu áp dụng cho **Addressables 2.x** trên Unity 2022.3+. API có thể khác đôi chút với phiên bản 1.x.
