@@ -5,7 +5,7 @@ title: Unity Addressables
 
 # Unity Addressables
 
-> Tài liệu áp dụng cho **Addressables 2.x** trên Unity 2022.3+. API có thể khác đôi chút với phiên bản 1.x.
+> Tài liệu áp dụng cho **Addressables 2.x** trên Unity 2022.3+. Một số mục (Play Asset Delivery built-in) yêu cầu Unity 6+ và được ghi chú riêng. API có thể khác đôi chút với phiên bản 1.x.
 
 ## Mục lục
 
@@ -119,7 +119,7 @@ Quy định cách Unity đóng gói asset trong group thành bundle:
 | Pack Mode | Hành vi | Khi nào dùng |
 |-----------|---------|--------------|
 | **Pack Together** | Toàn bộ asset của group → 1 bundle | Mặc định, phù hợp nhất cho đa số trường hợp |
-| **Pack Separately** | Mỗi asset → 1 bundle riêng | Khi cần kiểm soát chi tiết từng asset, load độc lập |
+| **Pack Separately** | Mỗi primary asset → 1 bundle riêng (sub-asset như sprite trong sprite sheet vẫn gộp chung) | Khi cần kiểm soát chi tiết từng asset, load độc lập |
 | **Pack Together By Label** | Gộp asset theo label → mỗi label 1 bundle | Khi 1 group chứa nhiều nhóm logic phân biệt bằng label |
 
 **Lưu ý**: Scene asset luôn được đóng gói tách biệt với asset thường, bất kể Pack Mode.
@@ -139,12 +139,12 @@ Gom asset thuộc **cùng một thực thể logic**.
 > Ví dụ: `Character_Hero` chứa prefab + animation + material + texture của nhân vật.
 
 #### 3. Type (theo loại asset)
-Gom asset **cùng loại** (audio, shader, texture).
+Gom asset **cùng loại** (audio, shader, texture) vào 1 group.
 
-Chỉ dùng cho asset **dùng chung nhiều nơi** như shared UI atlas, common shaders. **Lạm dụng pattern này dễ gây duplicate dependency và phá vỡ locality**.
+Phù hợp cho asset **dùng chung nhiều nơi** như shared UI atlas, common shaders. **Không nên gom tất cả asset cùng type vào 1 group** — ví dụ gom mọi texture của cả game vào group `All_Textures` sẽ tạo bundle khổng lồ, phá vỡ locality (load cả bundle dù chỉ cần vài texture cho 1 level) và dễ gây duplicate dependency khi các asset khác group reference vào.
 
 #### 4. Shared group (anti-duplicate)
-Tạo một group riêng chứa asset dùng chung giữa nhiều feature/group khác, mark Addressable để tránh Unity copy ngầm vào nhiều bundle.
+Tạo một group riêng chứa asset dùng chung giữa nhiều feature/group khác, mark Addressable để tránh Unity copy ngầm vào nhiều bundle. Thường kết hợp với Type grouping — ví dụ `Shared_Shaders` vừa gom theo type vừa đóng vai trò shared group.
 
 > Ví dụ: `Shared_UI` chứa font, icon, shared atlas. `Shared_Shaders` chứa shader dùng xuyên suốt.
 
@@ -172,19 +172,20 @@ Bật càng nhiều → catalog càng lớn → startup chậm hơn. Chỉ bật
 
 #### Internal Asset Naming Mode
 
-- **Full Path** / **Filename** / **GUID** / **Dynamic**.
-- `Full Path` dễ debug nhưng **catalog lớn** và **thay đổi khi di chuyển file** (ảnh hưởng content update).
-- `GUID` hoặc `Dynamic` ổn định hơn cho live-ops.
+- **Full Path**: dễ debug nhưng **catalog lớn** và **thay đổi khi di chuyển file** (ảnh hưởng content update).
+- **Filename**: ngắn hơn Full Path, nhưng vẫn thay đổi nếu đổi tên file.
+- **GUID**: ổn định nhất — không đổi khi di chuyển hay đổi tên file. Khó đọc khi debug.
+- **Dynamic**: tự động chọn tên nội bộ ngắn nhất dựa trên các asset trong group. Giảm catalog size mà vẫn đảm bảo tính duy nhất.
 
 #### Asset Load Mode
 
 - **Requested Asset And Dependencies** (mặc định): chỉ load asset được yêu cầu + dependency của nó.
-- **All Packed Assets And Dependencies**: load toàn bộ bundle khi bất kỳ asset nào được request. Peak memory cao, chỉ dùng khi chắc chắn sẽ dùng gần hết bundle.
+- **All Packed Assets And Dependencies**: khi request bất kỳ asset nào, Unity load **tất cả asset objects trong bundle** (không chỉ asset được request). Peak memory cao, chỉ dùng khi chắc chắn sẽ dùng gần hết asset trong bundle.
 
 #### Content Update Restriction — Prevent Updates
 
-- `Prevent Updates = false` (Can Change Post Release): group có thể cập nhật qua remote catalog.
-- `Prevent Updates = true` (Cannot Change Post Release): group cố định, không thể update sau khi ship → dùng cho asset ổn định, hạn chế remote fetch.
+- `Prevent Updates = false` (Can Change Post Release): khi có asset thay đổi, toàn bộ bundle của group được build lại trong content update.
+- `Prevent Updates = true` (Cannot Change Post Release): bundle gốc được giữ nguyên. Khi chạy **Check for Content Update Restrictions**, tool sẽ di chuyển asset đã thay đổi sang một group mới riêng biệt để build thành bundle update — bundle cũ không bị ảnh hưởng. Dùng cho asset ổn định, hạn chế user phải tải lại bundle lớn.
 
 ### Naming convention khuyến nghị
 
@@ -229,11 +230,11 @@ SubAsset là asset con bên trong một container asset: Sprite trong SpriteAtla
 #### Cách tham chiếu SubAsset
 
 **1. Direct SubAsset Reference** — reference trực tiếp tới sub-asset.
-- Hệ quả: load **toàn bộ asset cha** vào memory dù chỉ cần 1 sub-asset.
+- Hệ quả: load **toàn bộ asset cha** vào memory dù chỉ cần 1 sub-asset. Ví dụ: reference 1 Sprite trong SpriteAtlas 50 sprite → load cả atlas.
 
-**2. Intermediary Asset Reference** — dùng một ScriptableObject trung gian giữ reference tới sub-asset.
-- Cho phép load chỉ asset cha khi cần, giảm overhead.
-- Phù hợp khi số lượng sub-asset lớn và không phải lúc nào cũng dùng hết.
+**2. Intermediary Asset Reference** — tạo một ScriptableObject trung gian cho mỗi sub-asset (hoặc nhóm sub-asset), đặt vào bundle riêng. SO chỉ chứa AssetReference trỏ tới sub-asset.
+- Khi cần: load SO nhẹ trước → chỉ load asset cha nặng khi thực sự dùng đến sub-asset đó.
+- Phù hợp khi container asset lớn (FBX nhiều mesh, atlas nhiều sprite) và chỉ cần một phần nhỏ tại mỗi thời điểm.
 
 ---
 
@@ -294,12 +295,11 @@ Tương tự, **unload scene đồng bộ không được hỗ trợ** — cố 
 
 #### 2. Deadlock khi load 2 scene liên tiếp
 
-- Bước 1: Scene A load xong (mode `Single`).
-- Bước 2: `SceneManager` gọi `UnloadUnusedAssets` trên main thread.
-- Bước 3: Cùng lúc, Scene B được load với `WaitForCompletion` → lock main thread.
-- **Deadlock**: Scene B chờ main thread free để load xong, nhưng main thread đang chờ `UnloadUnusedAssets` (cũng bị Scene B block).
+- Bước 1: Scene A load xong (mode `Single`) → Unity tự gọi `UnloadUnusedAssets` trên main thread.
+- Bước 2: Ngay sau đó, code gọi `WaitForCompletion` để load Scene B → lock main thread chờ Scene B load xong.
+- **Deadlock**: `UnloadUnusedAssets` (bước 1) cần main thread để hoàn thành, nhưng main thread đang bị `WaitForCompletion` (bước 2) chiếm giữ. Cả hai chờ nhau vô hạn.
 
-**Giải pháp**: load scene liên tiếp bằng async pattern, hoặc thêm delay giữa 2 lần load.
+**Giải pháp**: load scene liên tiếp bằng async pattern, hoặc chờ `UnloadUnusedAssets` xong rồi mới load scene tiếp.
 
 #### 3. Deadlock trong Awake
 
@@ -325,9 +325,9 @@ Addressables.Release(handle); // bắt buộc
 var handle = Addressables.InstantiateAsync("Enemy");
 ```
 
-Khi GameObject bị `Destroy`, Addressables **tự động release** handle.
+Khi `trackHandle = true`, handle được **tự động release khi scene chứa object đó bị unload**. Để release chủ động trong cùng scene, dùng `Addressables.ReleaseInstance(gameObject)` — vừa release handle vừa destroy GameObject.
 
-Scene load qua `LoadSceneAsync` cũng tự động release khi scene được unload — không cần gọi `Release` thủ công cho scene handle.
+Scene load qua `Addressables.LoadSceneAsync` cũng tự động release khi scene được unload qua `Addressables.UnloadSceneAsync` hoặc `SceneManager.UnloadSceneAsync` — không cần gọi `Release` thủ công cho scene handle.
 
 Ngoài 2 trường hợp này, mọi `LoadAssetAsync` / `LoadAssetsAsync` / `DownloadDependenciesAsync` đều **phải tự gọi Release**.
 
@@ -340,7 +340,7 @@ Các pattern giữ asset kiểu cũ **hoàn toàn vô tác dụng** với Addres
 
 **Hệ quả**: khi scene cũ unload, Addressables thấy bundle reference count = 0 → unload bundle. GameObject được `DontDestroyOnLoad` sẽ mất material (thành màu tím) hoặc mất mesh (tàng hình).
 
-**Giải pháp đúng**: dùng `ResourceManager.Acquire` trên scene load handle, hoặc giữ reference đến handle cho đến khi chủ động release.
+**Giải pháp đúng**: dùng `Addressables.ResourceManager.Acquire(handle)` để tăng reference count thủ công (ngăn bundle bị unload), hoặc giữ reference đến handle dưới dạng field cho đến khi chủ động release.
 
 ### Xử lý lỗi khi load
 
@@ -414,7 +414,6 @@ public class WeaponLoader : MonoBehaviour
 
     public async void Equip()
     {
-        // InstantiateAsync tự track handle — khi Destroy(_instance) sẽ auto-release
         var op = weaponRef.InstantiateAsync(transform);
         _instance = await op.Task;
     }
@@ -423,7 +422,9 @@ public class WeaponLoader : MonoBehaviour
     {
         if (_instance != null)
         {
-            // ReleaseInstance vừa release handle vừa destroy GameObject
+            // ReleaseInstance = release handle + destroy GameObject trong 1 lệnh.
+            // Không dùng Destroy(_instance) trực tiếp — handle chỉ tự release khi scene unload,
+            // không phải khi gọi Destroy thủ công.
             Addressables.ReleaseInstance(_instance);
             _instance = null;
         }
@@ -471,7 +472,8 @@ public async Task<bool> PreloadFeature(string label)
 Nhanh hơn load tuần tự nhiều lần vì các handle chạy song song:
 
 ```csharp
-public static async Task<List<T>> LoadAssetsAsync<T>(IList<string> addresses) where T : Object
+public static async Task<(List<T> assets, List<AsyncOperationHandle<T>> handles)>
+    LoadAssetsAsync<T>(IList<string> addresses) where T : Object
 {
     var handles = new List<AsyncOperationHandle<T>>(addresses.Count);
     var tasks = new List<Task<T>>(addresses.Count);
@@ -485,12 +487,12 @@ public static async Task<List<T>> LoadAssetsAsync<T>(IList<string> addresses) wh
 
     var results = await Task.WhenAll(tasks);
 
-    // Caller chịu trách nhiệm Release từng handle khi xong (giữ handles lại để release).
-    return new List<T>(results);
+    // Trả cả handles để caller có thể Release từng cái khi xong.
+    return (new List<T>(results), handles);
 }
 ```
 
-> ⚠️ Giữ danh sách `handles` để Release sau. Nếu chỉ cần dùng 1 lần rồi release toàn bộ, có thể wrap thành class `IDisposable`.
+> ⚠️ Caller **phải** Release từng handle trong danh sách trả về khi không còn dùng asset.
 
 #### 2. Tránh load lại `AssetReference` đã load
 
@@ -513,19 +515,20 @@ Release bằng `reference.ReleaseAsset()` khi không còn dùng.
 Tiện khi chỉ quan tâm component cụ thể, không cần giữ GameObject trung gian:
 
 ```csharp
-public static async Task<T> LoadPrefabComponentAsync<T>(string address) where T : Component
+public static async Task<(T component, AsyncOperationHandle<GameObject> handle)>
+    LoadPrefabComponentAsync<T>(string address) where T : Component
 {
     var handle = Addressables.LoadAssetAsync<GameObject>(address);
     var go = await handle.Task;
 
     if (handle.Status != AsyncOperationStatus.Succeeded || go == null)
-        return null;
+        return (null, handle); // caller vẫn cần Release handle dù fail
 
     if (!go.TryGetComponent<T>(out var component))
         Debug.LogError($"Prefab '{address}' không có component {typeof(T).Name}");
 
-    // Không Release ở đây — caller cần giữ handle để Release khi xong.
-    return component;
+    // Trả handle cùng component để caller có thể Release khi xong.
+    return (component, handle);
 }
 ```
 
@@ -546,7 +549,7 @@ public static async Task<T> LoadPrefabComponentAsync<T>(string address) where T 
 
 - Mỗi **asset** và mỗi **AssetBundle** có reference count riêng.
 - Load tăng count, Release giảm count.
-- Asset có `Reference Count = 0` **chưa unload ngay** — chờ AssetBundle chứa nó được unload mới thực sự giải phóng.
+- Asset có `Reference Count = 0` **chưa unload ngay** — asset vẫn ở trong RAM cho đến khi AssetBundle chứa nó cũng có ref count = 0 và được unload, lúc đó tất cả asset trong bundle mới thực sự giải phóng.
 - `Resources.UnloadUnusedAssets()` force giải phóng ngay nhưng **gây lag frame** — dùng tại điểm chuyển cảnh, không dùng runtime.
 
 > 📷 **[CẦN HÌNH]**: Diagram reference counting qua 3 giai đoạn — (1) Load 2 lần → count=2, (2) Release 1 lần → count=1, asset vẫn trong RAM, (3) Release lần cuối → count=0, bundle unload.
@@ -554,8 +557,8 @@ public static async Task<T> LoadPrefabComponentAsync<T>(string address) where T 
 ### Các nguyên tắc
 
 - **Tránh Asset Churn**: không load/release bundle liên tục trong thời gian ngắn — chi phí I/O và GC cao.
-- **Cân bằng số lượng bundle và asset/bundle**: mỗi bundle có chi phí metadata cố định (`TypeTrees`, `Table of Contents`, `Preload Table`, `Loading Cache`).
-- **Cẩn trọng với bundle dependencies**: nếu 1 asset trong bundle A tham chiếu 1 asset trong bundle B, **toàn bộ bundle B trở thành dependency của A** — load A sẽ kéo B vào memory.
+- **Cân bằng số lượng bundle và số asset trong mỗi bundle**: mỗi bundle có chi phí metadata cố định (`TypeTrees`, `Table of Contents`, `Preload Table`, `Loading Cache`).
+- **Cẩn trọng với bundle dependencies**: nếu 1 asset trong bundle A tham chiếu 1 asset trong bundle B, **toàn bộ bundle B trở thành dependency của bundle A** — load bất kỳ asset nào trong bundle A sẽ kéo toàn bộ bundle B vào memory.
 - **Nguyên tắc vàng**: giữ dependency graph giữa các bundle **càng phẳng càng tốt**.
 
 ### Nhược điểm của chia quá nhiều bundle NHỎ
@@ -570,7 +573,7 @@ public static async Task<T> LoadPrefabComponentAsync<T>(string address) where T 
 
 ### Nhược điểm của bundle KHỔNG LỒ
 
-- **Không hỗ trợ resume khi lỗi mạng**: download fail giữa chừng phải tải lại từ đầu.
+- **Không hỗ trợ resume khi lỗi mạng** (remote bundle): download fail giữa chừng phải tải lại từ đầu.
 - **Không thể unload từng phần**: toàn bộ bundle ở trong RAM dù chỉ cần 1 asset.
 - **Content update đắt đỏ**: sửa 1 asset nhỏ → user phải tải lại toàn bộ bundle lớn.
 - **Peak memory spike** khi load lần đầu.
@@ -594,12 +597,10 @@ Quản lý group, asset, address, label. Trigger build.
 `Window → Asset Management → Addressables → Analyze`
 
 Các rule quan trọng:
-- **Check Duplicate Bundle Dependencies**: phát hiện asset bị copy vào nhiều bundle.
-- **Check Resources to Addressable Duplicate Dependencies**: detect asset vừa ở `Resources/` vừa Addressable.
-- **Check Scene to Addressable Duplicate Dependencies**: detect asset ở scene build-in vừa Addressable.
-- **Bundle Layout Preview**: xem trước cấu trúc bundle sẽ được build.
-
-Nút **Fix Selected Rules** sẽ tự động tạo group chứa shared asset để fix duplicate.
+- **Check Duplicate Bundle Dependencies**: phát hiện asset bị copy vào nhiều bundle. **Có auto-fix** — nút **Fix Selected Rules** tự tạo group chứa shared asset.
+- **Check Resources to Addressable Duplicate Dependencies**: detect asset vừa ở `Resources/` vừa Addressable. Không có auto-fix — phải tự di chuyển asset ra khỏi `Resources/`.
+- **Check Scene to Addressable Duplicate Dependencies**: detect asset ở built-in scene vừa Addressable. Không có auto-fix — cân nhắc chuyển scene sang Addressable.
+- **Bundle Layout Preview**: xem trước cấu trúc bundle sẽ được build (chỉ hiển thị, không fix).
 
 > **Lưu ý**: Analyze không phải lúc nào cũng đưa ra fix đúng. Với SubAsset (Sprite Atlas, FBX), Analyze có thể không phát hiện load toàn bộ. Một số duplicate là **cố ý** (để tránh load thêm bundle nhỏ) — cần review thủ công.
 
