@@ -119,8 +119,16 @@ Quy định cách Unity đóng gói asset trong group thành bundle:
 | Pack Mode | Hành vi | Khi nào dùng |
 |-----------|---------|--------------|
 | **Pack Together** | Toàn bộ asset của group → 1 bundle | Mặc định, phù hợp nhất cho đa số trường hợp |
-| **Pack Separately** | Mỗi primary asset → 1 bundle riêng (sub-asset như sprite trong sprite sheet vẫn gộp chung) | Khi cần kiểm soát chi tiết từng asset, load độc lập |
+| **Pack Separately** | Mỗi entry → 1 bundle riêng. Entry là primary asset hoặc folder (xem chi tiết bên dưới) | Khi cần kiểm soát chi tiết từng asset hoặc folder, load độc lập |
 | **Pack Together By Label** | Gộp asset theo label → mỗi label 1 bundle | Khi 1 group chứa nhiều nhóm logic phân biệt bằng label |
+
+**Pack Separately và folder**: khi mark **folder** là Addressable, folder đó được coi là 1 entry — tất cả asset trong folder gộp thành **1 bundle**. Asset trong folder được mark riêng lẻ sẽ tách ra bundle riêng.
+
+| Cách đánh dấu | Pack Separately → kết quả |
+|---------------|--------------------------|
+| Mark **folder** | Tất cả asset trong folder → 1 bundle |
+| Mark **từng asset** | Mỗi asset → 1 bundle riêng |
+| Mark **folder** + mark riêng vài asset trong đó | Folder 1 bundle, asset mark riêng tách ra bundle riêng |
 
 **Lưu ý**: Scene asset luôn được đóng gói tách biệt với asset thường, bất kể Pack Mode.
 
@@ -155,8 +163,24 @@ Cách phát hiện asset cần đưa vào Shared: chạy **Addressables → Anal
 | Compression | Build Size | Load Time | Memory Footprint | Use Case |
 |-------------|-----------|-----------|------------------|----------|
 | **Uncompressed** | Lớn nhất | Nhanh nhất | Thấp | Khi dung lượng không quan trọng, ưu tiên tốc độ |
-| **LZ4** | Trung bình | Nhanh, streaming theo chunk | Thấp | **Mặc định cho local bundle** |
-| **LZMA** | Nhỏ nhất | Chậm, phải giải nén toàn bộ | Cao khi load | Remote download — tiết kiệm băng thông |
+| **LZ4** | Trung bình | Nhanh, chunk-based 128KB | Thấp — chỉ metadata + chunk cần thiết | **Mặc định cho local bundle** |
+| **LZMA** | Nhỏ nhất | Chậm, giải nén toàn bộ vào RAM | Cao — toàn bộ bundle trong RAM khi load | Remote download — tiết kiệm băng thông |
+
+#### LZ4 chunk-based loading (chi tiết)
+
+LZ4 chia bundle thành **chunk 128KB**, mỗi chunk nén độc lập. Khi load 1 asset, Unity chỉ giải nén các chunk chứa data của asset đó — **không giải nén toàn bộ bundle**.
+
+Với `LoadFromFile` (cách Addressables dùng mặc định), bundle **không được copy vào RAM** — Unity đọc trực tiếp từ file trên disk. Trong RAM chỉ có:
+
+| Thành phần | Mô tả |
+|------------|-------|
+| Metadata | TypeTrees, Table of Contents, Preload Table — luôn load |
+| Block cache | Cache nhỏ chứa chunk đã đọc gần đây (`m_CachedBlocks`) |
+| Asset objects | Chỉ asset được request mới deserialize thành Unity object (Texture2D, Mesh...) |
+
+→ Bundle 100MB trên disk **không chiếm 100MB RAM**. RAM thực tế = metadata + asset objects được load + block cache.
+
+Ngược lại, **LZMA** phải giải nén toàn bộ bundle vào RAM trước khi đọc được bất kỳ asset nào.
 
 ### Group Inspector Settings quan trọng
 
@@ -221,7 +245,7 @@ Khi một asset **không phải Addressable** được reference bởi **nhiều
 
 ### Lưu ý quan trọng
 
-> **Load 1 asset đồng nghĩa với load toàn bộ bundle chứa nó vào memory** (trừ streamed asset như video/audio streaming). Đây là lý do cần cân nhắc kỹ bundle size và cách nhóm asset.
+> **Load 1 asset sẽ mở AssetBundle chứa nó**: metadata (TypeTrees, Table of Contents, Preload Table) luôn load vào RAM. Với LZ4, asset data chỉ giải nén chunk cần thiết từ disk. Với LZMA, toàn bộ bundle giải nén vào RAM. Dù compression nào, **không thể unload từng asset riêng** — bundle chỉ unload khi tất cả asset trong nó đều được release. Đây là lý do cần cân nhắc kỹ bundle size và cách nhóm asset.
 
 ### SubAsset
 
@@ -267,6 +291,7 @@ Chỉ dùng khi **nắm rõ số operation đang chạy** và thực sự muốn
 
 - Trên operation đang tải AssetBundle từ **remote** (network) → block main thread suốt thời gian download, dễ gây ANR.
 - Trong **Awake()** khi scene chưa integrate xong → deadlock.
+- Trên **WebGL**: không hỗ trợ. WebGL single-threaded, tight loop block web request vĩnh viễn → app treo.
 
 ### Bẫy deadlock thường gặp
 
@@ -554,11 +579,22 @@ public static async Task<(T component, AsyncOperationHandle<GameObject> handle)>
 
 > 📷 **[CẦN HÌNH]**: Diagram reference counting qua 3 giai đoạn — (1) Load 2 lần → count=2, (2) Release 1 lần → count=1, asset vẫn trong RAM, (3) Release lần cuối → count=0, bundle unload.
 
+### Bundle loaded vs Asset deserialized
+
+Cần phân biệt hai lớp memory:
+
+| Lớp | Khi nào xảy ra | Chiếm bao nhiêu RAM |
+|-----|----------------|---------------------|
+| **Bundle opened** | Khi load bất kỳ asset nào trong bundle | Metadata (TypeTrees, TOC, Preload Table) + block cache. Với LZ4 + `LoadFromFile`: **không copy toàn bộ file vào RAM** |
+| **Asset deserialized** | Khi asset cụ thể được request | Unity object thực (Texture2D, Mesh, Material...) chiếm RAM tương ứng |
+
+→ Load 1 asset từ bundle 100MB (LZ4) **không chiếm 100MB RAM**. Nhưng bundle vẫn "mở" và metadata vẫn trong RAM cho đến khi tất cả asset được release.
+
 ### Các nguyên tắc
 
 - **Tránh Asset Churn**: không load/release bundle liên tục trong thời gian ngắn — chi phí I/O và GC cao.
 - **Cân bằng số lượng bundle và số asset trong mỗi bundle**: mỗi bundle có chi phí metadata cố định (`TypeTrees`, `Table of Contents`, `Preload Table`, `Loading Cache`).
-- **Cẩn trọng với bundle dependencies**: nếu 1 asset trong bundle A tham chiếu 1 asset trong bundle B, **toàn bộ bundle B trở thành dependency của bundle A** — load bất kỳ asset nào trong bundle A sẽ kéo toàn bộ bundle B vào memory.
+- **Cẩn trọng với bundle dependencies**: dependency tính ở **bundle level**, không phải asset level. Nếu 1 asset trong bundle A tham chiếu 1 asset trong bundle B, **toàn bộ bundle B trở thành dependency của bundle A**. Ví dụ: bundle A chứa `PrefabX` (không reference gì ngoài bundle) và `PrefabY` (reference texture trong bundle B). Load `PrefabX` — dù bản thân nó không cần bundle B — **vẫn trigger load bundle B** vì dependency tính ở bundle level.
 - **Nguyên tắc vàng**: giữ dependency graph giữa các bundle **càng phẳng càng tốt**.
 
 ### Nhược điểm của chia quá nhiều bundle NHỎ
@@ -574,9 +610,9 @@ public static async Task<(T component, AsyncOperationHandle<GameObject> handle)>
 ### Nhược điểm của bundle KHỔNG LỒ
 
 - **Không hỗ trợ resume khi lỗi mạng** (remote bundle): download fail giữa chừng phải tải lại từ đầu.
-- **Không thể unload từng phần**: toàn bộ bundle ở trong RAM dù chỉ cần 1 asset.
+- **Không thể unload từng phần**: dù chỉ cần 1 asset, bundle metadata và dependency vẫn giữ trong RAM. Với LZ4 không phải toàn bộ file, nhưng metadata của bundle lớn (TypeTrees, Preload Table) cũng đáng kể.
 - **Content update đắt đỏ**: sửa 1 asset nhỏ → user phải tải lại toàn bộ bundle lớn.
-- **Peak memory spike** khi load lần đầu.
+- **Metadata overhead lớn**: Preload Table phải track dependency của tất cả asset trong bundle — bundle càng lớn, table càng nặng.
 
 ### Kích thước bundle khuyến nghị
 
@@ -648,9 +684,10 @@ Debug lifecycle của operation: load, release, acquire, dependency resolution.
 Khi cần cập nhật asset sau release **không** qua app store:
 
 1. Build ban đầu tạo ra `addressables_content_state.bin` — **commit file này vào version control**.
-2. Khi cần update: `Addressables → Build → Update a Previous Build`.
-3. Chỉ group có `Prevent Updates = false` (Can Change Post Release) mới được update.
-4. Upload bundle + catalog mới lên CDN. Client fetch catalog mới → tải bundle thay đổi.
+2. Sửa asset cần update.
+3. Chạy **Addressables → Tools → Check for Content Update Restrictions**. Tool đọc `addressables_content_state.bin`, phát hiện asset thay đổi trong group có `Prevent Updates = true` và **di chuyển chúng sang group mới** — giữ bundle gốc nguyên vẹn.
+4. Chạy `Addressables → Build → Update a Previous Build`. Chỉ build bundle mới cho asset thay đổi + catalog mới.
+5. Upload bundle + catalog mới lên CDN. Client fetch catalog mới (qua hash file kiểm tra version) → tải bundle thay đổi.
 
 > 📷 **[CẦN HÌNH]**: Timeline workflow content update — từ Build v1 → Release → Sửa asset → Update Build → Upload CDN → Client fetch catalog mới.
 
@@ -886,6 +923,7 @@ Các lỗi phổ biến và cách xử lý nhanh:
 | App treo khi load scene | `WaitForCompletion` trong `Awake()` hoặc load 2 scene liên tiếp | Dùng async, hoặc chuyển logic sang `Start()` |
 | Download fail silent | Remote URL sai, CORS, hoặc CRC mismatch | Check profile path, check log network |
 | Bundle duplicate sau update | Addressables content state cũ | Commit `addressables_content_state.bin`, build update từ state đúng |
+| App treo trên WebGL khi load | Dùng `WaitForCompletion` trên WebGL (không hỗ trợ) | Chuyển sang async pattern, không dùng sync loading trên WebGL |
 
 ---
 
